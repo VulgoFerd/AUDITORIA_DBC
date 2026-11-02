@@ -7,6 +7,44 @@
 
 ---
 
+## [1.0.1] - 2026-11-02 - CORREÇÃO DO CRASH `JRMCorePStats2.toBytes`
+
+### 🐞 Corrigido
+
+#### `VerifyError: Bad type on operand stack` em `JRMCorePStats2.toBytes @22`
+
+**Sintoma:** jogo abria e chegava ao menu; ao clicar em "melhorar atributo" (`03:13:12`), o mundo caía para o menu principal.
+
+**Causa raiz:** o patch de `curTP int -> long` em `JRMCorePStats2` deixou a classe inconsistente em 3 pontos:
+
+1. `toBytes` trocou `writeInt` por `writeLong` também na escrita de `curExp` (campo `int`), gerando `long_2nd` recebendo `integer`.
+2. O construtor real é `(IIB[I)V`; o patcher assumia `(III[I)V`, então `PUTFIELD curTP` ficou com descritor `I` sobre campo `J`.
+3. `JRMCorePStats2$Handler` e `JRMCorePacHanC.handleStats2` continuaram lendo/entregando `int`.
+
+**Fix:** `patchJRMCorePStats2` agora é **SKIPPED**. `JRMCorePStats2` é DTO de rede que espelha o display `int`; long-izar exigiria alargar `Handler`, `PacHanC` e o estático `JRMCoreH.curTP`, sem ganho, pois o chamador já passa `int` saturado. A autoridade 64-bit permanece em `jrmcTplong` (`JRMCoreH`).
+
+Relatório completo: `RELATORIO_CRASH_STATS2.md`.
+
+#### Processo: patcher rodava `.class` obsoleto
+
+`C:\temp\run_patch.bat` executava `java PatchBig` sem recompilar. O `.class` usado era de `02/11 00:40`; o fonte corrigido era de `02:24`. As correções nunca chegaram ao JAR.
+
+**Fix:** fonte único em `artifacts/PatchBig.java` (espelho em `AUDITORIA_DBC/`), `javac -encoding UTF-8` obrigatório antes do patch, BOM removido do arquivo.
+
+### 📦 Artefato
+
+| Item | Valor |
+|------|-------|
+| SHA-256 do JAR | `221643729F567445AB04E2539009A67A8E9272625F1A6811B410E976DFB2243D` |
+| Classes patchadas de fato | `JRMCoreH`, `JRMCorePCost` |
+| Classes intactas por design | `JRMCorePStats2`, `JRMCorePacHanC`, `JRMCorePacHanS`, `JRMCoreComTickH`, `ComJrmctp` |
+
+### ⚠️ Limitação conhecida
+
+Acima de `Integer.MAX_VALUE`, a subtração de custo em `JRMCorePacHanS.handleUpgrade` opera sobre o espelho `jrmcTpint` saturado; `jrmcTplong` não é debitado. Não causa crash, mas o custo de melhoria deixa de ser cobrado nessa faixa. Corrigir exige patchear `JRMCorePacHanS`, que tem Mixin ativo.
+
+---
+
 ## [1.0.0] - 2026-11-02 - BIG TP RELEASE CANDIDATE
 
 ### 🎯 Objetivo Principal
@@ -35,17 +73,21 @@ Eliminar limite de 2.147.483.647 (Integer.MAX_VALUE) de TP, elevando para 64-bit
 - `applyPacketTPChange(NBTTagCompound, EntityPlayer)` - Processa pacote TP completo
 
 #### JRMCorePStats2 - Pacote de Stats (Rede)
-- Campo `curTP`: `int` → `long`
-- `toBytes`: `writeInt` → `writeLong` para `curTP`
-- `fromBytes`: `readInt` → `readLong` para `curTP`
-- Construtor: parâmetro `curTP` `int` → `long`
+> ⚠️ **Revertido em 1.0.1.** As mudanças abaixo causaram `VerifyError` em `toBytes`. A classe voltou a ser `int`; ver `RELATORIO_CRASH_STATS2.md`.
+
+- ~~Campo `curTP`: `int` → `long`~~
+- ~~`toBytes`: `writeInt` → `writeLong` para `curTP`~~
+- ~~`fromBytes`: `readInt` → `readLong` para `curTP`~~
+- ~~Construtor: parâmetro `curTP` `int` → `long`~~
 
 #### JRMCorePCost - Sistema Ki
 - Campos `short` → `int` (custos de Ki)
 - `toBytes`/`fromBytes`: `writeShort`/`readShort` → `writeInt`/`readInt`
 
 #### JRMCorePacHanC - Handler Cliente
-- `handleStats2`: parâmetro `curTP` `int` → `long` (descritor atualizado)
+> ⚠️ **Nunca aplicado.** A condição do patcher exigia descritor `(III[I...)V`; o real é `(IIB[I...)V`. Classe permanece original.
+
+- ~~`handleStats2`: parâmetro `curTP` `int` → `long`~~
 
 ### 🔧 Corrigido
 
@@ -79,6 +121,8 @@ Eliminar limite de 2.147.483.647 (Integer.MAX_VALUE) de TP, elevando para 64-bit
 | `JRMCoreComTickH` | Mixin `dbc.MixinJRMCoreComTickH` quebra Frame.merge |
 | `JRMCorePacHanS` | Mixin `dbc.MixinJRMCorePacHanS` quebra Frame.merge |
 | `ComJrmctp` | Command handler usa `jrmcTpint` (int mirror) |
+| `JRMCorePStats2` | DTO de rede int; long-izar quebrou `toBytes` (ver 1.0.1) |
+| `JRMCorePacHanC` | `handleStats2` é int por contrato com `JRMCoreH.curTP` |
 
 ### 🛠️ Ferramentas e Infraestrutura
 

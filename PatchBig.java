@@ -441,114 +441,18 @@ public class PatchBig {
     }
 
     // ============================================================
-    // JRMCorePStats2 - Change curTP from int to long, update toBytes/fromBytes
+    // JRMCorePStats2 - SKIPPED (int-native network DTO)
+    // curTP in this packet mirrors the int display value (JRMCoreH.curTP).
+    // The 64-bit authority lives in player NBT (jrmcTplong, handled in JRMCoreH).
+    // Long-izing this DTO would require widening Handler, PacHanC and the
+    // JRMCoreH.curTP static field, which are shared with Mixin/UI code.
+    // Keeping it int preserves the original wire format and avoids VerifyError.
     // ============================================================
     static byte[] patchJRMCorePStats2(byte[] data) throws Exception {
-        ClassNode cn = new ClassNode();
-        new ClassReader(data).accept(cn, 0);
-
-        // 1. Change curTP field from int to long
-        for (FieldNode f : cn.fields) {
-            if ("curTP".equals(f.name) && "I".equals(f.desc)) {
-                f.desc = "J";
-                System.out.println("  -> JRMCorePStats2.curTP: int -> long");
-            }
-        }
-
-        // 2. Update toBytes: writeLong instead of writeInt for curTP
-        for (MethodNode m : cn.methods) {
-            if (m.name.equals("toBytes") && m.desc.equals("(Lio/netty/buffer/ByteBuf;)V")) {
-                AbstractInsnNode insn = m.instructions.getFirst();
-                while (insn != null) {
-                    if (insn.getOpcode() == Opcodes.INVOKEVIRTUAL) {
-                        MethodInsnNode min = (MethodInsnNode) insn;
-                        if (min.owner.equals("io/netty/buffer/ByteBuf") &&
-                            min.name.equals("writeInt") &&
-                            min.desc.equals("(I)Lio/netty/buffer/ByteBuf;")) {
-                            // Check if this is writing curTP (first write in method, preceded by GETFIELD curTP)
-                            AbstractInsnNode prev = insn.getPrevious();
-                            while (prev != null) {
-                                if (prev.getOpcode() == Opcodes.GETFIELD) {
-                                    FieldInsnNode fin = (FieldInsnNode) prev;
-                                    if (fin.name.equals("curTP")) {
-                                        fin.desc = "J";
-                                        min.name = "writeLong";
-                                        min.desc = "(J)Lio/netty/buffer/ByteBuf;";
-                                        System.out.println("  -> JRMCorePStats2.toBytes: writeInt -> writeLong for curTP");
-                                        break;
-                                    }
-                                } else if (prev.getOpcode() == Opcodes.ILOAD) {
-                                    // Might be loading from local variable
-                                    break;
-                                }
-                                prev = prev.getPrevious();
-                            }
-                        }
-                    }
-                    insn = insn.getNext();
-                }
-            }
-        }
-
-        // 3. Update fromBytes: readLong instead of readInt for curTP
-        for (MethodNode m : cn.methods) {
-            if (m.name.equals("fromBytes") && m.desc.equals("(Lio/netty/buffer/ByteBuf;)V")) {
-                AbstractInsnNode insn = m.instructions.getFirst();
-                while (insn != null) {
-                    if (insn.getOpcode() == Opcodes.INVOKEVIRTUAL) {
-                        MethodInsnNode min = (MethodInsnNode) insn;
-                        if (min.owner.equals("io/netty/buffer/ByteBuf") &&
-                            min.name.equals("readInt") &&
-                            min.desc.equals("()I")) {
-                            // First readInt is for curTP
-                            min.name = "readLong";
-                            min.desc = "()J";
-                            // Update the subsequent putfield
-                            AbstractInsnNode next = insn.getNext();
-                            while (next != null) {
-                                if (next.getOpcode() == Opcodes.PUTFIELD) {
-                                    FieldInsnNode fin = (FieldInsnNode) next;
-                                    if (fin.name.equals("curTP")) {
-                                        fin.desc = "J";
-                                    }
-                                }
-                                next = next.getNext();
-                            }
-                            System.out.println("  -> JRMCorePStats2.fromBytes: readInt -> readLong for curTP");
-                            break;
-                        }
-                    }
-                    insn = insn.getNext();
-                }
-            }
-        }
-
-        // 4. Update constructor that takes curTP as int parameter
-        for (MethodNode m : cn.methods) {
-            if (m.name.equals("<init>") && m.desc.equals("(III[I)V")) {
-                m.desc = "(JII[I)V";
-                AbstractInsnNode insn = m.instructions.getFirst();
-                while (insn != null) {
-                    if (insn.getOpcode() == Opcodes.PUTFIELD) {
-                        FieldInsnNode fin = (FieldInsnNode) insn;
-                        if (fin.name.equals("curTP")) {
-                            fin.desc = "J";
-                            AbstractInsnNode prev = insn.getPrevious();
-                            if (prev != null && prev.getOpcode() == Opcodes.ILOAD) {
-                                ((VarInsnNode) prev).setOpcode(Opcodes.LLOAD);
-                            }
-                        }
-                    }
-                    insn = insn.getNext();
-                }
-                System.out.println("  -> JRMCorePStats2 constructor: curTP param int -> long");
-            }
-        }
-
-        ClassWriter cw = new SafeClassWriter(ClassWriter.COMPUTE_MAXS);
-        cn.accept(cw);
-        return cw.toByteArray();
+        System.out.println("  -> JRMCorePStats2: SKIPPED (int-native DTO, long authority is jrmcTplong)");
+        return data;
     }
+
 
     // ============================================================
     // JRMCorePCost - Change cost from short to int

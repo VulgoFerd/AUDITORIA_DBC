@@ -1,0 +1,99 @@
+﻿=== Sessao 2026-11-02 (cabecalho) ===
+[03:09:11] [main/INFO]: Loading tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[03:09:11] [main/INFO]: Using primary tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[03:09:11] [main/INFO]: Calling tweak class cpw.mods.fml.common.launcher.FMLTweaker
+[03:09:11] [main/INFO]: Forge Mod Loader version 7.99.40.1614 for Minecraft 1.7.10 loading
+[03:09:11] [main/INFO]: Java is Java HotSpot(TM) 64-Bit Server VM, version 1.8.0_51, running on Windows 10:amd64:10.0, installed at E:\Program Files (x86)\Minecraft Launcher\runtime\jre-legacy\windows-x64\jre-legacy
+[03:09:11] [main/INFO]: Loading tweaker org.spongepowered.asm.launch.MixinTweaker from +unimixins-all-1.7.10-0.1.17.jar
+
+=== Mod carregado ===
+[03:09:35] [Client thread/INFO]: Attempting to reparse the mod container JRMCore-v1.3.51-bignum.jar
+
+=== Comandos de TP ===
+[03:12:21] [Server thread/INFO]: [VulgoFerd: TP adding 2147483647 success for VulgoFerd]
+[03:12:21] [Client thread/INFO]: [CHAT] TP adding 2147483647 success for VulgoFerd
+[03:13:01] [Server thread/INFO]: [VulgoFerd: TP adding 2147483647 success for VulgoFerd]
+[03:13:01] [Client thread/INFO]: [CHAT] TP adding 2147483647 success for VulgoFerd
+
+=== Primeira excecao (VerifyError) ===
+[03:13:12] [Server thread/ERROR]: SimpleChannelHandlerWrapper exception
+java.lang.VerifyError: Bad type on operand stack
+Exception Details:
+  Location:
+    JinRyuu/JRMCore/p/JRMCorePStats2.toBytes(Lio/netty/buffer/ByteBuf;)V @22: invokevirtual
+  Reason:
+    Type integer (current frame, stack[1]) is not assignable to long_2nd
+  Current Frame:
+    bci: @22
+    flags: { }
+    locals: { 'JinRyuu/JRMCore/p/JRMCorePStats2', 'io/netty/buffer/ByteBuf', '[I' }
+    stack: { 'io/netty/buffer/ByteBuf', integer }
+  Bytecode:
+    0x0000000: 2ab4 001b bebc 0a4d 2b2a b400 2bb6 0031
+    0x0000010: 572b 2ab4 0022 b600 3157 2b2a b400 24b6
+    0x0000020: 0035 5703 3e1d 2cbe a200 142b 2ab4 001b
+    0x0000030: 1d2e b600 3957 8403 01a7 ffec 2a2c b500
+    0x0000040: 1bb1                                   
+  Stackmap Table:
+    append_frame(@37,Object[#54],Integer)
+    chop_frame(@60,1)
+
+	at JinRyuu.JRMCore.JRMCoreH.Stats2(JRMCoreH.java:7254) ~[JRMCoreH.class:?]
+	at JinRyuu.JRMCore.JRMCorePacHanS.handleUpgrade(JRMCorePacHanS.java:2170) ~[JRMCorePacHanS.class:?]
+	at JinRyuu.JRMCore.p.JRMCorePUpgrade$Handler.handleServerMessage(JRMCorePUpgrade.java:39) ~[JRMCorePUpgrade$Handler.class:?]
+	at JinRyuu.JRMCore.p.JRMCorePUpgrade$Handler.handleServerMessage(JRMCorePUpgrade.java:28) ~[JRMCorePUpgrade$Handler.class:?]
+	at JinRyuu.JRMCore.p.Amh.onMessage(Amh.java:54) ~[Amh.class:?]
+	at cpw.mods.fml.common.network.simpleimpl.SimpleChannelHandlerWrapper.channelRead0(SimpleChannelHandlerWrapper.java:37) ~[SimpleChannelHandlerWrapper.class:?]
+	at cpw.mods.fml.common.network.simpleimpl.SimpleChannelHandlerWrapper.channelRead0(SimpleChannelHandlerWrapper.java:17) ~[SimpleChannelHandlerWrapper.class:?]
+	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:98) ~[SimpleChannelInboundHandler.class:?]
+	at io.netty.channel.DefaultChannelHandlerContext.invokeChannelRead(DefaultChannelHandlerContext.java:337) [DefaultChannelHandlerContext.class:?]
+	at io.netty.channel.DefaultChannelHandlerContext.fireChannelRead(DefaultChannelHandlerContext.java:323) [DefaultChannelHandlerContext.class:?]
+	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:101) [SimpleChannelInboundHandler.class:?]
+	at io.netty.channel.DefaultChannelHandlerContext.invokeChannelRead(DefaultChannelHandlerContext.java:337) [DefaultChannelHandlerContext.class:?]
+	at io.netty.channel.DefaultChannelHandlerContext.fireChannelRead(DefaultChannelHandlerContext.java:323) [DefaultChannelHandlerContext.class:?]
+	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:101) [SimpleChannelInboundHandler.class:?]
+	at io.netty.channel.DefaultChannelHandlerContext.invokeChannelRead(DefaultChannelHandlerContext.java:337) [DefaultChannelHandlerContext.class:?]
+	at io.netty.channel.DefaultChannelHandlerContext.fireChannelRead(DefaultChannelHandlerContext.java:323) [DefaultChannelHandlerContext.class:?]
+	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:101) [SimpleChannelInboundHandler.class:?]
+	at io.netty.channel.DefaultChannelHandlerContext.invokeChannelRead(DefaultChannelHandlerContext.java:337) [DefaultChannelHandlerContext.class:?]
+	at io.netty.channel.DefaultChannelHandlerContext.fireChannelRead(DefaultChannelHandlerContext.java:323) [DefaultChannelHandlerContext.class:?]
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103) [MessageToMessageDecoder.class:?]
+	at io.netty.handler.codec.MessageToMessageCodec.channelRead(MessageToMessageCodec.java:111) [MessageToMessageCodec.class:?]
+	at io.netty.channel.DefaultChannelHandlerContext.invokeChannelRead(DefaultChannelHandlerContext.java:337) [DefaultChannelHandlerContext.class:?]
+	at io.netty.channel.DefaultChannelHandlerContext.fireChannelRead(DefaultChannelHandlerContext.java:323) [DefaultChannelHandlerContext.class:?]
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:785) [DefaultChannelPipeline.class:?]
+	at io.netty.channel.embedded.EmbeddedChannel.writeInbound(EmbeddedChannel.java:169) [EmbeddedChannel.class:?]
+	at cpw.mods.fml.common.network.internal.FMLProxyPacket.func_148833_a(FMLProxyPacket.java:77) [FMLProxyPacket.class:?]
+	at net.minecraft.network.NetworkManager.func_74428_b(NetworkManager.java:212) [ej.class:?]
+	at net.minecraft.network.NetworkSystem.func_151269_c(NetworkSystem.java:165) [nc.class:?]
+	at net.minecraft.server.MinecraftServer.func_71190_q(MinecraftServer.java:659) [MinecraftServer.class:?]
+	at net.minecraft.server.MinecraftServer.func_71217_p(MinecraftServer.java:547) [MinecraftServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.func_71217_p(IntegratedServer.java:111) [bsx.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:427) [MinecraftServer.class:?]
+	at net.minecraft.server.MinecraftServer$2.run(MinecraftServer.java:685) [?:?]
+
+=== Desconexao / unload do mundo (03:13:39) ===
+[03:13:39] [Server thread/INFO]: Saving players
+[03:13:39] [Server thread/INFO]: Saving worlds
+[03:13:39] [Server thread/INFO]: Saving chunks for level 'Novo Mundo'/Overworld
+[03:13:39] [Server thread/INFO]: Saving chunks for level 'Novo Mundo'/Nether
+[03:13:39] [Server thread/INFO]: Saving chunks for level 'Novo Mundo'/The End
+[03:13:39] [Server thread/INFO]: Saving chunks for level 'Novo Mundo'/OtherWorld
+[03:13:39] [Server thread/INFO]: Saving chunks for level 'Novo Mundo'/Vegeta
+[03:13:39] [Server thread/INFO]: Saving chunks for level 'Novo Mundo'/Namek
+[03:13:39] [Server thread/INFO]: Saving chunks for level 'Novo Mundo'/Spirit World
+[03:13:39] [Server thread/INFO]: Saving chunks for level 'Novo Mundo'/Torment
+[03:13:39] [Server thread/INFO]: Saving chunks for level 'Novo Mundo'/Mirror
+[03:13:39] [Server thread/INFO]: Saving chunks for level 'Novo Mundo'/Null Realm
+[03:13:39] [Server thread/INFO]: Saving chunks for level 'Novo Mundo'/TimeChamber
+[03:13:39] [Server thread/INFO]: Unloading dimension 0
+[03:13:39] [Server thread/INFO]: Unloading dimension -1
+[03:13:39] [Server thread/INFO]: Unloading dimension 1
+[03:13:39] [Server thread/INFO]: Unloading dimension 22
+[03:13:39] [Server thread/INFO]: Unloading dimension 21
+[03:13:39] [Server thread/INFO]: Unloading dimension 20
+[03:13:39] [Server thread/INFO]: Unloading dimension -37
+[03:13:39] [Server thread/INFO]: Unloading dimension -38
+[03:13:39] [Server thread/INFO]: Unloading dimension -39
+[03:13:39] [Server thread/INFO]: Unloading dimension 24
+[03:13:39] [Server thread/INFO]: Unloading dimension 23

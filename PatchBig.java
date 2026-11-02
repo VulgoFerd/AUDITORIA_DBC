@@ -205,7 +205,7 @@ public class PatchBig {
             m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3)); // String
             // Saturate long to int for mirror: min(value, Integer.MAX_VALUE)
             m.instructions.add(new VarInsnNode(Opcodes.LLOAD, 0)); // long value
-            m.instructions.add(new LdcInsnNode(Integer.MAX_VALUE)); // Integer.MAX_VALUE
+            m.instructions.add(new LdcInsnNode((long) Integer.MAX_VALUE)); // Integer.MAX_VALUE as long
             m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Math", "min", "(JJ)J", false));
             m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Math", "toIntExact", "(J)I", false));
             m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74768_a", "(Ljava/lang/String;I)V", false));
@@ -380,7 +380,7 @@ public class PatchBig {
             
             // Saturate delta to int range
             m.instructions.add(new VarInsnNode(Opcodes.LLOAD, 5));
-            m.instructions.add(new LdcInsnNode(Integer.MAX_VALUE));
+            m.instructions.add(new LdcInsnNode((long) Integer.MAX_VALUE));
             m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Math", "min", "(JJ)J", false));
             m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Math", "toIntExact", "(J)I", false));
             m.instructions.add(new VarInsnNode(Opcodes.ISTORE, 7)); // saturated delta in local 7 (int)

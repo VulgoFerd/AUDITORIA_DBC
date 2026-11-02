@@ -1,0 +1,1 @@
+Fix Integer.MAX_VALUE long constants in setLong and applyPacketTPChange; add verification script

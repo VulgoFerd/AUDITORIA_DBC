@@ -216,62 +216,88 @@ public class PatchBig {
             System.out.println("  -> setLong method already exists, skipping");
         }
 
-        // 7. Add addLong method for delta addition (if not exists)
+        // 7. Add/Replace addLong method for delta addition
         // Signature: (JLnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)J
-        // Locals: 0-1=long(delta), 2=EntityPlayer, 3=String(key), 4=NBTTagCompound, 5-6=result long
-        if (!hasMethod.test("addLong", "(JLnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)J")) {
-            MethodNode m = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "addLong", "(JLnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)J", null, null);
-            // Get NBTTagCompound for player "pres"
-            m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2)); // EntityPlayer
-            m.instructions.add(new LdcInsnNode("pres"));
-            m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "JinRyuu/JRMCore/JRMCoreH", "nbt", "(Lnet/minecraft/entity/Entity;Ljava/lang/String;)Lnet/minecraft/nbt/NBTTagCompound;", false));
-            // Store NBTTagCompound in local 4 for later use
-            m.instructions.add(new VarInsnNode(Opcodes.ASTORE, 4));
-            // Get current jrmcTplong from NBT
-            m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 4)); // NBTTagCompound
-            m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3)); // String key
-            m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74763_f", "(Ljava/lang/String;)J", false));
-            // stack: [long, long_2nd] (current value)
-            // Add delta (parameter long at locals 0-1)
-            m.instructions.add(new VarInsnNode(Opcodes.LLOAD, 0)); // long delta
-            m.instructions.add(new InsnNode(Opcodes.LADD));
-            // stack: [long, long_2nd] (new value)
-            // DUP2 new value for return and for setLong
-            m.instructions.add(new InsnNode(Opcodes.DUP2));
-            // stack: [long, long_2nd, long, long_2nd]
-            // Store new value in local 5-6 (for return)
-            m.instructions.add(new VarInsnNode(Opcodes.LSTORE, 5));
-            // stack: [long, long_2nd] (new value)
-            // Write new value back to NBT: func_74772_a(String, long)V
-            // Need stack: [NBTTagCompound, String, long, long_2nd]
-            // Current stack: [long, long_2nd]
-            // Store value temporarily, then reload in correct order
-            m.instructions.add(new VarInsnNode(Opcodes.LSTORE, 5)); // store new value in 5-6
-            // stack: empty
-            // Now reload for setLong: NBTTagCompound, String, long, long_2nd
-            m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 4)); // NBTTagCompound
-            m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3)); // String key
-            m.instructions.add(new VarInsnNode(Opcodes.LLOAD, 5)); // long value (locals 5-6)
-            m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74772_a", "(Ljava/lang/String;J)V", false));
-            // stack: empty
-            // Now sync to int: get NBTTagCompound again (or reuse), write int
-            m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2)); // EntityPlayer
-            m.instructions.add(new LdcInsnNode("pres"));
-            m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "JinRyuu/JRMCore/JRMCoreH", "nbt", "(Lnet/minecraft/entity/Entity;Ljava/lang/String;)Lnet/minecraft/nbt/NBTTagCompound;", false));
-            m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3)); // String key
-            // Saturate long to int for mirror: min(value, Integer.MAX_VALUE)
-            m.instructions.add(new VarInsnNode(Opcodes.LLOAD, 5)); // long value (locals 5-6)
-            m.instructions.add(new LdcInsnNode(Integer.MAX_VALUE)); // Integer.MAX_VALUE
-            m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Math", "min", "(JJ)J", false));
-            m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Math", "toIntExact", "(J)I", false));
-            m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74768_a", "(Ljava/lang/String;I)V", false));
-            // Return the long value
-            m.instructions.add(new VarInsnNode(Opcodes.LLOAD, 5)); // long value (locals 5-6)
-            m.instructions.add(new InsnNode(Opcodes.LRETURN));
-            cn.methods.add(m);
-            System.out.println("  -> Added addLong method");
-        } else {
-            System.out.println("  -> addLong method already exists, skipping");
+        // Locals:
+        //   0-1 = delta (long parameter)
+        //   2 = EntityPlayer
+        //   3 = String key
+        //   4 = NBTTagCompound (player "pres")
+        //   5-6 = newValue (long) for return
+        //   7 = saturated int (for mirror)
+        // Remove existing addLong method if present
+        for (int i = 0; i < cn.methods.size(); i++) {
+            MethodNode existing = cn.methods.get(i);
+            if (existing.name.equals("addLong") && existing.desc.equals("(JLnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)J")) {
+                cn.methods.remove(i);
+                System.out.println("  -> Removed existing addLong method");
+                break;
+            }
+        }
+        { // Block scope for addLong method variable
+        MethodNode mAddLong = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "addLong", "(JLnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)J", null, null);
+        LabelNode start = new LabelNode();
+        LabelNode end = new LabelNode();
+        mAddLong.instructions.add(start);
+
+        // 1. Get NBTTagCompound for player "pres" -> store in local 4
+        mAddLong.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2)); // EntityPlayer
+        mAddLong.instructions.add(new LdcInsnNode("pres"));
+        mAddLong.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "JinRyuu/JRMCore/JRMCoreH", "nbt", "(Lnet/minecraft/entity/Entity;Ljava/lang/String;)Lnet/minecraft/nbt/NBTTagCompound;", false));
+        mAddLong.instructions.add(new VarInsnNode(Opcodes.ASTORE, 4)); // local 4 = NBTTagCompound
+
+        // 2. Get current jrmcTplong from NBT: nbt.getLong(key) -> stack: [long]
+        mAddLong.instructions.add(new VarInsnNode(Opcodes.ALOAD, 4)); // NBTTagCompound
+        mAddLong.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3)); // String key
+        mAddLong.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74763_f", "(Ljava/lang/String;)J", false));
+
+        // 3. Add delta (local 0-1): stack = [current_long] + [delta_long] -> LADD -> [new_long]
+        mAddLong.instructions.add(new VarInsnNode(Opcodes.LLOAD, 0)); // delta
+        mAddLong.instructions.add(new InsnNode(Opcodes.LADD)); // new value on stack [long, long_2nd]
+
+        // 4. DUP2 to keep copy for return, store one copy in local 5-6
+        mAddLong.instructions.add(new InsnNode(Opcodes.DUP2)); // [new, new]
+        mAddLong.instructions.add(new VarInsnNode(Opcodes.LSTORE, 5)); // local 5-6 = new value, stack = [new]
+
+        // 5. Write new value to NBT (jrmcTplong): nbt.setLong(key, value)
+        // Need stack: [NBT, String, long, long_2nd]
+        mAddLong.instructions.add(new VarInsnNode(Opcodes.ALOAD, 4)); // NBTTagCompound
+        mAddLong.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3)); // String key
+        mAddLong.instructions.add(new VarInsnNode(Opcodes.LLOAD, 5)); // long value from local 5-6
+        mAddLong.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74772_a", "(Ljava/lang/String;J)V", false));
+        // stack: empty
+
+        // 6. Sync int mirror (jrmcTpint): FIRST compute saturated int, THEN get NBT and write
+        // Compute saturated int: min(value, Integer.MAX_VALUE) -> toIntExact -> store in local 7
+        mAddLong.instructions.add(new VarInsnNode(Opcodes.LLOAD, 5)); // long value
+        mAddLong.instructions.add(new LdcInsnNode((long) Integer.MAX_VALUE)); // Integer.MAX_VALUE as long
+        mAddLong.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Math", "min", "(JJ)J", false));
+        mAddLong.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Math", "toIntExact", "(J)I", false));
+        mAddLong.instructions.add(new VarInsnNode(Opcodes.ISTORE, 7)); // saturated int in local 7
+
+        // Now get NBT and write the int
+        mAddLong.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2)); // EntityPlayer
+        mAddLong.instructions.add(new LdcInsnNode("pres"));
+        mAddLong.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "JinRyuu/JRMCore/JRMCoreH", "nbt", "(Lnet/minecraft/entity/Entity;Ljava/lang/String;)Lnet/minecraft/nbt/NBTTagCompound;", false));
+        mAddLong.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3)); // String key
+        mAddLong.instructions.add(new VarInsnNode(Opcodes.ILOAD, 7)); // saturated int
+        mAddLong.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74768_a", "(Ljava/lang/String;I)V", false));
+        // stack: empty
+
+        // 7. Return the long value from local 5-6
+        mAddLong.instructions.add(new VarInsnNode(Opcodes.LLOAD, 5));
+        mAddLong.instructions.add(new InsnNode(Opcodes.LRETURN));
+
+        mAddLong.instructions.add(end);
+        mAddLong.localVariables.add(new LocalVariableNode("delta", "J", null, start, end, 0));
+        mAddLong.localVariables.add(new LocalVariableNode("player", "Lnet/minecraft/entity/player/EntityPlayer;", null, start, end, 2));
+        mAddLong.localVariables.add(new LocalVariableNode("key", "Ljava/lang/String;", null, start, end, 3));
+        mAddLong.localVariables.add(new LocalVariableNode("nbt", "Lnet/minecraft/nbt/NBTTagCompound;", null, start, end, 4));
+        mAddLong.localVariables.add(new LocalVariableNode("newValue", "J", null, start, end, 5));
+        mAddLong.localVariables.add(new LocalVariableNode("saturatedInt", "I", null, start, end, 7));
+
+        cn.methods.add(mAddLong);
+        System.out.println("  -> Added addLong method (fixed stack management)");
         }
 
         // 8. Add helper methods for packet NBT TP handling (to avoid bytecode issues in JRMCorePacHanS)
@@ -377,7 +403,7 @@ public class PatchBig {
             System.out.println("  -> Added applyPacketTPChange helper");
         }
 
-        ClassWriter cw = new SafeClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+        ClassWriter cw = new SafeClassWriter(ClassWriter.COMPUTE_MAXS);
         cn.accept(cw);
         return cw.toByteArray();
     }

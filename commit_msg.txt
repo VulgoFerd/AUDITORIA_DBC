@@ -1,1 +1,1 @@
-Fix Integer.MAX_VALUE long constants in setLong and applyPacketTPChange; add verification script
+Add complete audit reports: AUDITORIA_COMPLETA, MAPA_DE_REFERENCIAS_TP, RELATORIO_DE_TESTES, RELATORIO_DE_BYTECODE, CHANGELOG, VerifyClasses

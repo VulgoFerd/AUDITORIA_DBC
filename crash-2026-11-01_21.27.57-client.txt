@@ -1,0 +1,146 @@
+---- Minecraft Crash Report ----
+// You're mean.
+
+Time: 01/11/26 21:27
+Description: There was a severe problem during mod loading that has caused the game to fail
+
+cpw.mods.fml.common.LoaderException: java.lang.VerifyError: Bad type on operand stack
+Exception Details:
+  Location:
+    JinRyuu/JRMCore/JRMCoreH.applyPacketTPChange(Lnet/minecraft/nbt/NBTTagCompound;Lnet/minecraft/entity/player/EntityPlayer;)V @29: invokestatic
+  Reason:
+    Type integer (current frame, stack[2]) is not assignable to long_2nd
+  Current Frame:
+    bci: @29
+    flags: { }
+    locals: { 'net/minecraft/nbt/NBTTagCompound', 'net/minecraft/entity/player/EntityPlayer', long, long_2nd, integer, long, long_2nd }
+    stack: { long, long_2nd, integer }
+  Bytecode:
+    0x0000000: 2a13 21d1 b821 d341 2a13 0419 b821 d536
+    0x0000010: 0420 1504 8565 3705 1605 130d 35b8 21c5
+    0x0000020: b806 0736 072a 1304 1915 07b8 21d7 1605
+    0x0000030: 2b13 21d1 b821 d958 b1                 
+
+	at cpw.mods.fml.common.LoadController.transition(LoadController.java:163)
+	at cpw.mods.fml.common.Loader.loadMods(Loader.java:544)
+	at cpw.mods.fml.client.FMLClientHandler.beginMinecraftLoading(FMLClientHandler.java:208)
+	at net.minecraft.client.Minecraft.func_71384_a(Minecraft.java:480)
+	at net.minecraft.client.Minecraft.func_99999_d(Minecraft.java:878)
+	at net.minecraft.client.main.Main.main(SourceFile:148)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at net.minecraft.launchwrapper.Launch.launch(Launch.java:135)
+	at net.minecraft.launchwrapper.Launch.main(Launch.java:28)
+Caused by: java.lang.VerifyError: Bad type on operand stack
+Exception Details:
+  Location:
+    JinRyuu/JRMCore/JRMCoreH.applyPacketTPChange(Lnet/minecraft/nbt/NBTTagCompound;Lnet/minecraft/entity/player/EntityPlayer;)V @29: invokestatic
+  Reason:
+    Type integer (current frame, stack[2]) is not assignable to long_2nd
+  Current Frame:
+    bci: @29
+    flags: { }
+    locals: { 'net/minecraft/nbt/NBTTagCompound', 'net/minecraft/entity/player/EntityPlayer', long, long_2nd, integer, long, long_2nd }
+    stack: { long, long_2nd, integer }
+  Bytecode:
+    0x0000000: 2a13 21d1 b821 d341 2a13 0419 b821 d536
+    0x0000010: 0420 1504 8565 3705 1605 130d 35b8 21c5
+    0x0000020: b806 0736 072a 1304 1915 07b8 21d7 1605
+    0x0000030: 2b13 21d1 b821 d958 b1                 
+
+	at JinRyuu.JRMCore.JRMCore.<clinit>(JRMCore.java:25)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:348)
+	at cpw.mods.fml.common.ProxyInjector.inject(ProxyInjector.java:59)
+	at cpw.mods.fml.common.FMLModContainer.constructMod(FMLModContainer.java:512)
+	at sun.reflect.GeneratedMethodAccessor3.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at com.google.common.eventbus.EventSubscriber.handleEvent(EventSubscriber.java:74)
+	at com.google.common.eventbus.SynchronizedEventSubscriber.handleEvent(SynchronizedEventSubscriber.java:47)
+	at com.google.common.eventbus.EventBus.dispatch(EventBus.java:322)
+	at com.google.common.eventbus.EventBus.dispatchQueuedEvents(EventBus.java:304)
+	at com.google.common.eventbus.EventBus.post(EventBus.java:275)
+	at cpw.mods.fml.common.LoadController.sendEventToModContainer(LoadController.java:212)
+	at cpw.mods.fml.common.LoadController.propogateStateMessage(LoadController.java:190)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at com.google.common.eventbus.EventSubscriber.handleEvent(EventSubscriber.java:74)
+	at com.google.common.eventbus.SynchronizedEventSubscriber.handleEvent(SynchronizedEventSubscriber.java:47)
+	at com.google.common.eventbus.EventBus.dispatch(EventBus.java:322)
+	at com.google.common.eventbus.EventBus.dispatchQueuedEvents(EventBus.java:304)
+	at com.google.common.eventbus.EventBus.post(EventBus.java:275)
+	at cpw.mods.fml.common.LoadController.distributeStateMessage(LoadController.java:119)
+	at cpw.mods.fml.common.Loader.loadMods(Loader.java:513)
+	... 10 more
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- System Details --
+Details:
+	Minecraft Version: 1.7.10
+	Operating System: Windows 10 (amd64) version 10.0
+	Java Version: 1.8.0_51, Oracle Corporation
+	Java VM Version: Java HotSpot(TM) 64-Bit Server VM (mixed mode), Oracle Corporation
+	Memory: 917379520 bytes (874 MB) / 1207959552 bytes (1152 MB) up to 2147483648 bytes (2048 MB)
+	JVM Flags: 8 total; -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump -Xmx2G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M
+	AABB Pool Size: 0 (0 bytes; 0 MB) allocated, 0 (0 bytes; 0 MB) used
+	IntCache: cache: 0, tcache: 0, allocated: 0, tallocated: 0
+	FML: MCP v9.05 FML v7.10.99.99 Minecraft Forge 10.13.4.1614 42 mods loaded, 42 mods active
+	States: 'U' = Unloaded 'L' = Loaded 'C' = Constructed 'H' = Pre-initialized 'I' = Initialized 'J' = Post-initialized 'A' = Available 'D' = Disabled 'E' = Errored
+	UC	mcp{9.05} [Minecraft Coder Pack] (minecraft.jar) 
+	UC	FML{7.10.99.99} [Forge Mod Loader] (forge-1.7.10-10.13.4.1614-1.7.10.jar) 
+	UC	Forge{10.13.4.1614} [Minecraft Forge] (forge-1.7.10-10.13.4.1614-1.7.10.jar) 
+	UC	AM2-Preloader{0.0.3} [AMCore] (minecraft.jar) 
+	UC	CodeChickenCore{1.0.7.47} [CodeChicken Core] (minecraft.jar) 
+	UC	LumySkinPatch{1.0.13} [Lumy Skin Patch] (minecraft.jar) 
+	UC	NotEnoughItems{1.0.5.120} [Not Enough Items] (NotEnoughItems-1.7.10-1.0.5.120-universal.jar) 
+	UC	unimixins{0.1.17} [UniMixins] (+unimixins-all-1.7.10-0.1.17.jar) 
+	UC	unimixins-mixin{0.1.17} [UniMixins: Mixin (UniMix)] (+unimixins-all-1.7.10-0.1.17.jar) 
+	UC	unimixins-compat{0.1.17} [UniMixins: Compatibility] (+unimixins-all-1.7.10-0.1.17.jar) 
+	UC	mixingasm{0.3} [UniMixins: Mixingasm] (+unimixins-all-1.7.10-0.1.17.jar) 
+	UC	spongemixins{2.0.1} [UniMixins: SpongeMixins] (+unimixins-all-1.7.10-0.1.17.jar) 
+	UC	mixinbooterlegacy{1.2.1} [UniMixins: MixinBooterLegacy] (+unimixins-all-1.7.10-0.1.17.jar) 
+	UC	gasstation{0.5.1} [UniMixins: GasStation] (+unimixins-all-1.7.10-0.1.17.jar) 
+	UC	gtnhmixins{2.2.0} [UniMixins: GTNHMixins] (+unimixins-all-1.7.10-0.1.17.jar) 
+	UC	mixinextras{0.1.17} [UniMixins: MixinExtras] (+unimixins-all-1.7.10-0.1.17.jar) 
+	UC	fullbright{1.2} [Fullbright] (1.7.10-Fullbright-v1.2.jar) 
+	UC	DamageIndicatorsMod{3.2.3} [Damage Indicators] (1.7.10DamageIndicatorsMod-3.2.3.jar) 
+	UC	nanatsu{0.1} [nanatsu] (7dsMod_0.1_2.jar) 
+	UC	crow{1.1} [Crow's weapons Mod] (7DSModels.jar) 
+	UC	nanatsunotaizai{4.0.0} [nanatsunotaizai] (7DSNationv1.3.jar) 
+	UC	advancedtitles{1.0.0} [AdvancedTitles] (advancedtitles-1.0.0.jar) 
+	UC	AnimationAPI{1.2.4} [AnimationAPI] (AnimationAPI-1.7.10.jar) 
+	UC	armourersWorkshop{1.7.10-0.48.5} [Armourer's Workshop] (Armourers-Workshop-1.7.10-0.48.5.jar) 
+	UC	arsmagica2{1.4.0.009} [Ars Magica 2] (Ars-Magica-2-Mod-1.7.10.jar) 
+	UC	clientslots{1.0.0} [ClientSlots] (ClientSlots-1.7.10.jar) 
+	UC	crowhpbar{1.0} [Crow's HP Bar] (crowHPBar-1.0.jar) 
+	UE	jinryuujrmcore{1.3.51} [JinRyuu's JRMCore] (JRMCore-v1.3.51-bignum.jar) 
+	UE	jinryuudragonblockc{1.4.85} [Dragon Block C] (DragonBlockC-v1.4.85.jar) 
+	UC	wizardry{1.1.5} [Electroblob's Wizardry] (ElectroblobsWizardry-1.1.5-MC1.7.10.jar) 
+	UC	ias{D7.29 :P} [In-Game Account Switcher] (InGameAccountSwitcher-Forge-1.7-8.0.1.jar) 
+	UE	jinryuubetterrenderaddon{1.6.52} [JinRyuu's Better Render Addon] (JBRA-Client-v1.6.52.jar) 
+	UC	journeymap{4.0.1} [JourneyMap] (JourneyMap-Mod-1.7.10-FairPlay.jar) 
+	UC	LunatriusCore{1.1.2.21} [LunatriusCore] (LunatriusCore-1.7.10-1.1.2.21-universal.jar) 
+	UC	necrotempus{1.3.6} [NecroTempus] (necrotempus-1.3.6.jar) 
+	UC	customnpcs{1.11.1} [CustomNPC+] (nntdark-CustomNPC-Plus-1.11.1.jar) 
+	UE	npcdbc{1.2.1} [CustomNPC+ DBC Addon] (npcdbc-1.2.1-hotfix1.jar) 
+	UC	omniconfig{1.0.1} [Omniconfig] (omniconfig-1.0.1-mc1.7.10.jar) 
+	UC	rpresence{1.0} [rpresence] (RPresenceCore-NNTDark.jar) 
+	UC	Schematica{1.7.6.131} [Schematica] (Schematica-1.7.10-1.7.6.131-universal.jar) 
+	UC	Waila{1.5.10} [Waila] (Waila-1.5.10_1.7.10.jar) 
+	UC	witchery{0.24.1} [Witchery] (Witchery-Mod-1.7.10.jar) 
+	GL info: ' Vendor: 'Intel' Version: '4.3.0 - Build 20.19.15.5171' Renderer: 'Intel(R) HD Graphics 4600'
+	Mixins in Stacktrace: 
+		cpw.mods.fml.common.LoadController:
+			mixin.mixinbooterlegacy.json:LoadControllerMixin from mod (unknown)
+		net.minecraft.client.Minecraft:
+			mixins.npcdbc.json:client.MixinMinecraft from mod (unknown)
+		cpw.mods.fml.client.FMLClientHandler:
+			mixins.necrotempus.json:fml.FMLClientHandler from mod (unknown)

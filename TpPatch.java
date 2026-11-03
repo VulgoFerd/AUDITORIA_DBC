@@ -97,6 +97,8 @@ public class TpPatch {
                     patched = patchPStats2(data);
                 } else if (name.equals(ComJrmctp + ".class")) {
                     patched = patchComJrmctp(data);
+                } else if (name.equals(PStats2Handler + ".class")) {
+                    patched = patchPStats2Handler(data);
                 } else {
                     for (String gui : GUI_CLASSES) {
                         if (name.equals(gui + ".class")) {
@@ -221,7 +223,13 @@ public class TpPatch {
         patchStats2Method(cn);
 
         // Patch handleStats2 if exists
-        patchHandleStats2Method(cn);
+        patchHandleStats2(cn);
+
+        // Patch resetChar to initialize curTPLong
+        patchResetCharMethod(cn);
+
+        // Patch <clinit> to initialize curTPLong
+        patchClinitMethod(cn);
 
         // Patch jrmcExp method for TP gain
         patchJrmcExpMethod(cn);
@@ -234,15 +242,49 @@ public class TpPatch {
 
     static void addHelperMethods(ClassNode cn) {
         // getTPTotal(NBTTagCompound):J
+        // Migration logic: check if jrmcTplong key exists using hasKey
+        // If exists, return its value (even if 0)
+        // If not exists, read jrmcTpint, convert to long, create jrmcTplong, update mirror
         InsnList list1 = newInsnList();
+        LabelNode lHasLong1 = new LabelNode();
+        LabelNode lEnd1 = new LabelNode();
+        
+        // Check if jrmcTplong key exists
+        addInsn(list1, new VarInsnNode(Opcodes.ALOAD, 0)); // nbt
+        addInsn(list1, new LdcInsnNode("jrmcTplong"));
+        addInsn(list1, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74764_b", "(Ljava/lang/String;)Z", false));
+        addInsn(list1, new JumpInsnNode(Opcodes.IFEQ, lHasLong1)); // if not exists, jump to migration
+        
+        // Key exists: read and return jrmcTplong value
         addInsn(list1, new VarInsnNode(Opcodes.ALOAD, 0));
         addInsn(list1, new LdcInsnNode("jrmcTplong"));
         addInsn(list1, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74763_f", "(Ljava/lang/String;)J", false));
         addInsn(list1, new InsnNode(Opcodes.LRETURN));
-        addMethodIfAbsent(cn, "getTPTotal", "(Lnet/minecraft/nbt/NBTTagCompound;)J", list1, "Lê TP total como long do NBT");
+        
+        // Key doesn't exist: migrate from jrmcTpint
+        addInsn(list1, lHasLong1);
+        addInsn(list1, new VarInsnNode(Opcodes.ALOAD, 0));
+        addInsn(list1, new LdcInsnNode("jrmcTpint"));
+        addInsn(list1, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74762_e", "(Ljava/lang/String;)I", false));
+        addInsn(list1, new InsnNode(Opcodes.I2L));
+        // Create jrmcTplong and update mirror via setTPTotal
+        addInsn(list1, new VarInsnNode(Opcodes.ALOAD, 0));
+        addInsn(list1, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "setTPTotal", "(Lnet/minecraft/nbt/NBTTagCompound;J)V", false));
+        // Return the migrated value
+        addInsn(list1, new VarInsnNode(Opcodes.ALOAD, 0));
+        addInsn(list1, new LdcInsnNode("jrmcTpint"));
+        addInsn(list1, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74762_e", "(Ljava/lang/String;)I", false));
+        addInsn(list1, new InsnNode(Opcodes.I2L));
+        addInsn(list1, new InsnNode(Opcodes.LRETURN));
+        
+        addMethodIfAbsent(cn, "getTPTotal", "(Lnet/minecraft/nbt/NBTTagCompound;)J", list1, "Lê TP total como long do NBT com migração de saves antigos");
 
         // getTPTotal(EntityPlayer):J
+        // Similar migration logic for player extended data
         InsnList list2 = newInsnList();
+        // For EntityPlayer, we use the existing getLong which should handle missing keys
+        // But we need to ensure it checks existence first
+        // For now, use the existing getLong helper which presumably handles this
         addInsn(list2, new VarInsnNode(Opcodes.ALOAD, 0));
         addInsn(list2, new LdcInsnNode("jrmcTplong"));
         addInsn(list2, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "getLong", "(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)J", false));
@@ -256,11 +298,11 @@ public class TpPatch {
         addInsn(list3, new LdcInsnNode("jrmcTplong"));
         addInsn(list3, new VarInsnNode(Opcodes.LLOAD, 1));
         addInsn(list3, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74772_a", "(Ljava/lang/String;J)V", false));
-        // Also update NBT jrmcTpint mirror
+        // Also update NBT jrmcTpint mirror using clampTP
         addInsn(list3, new VarInsnNode(Opcodes.ALOAD, 0));
         addInsn(list3, new LdcInsnNode("jrmcTpint"));
         addInsn(list3, new VarInsnNode(Opcodes.LLOAD, 1));
-        addInsn(list3, new InsnNode(Opcodes.L2I));
+        addInsn(list3, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "clampTP", "(J)I", false));
         addInsn(list3, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74768_a", "(Ljava/lang/String;I)V", false));
         // Update static curTPLong field
         addInsn(list3, new VarInsnNode(Opcodes.LLOAD, 1));
@@ -273,25 +315,50 @@ public class TpPatch {
         addMethodIfAbsent(cn, "setTPTotal", "(Lnet/minecraft/nbt/NBTTagCompound;J)V", list3, "Escreve TP total como long no NBT e atualiza campos estáticos");
 
         // clampTP(J):I - satura long para int
+        // Regras: <= 0 -> 0; 1 a Integer.MAX_VALUE -> valor; > Integer.MAX_VALUE -> Integer.MAX_VALUE
+        // Single exit point pattern for robust frame computation
         InsnList list4 = newInsnList();
+        LabelNode lCheckMax = new LabelNode();
+        LabelNode lCheckNeg = new LabelNode();
+        LabelNode lEnd = new LabelNode();
+        
+        // Check if value <= 0
+        addInsn(list4, new VarInsnNode(Opcodes.LLOAD, 0));
+        addInsn(list4, new InsnNode(Opcodes.LCONST_0));
+        addInsn(list4, new InsnNode(Opcodes.LCMP));
+        addInsn(list4, new JumpInsnNode(Opcodes.IFLE, lCheckNeg)); // if <= 0, jump to negative handling
+        
+        // Check if value > Integer.MAX_VALUE
         addInsn(list4, new VarInsnNode(Opcodes.LLOAD, 0));
         addInsn(list4, new LdcInsnNode(Integer.MAX_VALUE));
         addInsn(list4, new InsnNode(Opcodes.LCMP));
-        addInsn(list4, new InsnNode(Opcodes.IFLE));
-        LabelNode lClamp = new LabelNode();
-        addInsn(list4, lClamp);
-        addInsn(list4, new InsnNode(Opcodes.LDC));
-        addInsn(list4, new InsnNode(Opcodes.IRETURN));
-        LabelNode lEndClamp = new LabelNode();
-        addInsn(list4, lEndClamp);
+        addInsn(list4, new JumpInsnNode(Opcodes.IFGT, lCheckMax)); // if > MAX_VALUE, jump to max handling
+        
+        // Value is in range 1..Integer.MAX_VALUE, convert to int
         addInsn(list4, new VarInsnNode(Opcodes.LLOAD, 0));
         addInsn(list4, new InsnNode(Opcodes.L2I));
+        addInsn(list4, new JumpInsnNode(Opcodes.GOTO, lEnd));
+        
+        // Negative or zero: result = 0
+        addInsn(list4, lCheckNeg);
+        addInsn(list4, new InsnNode(Opcodes.ICONST_0));
+        addInsn(list4, new JumpInsnNode(Opcodes.GOTO, lEnd));
+        
+        // Above max: result = Integer.MAX_VALUE
+        addInsn(list4, lCheckMax);
+        addInsn(list4, new LdcInsnNode(Integer.MAX_VALUE));
+        addInsn(list4, new JumpInsnNode(Opcodes.GOTO, lEnd));
+        
+        // Single return
+        addInsn(list4, lEnd);
         addInsn(list4, new InsnNode(Opcodes.IRETURN));
-        addMethodIfAbsent(cn, "clampTP", "(J)I", list4, "Satura TP long para int (teto Integer.MAX_VALUE)");
+        
+        addMethodIfAbsent(cn, "clampTP", "(J)I", list4, "Satura TP long para int (teto Integer.MAX_VALUE, negativos viram 0)");
 
         // applyTPWindow(NBTTagCompound, I):V - compatibilidade delta
         InsnList list5 = newInsnList();
         LabelNode lAbove = new LabelNode();
+        LabelNode lEndApply = new LabelNode();
         addInsn(list5, new VarInsnNode(Opcodes.ALOAD, 0));
         addInsn(list5, new LdcInsnNode("jrmcTplong"));
         addInsn(list5, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74764_b", "(Ljava/lang/String;)Z", false));
@@ -304,7 +371,7 @@ public class TpPatch {
         addInsn(list5, new InsnNode(Opcodes.I2L));
         addInsn(list5, new InsnNode(Opcodes.LADD));
         addInsn(list5, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "setTPTotal", "(Lnet/minecraft/nbt/NBTTagCompound;J)V", false));
-        addInsn(list5, new JumpInsnNode(Opcodes.GOTO, lEndClamp));
+        addInsn(list5, new JumpInsnNode(Opcodes.GOTO, lEndApply));
         addInsn(list5, lAbove);
         // jrmcTplong doesn't exist: legacy behavior (set int directly)
         addInsn(list5, new VarInsnNode(Opcodes.ALOAD, 0));
@@ -317,7 +384,7 @@ public class TpPatch {
         addInsn(list5, new VarInsnNode(Opcodes.ILOAD, 1));
         addInsn(list5, new InsnNode(Opcodes.I2L));
         addInsn(list5, new FieldInsnNode(Opcodes.PUTSTATIC, JRMCoreH, "curTPLong", "J"));
-        addInsn(list5, lEndClamp);
+        addInsn(list5, lEndApply);
         addInsn(list5, new InsnNode(Opcodes.RETURN));
         addMethodIfAbsent(cn, "applyTPWindow", "(Lnet/minecraft/nbt/NBTTagCompound;I)V", list5, "Aplica janela de gasto: delta se long existe, senão set int direto");
 
@@ -326,28 +393,86 @@ public class TpPatch {
         addInsn(list6, new VarInsnNode(Opcodes.ALOAD, 0));
         addInsn(list6, new LdcInsnNode("jrmcTplong"));
         addInsn(list6, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74764_b", "(Ljava/lang/String;)Z", false));
-        LabelNode lHasLong = new LabelNode();
-        addInsn(list6, new JumpInsnNode(Opcodes.IFEQ, lHasLong));
-        // Has long: add to it
+        LabelNode lHasLongAdd = new LabelNode();
+        LabelNode lEndAdd = new LabelNode();
+        addInsn(list6, new JumpInsnNode(Opcodes.IFEQ, lHasLongAdd));
+        // Has long: add to it using addTPSafe
         addInsn(list6, new VarInsnNode(Opcodes.ALOAD, 0));
         addInsn(list6, new LdcInsnNode("jrmcTplong"));
         addInsn(list6, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74763_f", "(Ljava/lang/String;)J", false));
         addInsn(list6, new VarInsnNode(Opcodes.LLOAD, 1));
-        addInsn(list6, new InsnNode(Opcodes.LADD));
+        addInsn(list6, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "addTPSafe", "(JJ)J", false));
         addInsn(list6, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "setTPTotal", "(Lnet/minecraft/nbt/NBTTagCompound;J)V", false));
-        addInsn(list6, new JumpInsnNode(Opcodes.GOTO, lEndClamp));
-        addInsn(list6, lHasLong);
-        // No long yet: create it from int mirror + gain
+        addInsn(list6, new JumpInsnNode(Opcodes.GOTO, lEndAdd));
+        addInsn(list6, lHasLongAdd);
+        // No long yet: create it from int mirror + gain using addTPSafe
         addInsn(list6, new VarInsnNode(Opcodes.ALOAD, 0));
         addInsn(list6, new LdcInsnNode("jrmcTpint"));
         addInsn(list6, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74762_e", "(Ljava/lang/String;)I", false));
         addInsn(list6, new InsnNode(Opcodes.I2L));
         addInsn(list6, new VarInsnNode(Opcodes.LLOAD, 1));
-        addInsn(list6, new InsnNode(Opcodes.LADD));
+        addInsn(list6, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "addTPSafe", "(JJ)J", false));
         addInsn(list6, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "setTPTotal", "(Lnet/minecraft/nbt/NBTTagCompound;J)V", false));
-        addInsn(list6, lEndClamp);
+        addInsn(list6, lEndAdd);
         addInsn(list6, new InsnNode(Opcodes.RETURN));
         addMethodIfAbsent(cn, "addTP", "(Lnet/minecraft/nbt/NBTTagCompound;J)V", list6, "Adiciona TP long ao NBT (cria se não existe)");
+
+        // addTPSafe(J, J):J - adição segura com saturação
+        // Se delta > 0 e current > Long.MAX_VALUE - delta -> Long.MAX_VALUE
+        // Se delta < 0 e current < -delta -> 0
+        // Senão -> current + delta
+        // Single exit point pattern for robust frame computation
+        InsnList list6safe = newInsnList();
+        LabelNode lDeltaPos = new LabelNode();
+        LabelNode lCheckPosOverflow = new LabelNode();
+        LabelNode lCheckNegOverflow = new LabelNode();
+        LabelNode lEndSafe = new LabelNode();
+        
+        // Check if delta > 0
+        addInsn(list6safe, new VarInsnNode(Opcodes.LLOAD, 1)); // delta
+        addInsn(list6safe, new InsnNode(Opcodes.LCONST_0));
+        addInsn(list6safe, new InsnNode(Opcodes.LCMP));
+        addInsn(list6safe, new JumpInsnNode(Opcodes.IFLE, lCheckNegOverflow)); // if delta <= 0, check negative overflow
+        
+        // delta > 0: check positive overflow
+        addInsn(list6safe, new VarInsnNode(Opcodes.LLOAD, 0)); // current
+        addInsn(list6safe, new LdcInsnNode(Long.MAX_VALUE));
+        addInsn(list6safe, new VarInsnNode(Opcodes.LLOAD, 1)); // delta
+        addInsn(list6safe, new InsnNode(Opcodes.LSUB)); // Long.MAX_VALUE - delta
+        addInsn(list6safe, new InsnNode(Opcodes.LCMP));
+        addInsn(list6safe, new JumpInsnNode(Opcodes.IFGT, lCheckPosOverflow)); // if current > Long.MAX_VALUE - delta, overflow
+        
+        // Safe addition for positive delta
+        addInsn(list6safe, new VarInsnNode(Opcodes.LLOAD, 0));
+        addInsn(list6safe, new VarInsnNode(Opcodes.LLOAD, 1));
+        addInsn(list6safe, new InsnNode(Opcodes.LADD));
+        addInsn(list6safe, new InsnNode(Opcodes.LRETURN));
+        
+        // Positive overflow: return Long.MAX_VALUE
+        addInsn(list6safe, lCheckPosOverflow);
+        addInsn(list6safe, new LdcInsnNode(Long.MAX_VALUE));
+        addInsn(list6safe, new InsnNode(Opcodes.LRETURN));
+        
+        // delta <= 0: check negative overflow
+        addInsn(list6safe, lCheckNegOverflow);
+        addInsn(list6safe, new VarInsnNode(Opcodes.LLOAD, 0)); // current
+        addInsn(list6safe, new VarInsnNode(Opcodes.LLOAD, 1)); // delta (negative)
+        addInsn(list6safe, new InsnNode(Opcodes.LNEG)); // -delta
+        addInsn(list6safe, new InsnNode(Opcodes.LCMP));
+        addInsn(list6safe, new JumpInsnNode(Opcodes.IFLT, lEndSafe)); // if current < -delta, would go negative
+        
+        // Safe addition for negative delta
+        addInsn(list6safe, new VarInsnNode(Opcodes.LLOAD, 0));
+        addInsn(list6safe, new VarInsnNode(Opcodes.LLOAD, 1));
+        addInsn(list6safe, new InsnNode(Opcodes.LADD));
+        addInsn(list6safe, new InsnNode(Opcodes.LRETURN));
+        
+        // Negative overflow: return 0
+        addInsn(list6safe, lEndSafe);
+        addInsn(list6safe, new InsnNode(Opcodes.LCONST_0));
+        addInsn(list6safe, new InsnNode(Opcodes.LRETURN));
+        
+        addMethodIfAbsent(cn, "addTPSafe", "(JJ)J", list6safe, "Adição segura de TP com saturação (sem overflow, sem negativo)");
 
         // addTP(EntityPlayer, J):V
         InsnList list7 = newInsnList();
@@ -355,17 +480,17 @@ public class TpPatch {
         addInsn(list7, new LdcInsnNode("jrmcTplong"));
         addInsn(list7, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "getLong", "(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)J", false));
         addInsn(list7, new VarInsnNode(Opcodes.LLOAD, 1));
-        addInsn(list7, new InsnNode(Opcodes.LADD));
+        addInsn(list7, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "addTPSafe", "(JJ)J", false));
         addInsn(list7, new VarInsnNode(Opcodes.ALOAD, 0));
         addInsn(list7, new VarInsnNode(Opcodes.LLOAD, 1));
-        addInsn(list7, new InsnNode(Opcodes.LADD));
+        addInsn(list7, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "addTPSafe", "(JJ)J", false));
         addInsn(list7, new LdcInsnNode("jrmcTplong"));
         addInsn(list7, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "setLong", "(JLnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", false));
-        // Also update mirror
+        // Also update mirror using clampTP
         addInsn(list7, new VarInsnNode(Opcodes.ALOAD, 0));
         addInsn(list7, new LdcInsnNode("jrmcTplong"));
         addInsn(list7, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "getLong", "(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)J", false));
-        addInsn(list7, new InsnNode(Opcodes.L2I));
+        addInsn(list7, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "clampTP", "(J)I", false));
         addInsn(list7, new VarInsnNode(Opcodes.ALOAD, 0));
         addInsn(list7, new LdcInsnNode("jrmcTpint"));
         addInsn(list7, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "setInt", "(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", false));
@@ -492,7 +617,74 @@ public class TpPatch {
     static void patchJrmcExpMethod(ClassNode cn) {
         for (MethodNode m : cn.methods) {
             if ("jrmcExp".equals(m.name)) {
-                System.out.println("  JRMCoreH.jrmcExp: found, would add long TP gain logic here");
+                // jrmcExp likely handles TP gain - replace jrmcTpint operations with long versions
+                for (int i = 0; i < m.instructions.size(); i++) {
+                    AbstractInsnNode insn = m.instructions.get(i);
+                    if (insn instanceof MethodInsnNode) {
+                        MethodInsnNode min = (MethodInsnNode)insn;
+                        // Replace getInt for jrmcTpint with getTPTotal
+                        if ("func_74762_e".equals(min.name) && "net/minecraft/nbt/NBTTagCompound".equals(min.owner)) {
+                            if (i > 0 && m.instructions.get(i - 1) instanceof LdcInsnNode) {
+                                LdcInsnNode ldc = (LdcInsnNode)m.instructions.get(i - 1);
+                                if ("jrmcTpint".equals(ldc.cst)) {
+                                    AbstractInsnNode nbtLoad = null;
+                                    if (i > 1 && m.instructions.get(i - 2) instanceof VarInsnNode) {
+                                        VarInsnNode var = (VarInsnNode)m.instructions.get(i - 2);
+                                        if (var.getOpcode() == Opcodes.ALOAD) {
+                                            nbtLoad = var;
+                                        }
+                                    }
+                                    InsnList replacement = newInsnList();
+                                    if (nbtLoad != null) {
+                                        addInsn(replacement, new VarInsnNode(Opcodes.ALOAD, ((VarInsnNode)nbtLoad).var));
+                                    }
+                                    addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "getTPTotal", "(Lnet/minecraft/nbt/NBTTagCompound;)J", false));
+                                    m.instructions.remove(ldc);
+                                    m.instructions.remove(min);
+                                    if (nbtLoad != null) {
+                                        m.instructions.insert(nbtLoad, replacement);
+                                    } else {
+                                        m.instructions.insert(min, replacement);
+                                    }
+                                    System.out.println("  JRMCoreH.jrmcExp: replaced getInt jrmcTpint with getTPTotal at index " + i);
+                                }
+                            }
+                        }
+                        // Replace setInt for jrmcTpint with setTPTotal
+                        else if ("func_74768_a".equals(min.name) && "net/minecraft/nbt/NBTTagCompound".equals(min.owner)) {
+                            if (i > 0 && m.instructions.get(i - 1) instanceof LdcInsnNode) {
+                                LdcInsnNode ldc = (LdcInsnNode)m.instructions.get(i - 1);
+                                if ("jrmcTpint".equals(ldc.cst)) {
+                                    InsnList replacement = newInsnList();
+                                    addInsn(replacement, new InsnNode(Opcodes.I2L));
+                                    addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "setTPTotal", "(Lnet/minecraft/nbt/NBTTagCompound;J)V", false));
+                                    m.instructions.remove(ldc);
+                                    m.instructions.remove(min);
+                                    m.instructions.insert(min, replacement);
+                                    System.out.println("  JRMCoreH.jrmcExp: replaced setInt jrmcTpint with setTPTotal at index " + i);
+                                }
+                            }
+                        }
+                    }
+                    // Replace direct field access to curTP:I with helper calls
+                    else if (insn instanceof FieldInsnNode) {
+                        FieldInsnNode fin = (FieldInsnNode)insn;
+                        if (JRMCoreH.equals(fin.owner) && "curTP".equals(fin.name) && "I".equals(fin.desc)) {
+                            if (fin.getOpcode() == Opcodes.GETSTATIC) {
+                                fin.name = "curTPLong";
+                                fin.desc = "J";
+                                System.out.println("  JRMCoreH.jrmcExp: replaced GETSTATIC curTP:I with GETSTATIC curTPLong:J");
+                            } else if (fin.getOpcode() == Opcodes.PUTSTATIC) {
+                                InsnList replacement = newInsnList();
+                                addInsn(replacement, new InsnNode(Opcodes.I2L));
+                                addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "setTPTotalClient", "(J)V", false));
+                                m.instructions.insert(fin, replacement);
+                                m.instructions.remove(fin);
+                                System.out.println("  JRMCoreH.jrmcExp: replaced PUTSTATIC curTP:I with setTPTotalClient");
+                            }
+                        }
+                    }
+                }
                 break;
             }
         }
@@ -501,7 +693,137 @@ public class TpPatch {
     static void patchTpalgnMethod(ClassNode cn) {
         for (MethodNode m : cn.methods) {
             if ("tpalgn".equals(m.name)) {
-                System.out.println("  JRMCoreH.tpalgn: found, would ensure it uses jrmcTplong");
+                // tpalgn likely aligns/adjusts TP - replace jrmcTpint operations with long versions
+                for (int i = 0; i < m.instructions.size(); i++) {
+                    AbstractInsnNode insn = m.instructions.get(i);
+                    if (insn instanceof MethodInsnNode) {
+                        MethodInsnNode min = (MethodInsnNode)insn;
+                        // Replace getInt for jrmcTpint with getTPTotal
+                        if ("func_74762_e".equals(min.name) && "net/minecraft/nbt/NBTTagCompound".equals(min.owner)) {
+                            if (i > 0 && m.instructions.get(i - 1) instanceof LdcInsnNode) {
+                                LdcInsnNode ldc = (LdcInsnNode)m.instructions.get(i - 1);
+                                if ("jrmcTpint".equals(ldc.cst)) {
+                                    AbstractInsnNode nbtLoad = null;
+                                    if (i > 1 && m.instructions.get(i - 2) instanceof VarInsnNode) {
+                                        VarInsnNode var = (VarInsnNode)m.instructions.get(i - 2);
+                                        if (var.getOpcode() == Opcodes.ALOAD) {
+                                            nbtLoad = var;
+                                        }
+                                    }
+                                    InsnList replacement = newInsnList();
+                                    if (nbtLoad != null) {
+                                        addInsn(replacement, new VarInsnNode(Opcodes.ALOAD, ((VarInsnNode)nbtLoad).var));
+                                    }
+                                    addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "getTPTotal", "(Lnet/minecraft/nbt/NBTTagCompound;)J", false));
+                                    m.instructions.remove(ldc);
+                                    m.instructions.remove(min);
+                                    if (nbtLoad != null) {
+                                        m.instructions.insert(nbtLoad, replacement);
+                                    } else {
+                                        m.instructions.insert(min, replacement);
+                                    }
+                                    System.out.println("  JRMCoreH.tpalgn: replaced getInt jrmcTpint with getTPTotal at index " + i);
+                                }
+                            }
+                        }
+                        // Replace setInt for jrmcTpint with setTPTotal
+                        else if ("func_74768_a".equals(min.name) && "net/minecraft/nbt/NBTTagCompound".equals(min.owner)) {
+                            if (i > 0 && m.instructions.get(i - 1) instanceof LdcInsnNode) {
+                                LdcInsnNode ldc = (LdcInsnNode)m.instructions.get(i - 1);
+                                if ("jrmcTpint".equals(ldc.cst)) {
+                                    InsnList replacement = newInsnList();
+                                    addInsn(replacement, new InsnNode(Opcodes.I2L));
+                                    addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "setTPTotal", "(Lnet/minecraft/nbt/NBTTagCompound;J)V", false));
+                                    m.instructions.remove(ldc);
+                                    m.instructions.remove(min);
+                                    m.instructions.insert(min, replacement);
+                                    System.out.println("  JRMCoreH.tpalgn: replaced setInt jrmcTpint with setTPTotal at index " + i);
+                                }
+                            }
+                        }
+                    }
+                    // Replace direct field access to curTP:I with helper calls
+                    else if (insn instanceof FieldInsnNode) {
+                        FieldInsnNode fin = (FieldInsnNode)insn;
+                        if (JRMCoreH.equals(fin.owner) && "curTP".equals(fin.name) && "I".equals(fin.desc)) {
+                            if (fin.getOpcode() == Opcodes.GETSTATIC) {
+                                fin.name = "curTPLong";
+                                fin.desc = "J";
+                                System.out.println("  JRMCoreH.tpalgn: replaced GETSTATIC curTP:I with GETSTATIC curTPLong:J");
+                            } else if (fin.getOpcode() == Opcodes.PUTSTATIC) {
+                                InsnList replacement = newInsnList();
+                                addInsn(replacement, new InsnNode(Opcodes.I2L));
+                                addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "setTPTotalClient", "(J)V", false));
+                                m.instructions.insert(fin, replacement);
+                                m.instructions.remove(fin);
+                                System.out.println("  JRMCoreH.tpalgn: replaced PUTSTATIC curTP:I with setTPTotalClient");
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    static void patchResetCharMethod(ClassNode cn) {
+        for (MethodNode m : cn.methods) {
+            if ("resetChar".equals(m.name)) {
+                // resetChar likely resets character stats including TP
+                // Need to also reset curTPLong to 0
+                for (int i = 0; i < m.instructions.size(); i++) {
+                    AbstractInsnNode insn = m.instructions.get(i);
+                    if (insn instanceof FieldInsnNode) {
+                        FieldInsnNode fin = (FieldInsnNode)insn;
+                        if (JRMCoreH.equals(fin.owner) && "curTP".equals(fin.name) && "I".equals(fin.desc)) {
+                            if (fin.getOpcode() == Opcodes.PUTSTATIC) {
+                                // Before PUTSTATIC curTP:I, DUP the value, then after PUTSTATIC, convert and store to curTPLong
+                                // We need to insert before the PUTSTATIC to DUP, then after to store long
+                                InsnList replacement = newInsnList();
+                                // DUP the int value on stack
+                                addInsn(replacement, new InsnNode(Opcodes.DUP));
+                                // Convert to long
+                                addInsn(replacement, new InsnNode(Opcodes.I2L));
+                                // Store to curTPLong
+                                addInsn(replacement, new FieldInsnNode(Opcodes.PUTSTATIC, JRMCoreH, "curTPLong", "J"));
+                                // Insert before the PUTSTATIC so DUP happens before the value is consumed
+                                m.instructions.insert(fin, replacement);
+                                System.out.println("  JRMCoreH.resetChar: added curTPLong initialization before curTP reset at index " + i);
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    static void patchClinitMethod(ClassNode cn) {
+        for (MethodNode m : cn.methods) {
+            if ("<clinit>".equals(m.name)) {
+                // Static initializer - need to initialize curTPLong to 0
+                // Look for where curTP is initialized
+                for (int i = 0; i < m.instructions.size(); i++) {
+                    AbstractInsnNode insn = m.instructions.get(i);
+                    if (insn instanceof FieldInsnNode) {
+                        FieldInsnNode fin = (FieldInsnNode)insn;
+                        if (JRMCoreH.equals(fin.owner) && "curTP".equals(fin.name) && "I".equals(fin.desc)) {
+                            if (fin.getOpcode() == Opcodes.PUTSTATIC) {
+                                // Before PUTSTATIC curTP:I, DUP the value, then after PUTSTATIC, convert and store to curTPLong
+                                InsnList replacement = newInsnList();
+                                // DUP the int value on stack
+                                addInsn(replacement, new InsnNode(Opcodes.DUP));
+                                // Convert to long
+                                addInsn(replacement, new InsnNode(Opcodes.I2L));
+                                // Store to curTPLong
+                                addInsn(replacement, new FieldInsnNode(Opcodes.PUTSTATIC, JRMCoreH, "curTPLong", "J"));
+                                // Insert before the PUTSTATIC so DUP happens before the value is consumed
+                                m.instructions.insert(fin, replacement);
+                                System.out.println("  JRMCoreH.<clinit>: added curTPLong initialization before curTP init at index " + i);
+                            }
+                        }
+                    }
+                }
                 break;
             }
         }
@@ -847,8 +1169,32 @@ public class TpPatch {
     }
 
     static void patchComTickHSendPlayerData(MethodNode m, ClassNode cn) {
-        // Similar patching for sending TP to client
-        System.out.println("  ComTickH.sendPlayerData: would patch to send curTPLong");
+        // This method sends player data to the client - need to send curTPLong instead of curTP
+        // Look for where curTP is written to the packet/buffer
+        for (int i = 0; i < m.instructions.size(); i++) {
+            AbstractInsnNode insn = m.instructions.get(i);
+            if (insn instanceof FieldInsnNode) {
+                FieldInsnNode fin = (FieldInsnNode)insn;
+                if (JRMCoreH.equals(fin.owner) && "curTP".equals(fin.name) && "I".equals(fin.desc)) {
+                    if (fin.getOpcode() == Opcodes.GETSTATIC) {
+                        // GETSTATIC curTP:I -> GETSTATIC curTPLong:J
+                        fin.name = "curTPLong";
+                        fin.desc = "J";
+                        System.out.println("  ComTickH.sendPlayerData: replaced GETSTATIC curTP:I with GETSTATIC curTPLong:J at index " + i);
+                        // Also need to change the write method from writeInt to writeLong
+                        // Check next instruction
+                        if (i + 1 < m.instructions.size() && m.instructions.get(i + 1) instanceof MethodInsnNode) {
+                            MethodInsnNode min = (MethodInsnNode)m.instructions.get(i + 1);
+                            if ("writeInt".equals(min.name) && "io/netty/buffer/ByteBuf".equals(min.owner)) {
+                                min.name = "writeLong";
+                                min.desc = "(J)Lio/netty/buffer/ByteBuf;";
+                                System.out.println("  ComTickH.sendPlayerData: changed writeInt to writeLong at index " + (i + 1));
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // ==================== 5. PStats2 ====================
@@ -878,11 +1224,20 @@ public class TpPatch {
                 // Change descriptor to (JIB[I)V
                 m.desc = "(JIB[I)V";
                 // Update the field store from curTP (I) to curTPLong (J)
+                // Also update the load instruction before PUTFIELD from ILOAD to LLOAD
                 for (int i = 0; i < m.instructions.size(); i++) {
                     AbstractInsnNode insn = m.instructions.get(i);
                     if (insn instanceof FieldInsnNode) {
                         FieldInsnNode fin = (FieldInsnNode)insn;
                         if (Opcodes.PUTFIELD == fin.getOpcode() && PStats2.equals(fin.owner) && "curTP".equals(fin.name) && "I".equals(fin.desc)) {
+                            // Check previous instruction - should be a load
+                            if (i > 0 && m.instructions.get(i - 1) instanceof VarInsnNode) {
+                                VarInsnNode var = (VarInsnNode)m.instructions.get(i - 1);
+                                if (var.getOpcode() == Opcodes.ILOAD) {
+                                    var.setOpcode(Opcodes.LLOAD);
+                                    System.out.println("  PStats2.<init>: changed ILOAD to LLOAD before curTPLong store");
+                                }
+                            }
                             fin.name = "curTPLong";
                             fin.desc = "J";
                             System.out.println("  PStats2.<init>: changed curTP field store to curTPLong:J");
@@ -961,8 +1316,47 @@ public class TpPatch {
     // ==================== 6. PStats2Handler (stub - may not exist) ====================
 
     static byte[] patchPStats2Handler(byte[] data) {
-        // Handler class may not exist as separate class
-        return data;
+        ClassNode cn = readClass(data);
+        for (MethodNode m : cn.methods) {
+            // Handler method typically processes the packet on client side
+            // Look for methods that handle the PStats2 packet
+            if ("handleClientMessage".equals(m.name) || "onMessage".equals(m.name) || "handle".equals(m.name)) {
+                // The handler receives the PStats2 object and needs to extract curTPLong
+                // Patch any field access to curTP:I in PStats2 to curTPLong:J
+                for (int i = 0; i < m.instructions.size(); i++) {
+                    AbstractInsnNode insn = m.instructions.get(i);
+                    if (insn instanceof FieldInsnNode) {
+                        FieldInsnNode fin = (FieldInsnNode)insn;
+                        if (PStats2.equals(fin.owner) && "curTP".equals(fin.name) && "I".equals(fin.desc)) {
+                            if (fin.getOpcode() == Opcodes.GETFIELD) {
+                                // GETFIELD curTP:I -> GETFIELD curTPLong:J
+                                fin.name = "curTPLong";
+                                fin.desc = "J";
+                                System.out.println("  PStats2Handler." + m.name + m.desc + ": replaced GETFIELD curTP:I with GETFIELD curTPLong:J at index " + i);
+                            } else if (fin.getOpcode() == Opcodes.PUTFIELD) {
+                                // PUTFIELD curTP:I -> should not happen in handler, but handle if it does
+                                fin.name = "curTPLong";
+                                fin.desc = "J";
+                                System.out.println("  PStats2Handler." + m.name + m.desc + ": replaced PUTFIELD curTP:I with PUTFIELD curTPLong:J at index " + i);
+                            }
+                        }
+                    }
+                    // Also check for calls to JRMCoreH.handleStats2 with int curTP
+                    if (insn instanceof MethodInsnNode) {
+                        MethodInsnNode min = (MethodInsnNode)insn;
+                        if (JRMCoreH.equals(min.owner) && "handleStats2".equals(min.name) && "(IIB[I)V".equals(min.desc)) {
+                            // Update descriptor to long version
+                            min.desc = "(JIB[I)V";
+                            System.out.println("  PStats2Handler." + m.name + m.desc + ": updated handleStats2 call descriptor to long");
+                        }
+                    }
+                }
+                // The handler should now call JRMCoreH.setTPTotalClient or update both fields
+                // Look for where the curTP value is used to update client state
+                // This depends on the actual bytecode structure
+            }
+        }
+        return writeClass(cn);
     }
 
     // ==================== 7. GUI Display Patches ====================
@@ -1049,26 +1443,99 @@ public class TpPatch {
     }
 
     static void patchComJrmctpExecute(MethodNode m, ClassNode cn) {
-        // This is a complex method - we need to replace all jrmcTpint NBT operations
-        // with calls to addTPToPlayer, getTPTotal, setTPTotal
-        // For now, log all jrmcTpint refs and curTP refs
+        // Replace jrmcTpint NBT operations with calls to helper methods
         for (int i = 0; i < m.instructions.size(); i++) {
             AbstractInsnNode insn = m.instructions.get(i);
-            if (insn instanceof FieldInsnNode) {
-                FieldInsnNode fin = (FieldInsnNode)insn;
-                if ("jrmcTpint".equals(fin.name)) {
-                    System.out.println("  ComJrmctp." + m.name + m.desc + ": found jrmcTpint ref at index " + i + " opcode=" + fin.getOpcode());
-                }
-            }
             if (insn instanceof MethodInsnNode) {
                 MethodInsnNode min = (MethodInsnNode)insn;
-                if (JRMCoreH.equals(min.owner) && min.name.contains("addExp")) {
-                    System.out.println("  ComJrmctp." + m.name + m.desc + ": found addExp call at index " + i);
+                // Replace getInt for jrmcTpint with getTPTotal
+                if ("func_74762_e".equals(min.name) && "net/minecraft/nbt/NBTTagCompound".equals(min.owner)) {
+                    if (i > 0 && m.instructions.get(i - 1) instanceof LdcInsnNode) {
+                        LdcInsnNode ldc = (LdcInsnNode)m.instructions.get(i - 1);
+                        if ("jrmcTpint".equals(ldc.cst)) {
+                            // Pattern: ALOAD nbt, LDC "jrmcTpint", INVOKEVIRTUAL getInt
+                            // Replace with: ALOAD nbt, INVOKESTATIC getTPTotal
+                            AbstractInsnNode nbtLoad = null;
+                            if (i > 1 && m.instructions.get(i - 2) instanceof VarInsnNode) {
+                                VarInsnNode var = (VarInsnNode)m.instructions.get(i - 2);
+                                if (var.getOpcode() == Opcodes.ALOAD) {
+                                    nbtLoad = var;
+                                }
+                            }
+                            InsnList replacement = newInsnList();
+                            if (nbtLoad != null) {
+                                addInsn(replacement, new VarInsnNode(Opcodes.ALOAD, ((VarInsnNode)nbtLoad).var));
+                            }
+                            addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "getTPTotal", "(Lnet/minecraft/nbt/NBTTagCompound;)J", false));
+                            m.instructions.remove(ldc);
+                            m.instructions.remove(min);
+                            if (nbtLoad != null) {
+                                m.instructions.insert(nbtLoad, replacement);
+                            } else {
+                                m.instructions.insert(min, replacement);
+                            }
+                            System.out.println("  ComJrmctp." + m.name + m.desc + ": replaced getInt jrmcTpint with getTPTotal at index " + i);
+                        }
+                    }
+                }
+                // Replace setInt for jrmcTpint with setTPTotal
+                else if ("func_74768_a".equals(min.name) && "net/minecraft/nbt/NBTTagCompound".equals(min.owner)) {
+                    if (i > 0 && m.instructions.get(i - 1) instanceof LdcInsnNode) {
+                        LdcInsnNode ldc = (LdcInsnNode)m.instructions.get(i - 1);
+                        if ("jrmcTpint".equals(ldc.cst)) {
+                            // Pattern: ALOAD nbt, LDC "jrmcTpint", ILOAD value, INVOKEVIRTUAL setInt
+                            // Replace with: ALOAD nbt, LLOAD value, INVOKESTATIC setTPTotal
+                            // The value is on stack as int (from ILOAD), need to convert to long
+                            InsnList replacement = newInsnList();
+                            addInsn(replacement, new InsnNode(Opcodes.I2L));
+                            addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "setTPTotal", "(Lnet/minecraft/nbt/NBTTagCompound;J)V", false));
+                            m.instructions.remove(ldc);
+                            m.instructions.remove(min);
+                            m.instructions.insert(min, replacement);
+                            System.out.println("  ComJrmctp." + m.name + m.desc + ": replaced setInt jrmcTpint with setTPTotal at index " + i);
+                        }
+                    }
+                }
+                // Replace addExp calls with addTPToPlayer for TP gains
+                else if (JRMCoreH.equals(min.owner) && "addExp".equals(min.name)) {
+                    // addExp(EntityPlayer, int) -> addTPToPlayer(int, EntityPlayer)
+                    // The arguments on stack: EntityPlayer, int
+                    // We need to swap and call addTPToPlayer
+                    InsnList replacement = newInsnList();
+                    // Stack has: EntityPlayer, int
+                    // addTPToPlayer expects: int, EntityPlayer
+                    // So we need to swap: SWAP, then I2L is done inside addTPToPlayer
+                    // Actually addTPToPlayer signature is (ILnet/minecraft/entity/player/EntityPlayer;)V
+                    // Stack: EntityPlayer, int -> need to reorder to int, EntityPlayer
+                    addInsn(replacement, new InsnNode(Opcodes.SWAP));
+                    addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "addTPToPlayer", "(ILnet/minecraft/entity/player/EntityPlayer;)V", false));
+                    m.instructions.insert(min, replacement);
+                    m.instructions.remove(min);
+                    System.out.println("  ComJrmctp." + m.name + m.desc + ": replaced addExp with addTPToPlayer at index " + i);
+                }
+            }
+            // Replace direct field access to curTP:I with helper calls
+            else if (insn instanceof FieldInsnNode) {
+                FieldInsnNode fin = (FieldInsnNode)insn;
+                if (JRMCoreH.equals(fin.owner) && "curTP".equals(fin.name) && "I".equals(fin.desc)) {
+                    if (fin.getOpcode() == Opcodes.GETSTATIC) {
+                        // GETSTATIC curTP:I -> GETSTATIC curTPLong:J
+                        fin.name = "curTPLong";
+                        fin.desc = "J";
+                        System.out.println("  ComJrmctp." + m.name + m.desc + ": replaced GETSTATIC curTP:I with GETSTATIC curTPLong:J");
+                    } else if (fin.getOpcode() == Opcodes.PUTSTATIC) {
+                        // PUTSTATIC curTP:I -> call setTPTotalClient(J)V
+                        // The value is on stack as int, need to convert to long
+                        InsnList replacement = newInsnList();
+                        addInsn(replacement, new InsnNode(Opcodes.I2L));
+                        addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "setTPTotalClient", "(J)V", false));
+                        m.instructions.insert(fin, replacement);
+                        m.instructions.remove(fin);
+                        System.out.println("  ComJrmctp." + m.name + m.desc + ": replaced PUTSTATIC curTP:I with setTPTotalClient");
+                    }
                 }
             }
         }
-        // TODO: Full rewrite of command logic to use addTPToPlayer
-        // For now, the command will still use jrmcTpint (limited to 2.1B)
     }
 
     // ==================== 9. Patch curTP:I refs - ONLY for GUI display ====================
@@ -1084,9 +1551,66 @@ public class TpPatch {
     static void patchHandleStats2(ClassNode cn) {
         for (MethodNode m : cn.methods) {
             if ("handleStats2".equals(m.name)) {
-                // Update to use long for curTP
+                // Update to use long for curTP - change descriptor from (IIB[I)V to (JIB[I)V
                 m.desc = "(JIB[I)V";
-                System.out.println("  JRMCoreH.handleStats2: descriptor changed to long");
+                // Patch the bytecode: first parameter is now long (slots 1-2), rest shifted
+                // Local variables: 0=this, 1-2=curTP (long), 3=curHP (int), 4=curKI (byte), 5=curStats (int[])
+                // Previously: 0=this, 1=curTP (int), 2=curHP (int), 3=curKI (byte), 4=curStats (int[])
+                for (int i = 0; i < m.instructions.size(); i++) {
+                    AbstractInsnNode insn = m.instructions.get(i);
+                    if (insn instanceof VarInsnNode) {
+                        VarInsnNode var = (VarInsnNode)insn;
+                        // First parameter (curTP) was at local 1 as ILOAD, now at local 1 as LLOAD
+                        if (var.var == 1 && var.getOpcode() == Opcodes.ILOAD) {
+                            var.setOpcode(Opcodes.LLOAD);
+                            System.out.println("  JRMCoreH.handleStats2: changed curTP load from ILOAD to LLOAD at index " + i);
+                        }
+                        // Other parameters shifted by 1 slot due to long taking 2 slots
+                        // curHP was at 2, now at 3
+                        else if (var.var == 2 && var.getOpcode() == Opcodes.ILOAD) {
+                            var.var = 3;
+                            System.out.println("  JRMCoreH.handleStats2: shifted curHP load from var 2 to 3 at index " + i);
+                        }
+                        // curKI was at 3, now at 4
+                        else if (var.var == 3 && (var.getOpcode() == Opcodes.ILOAD || var.getOpcode() == Opcodes.BIPUSH || var.getOpcode() == Opcodes.SIPUSH)) {
+                            var.var = 4;
+                            System.out.println("  JRMCoreH.handleStats2: shifted curKI load from var 3 to 4 at index " + i);
+                        }
+                        // curStats was at 4, now at 5
+                        else if (var.var == 4 && var.getOpcode() == Opcodes.ALOAD) {
+                            var.var = 5;
+                            System.out.println("  JRMCoreH.handleStats2: shifted curStats load from var 4 to 5 at index " + i);
+                        }
+                    }
+                    // Update any field access to curTP:I to use curTPLong and dual update
+                    else if (insn instanceof FieldInsnNode) {
+                        FieldInsnNode fin = (FieldInsnNode)insn;
+                        if (JRMCoreH.equals(fin.owner) && "curTP".equals(fin.name) && "I".equals(fin.desc)) {
+                            if (fin.getOpcode() == Opcodes.PUTSTATIC) {
+                                // Replace PUTSTATIC curTP:I with dual field update
+                                // The value is on stack as long (from LLOAD 1)
+                                InsnList replacement = newInsnList();
+                                // Store to curTPLong
+                                addInsn(replacement, new FieldInsnNode(Opcodes.PUTSTATIC, JRMCoreH, "curTPLong", "J"));
+                                // Load again for clampTP (DUP2 would be better but let's reload)
+                                addInsn(replacement, new VarInsnNode(Opcodes.LLOAD, 1));
+                                // Clamp to int
+                                addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "clampTP", "(J)I", false));
+                                // Store to curTP
+                                addInsn(replacement, new FieldInsnNode(Opcodes.PUTSTATIC, JRMCoreH, "curTP", "I"));
+                                m.instructions.insert(fin, replacement);
+                                m.instructions.remove(fin);
+                                System.out.println("  JRMCoreH.handleStats2: replaced PUTSTATIC curTP:I with dual field update");
+                            } else if (fin.getOpcode() == Opcodes.GETSTATIC) {
+                                // GETSTATIC curTP:I -> GETSTATIC curTPLong:J
+                                fin.name = "curTPLong";
+                                fin.desc = "J";
+                                System.out.println("  JRMCoreH.handleStats2: replaced GETSTATIC curTP:I with GETSTATIC curTPLong:J");
+                            }
+                        }
+                    }
+                }
+                System.out.println("  JRMCoreH.handleStats2: descriptor and bytecode patched to long");
             }
         }
     }

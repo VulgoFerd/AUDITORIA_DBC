@@ -53,14 +53,26 @@ public final class TpUtil {
         setTP(JRMCoreH.nbt(p, "pres"), v);
     }
 
+    // Safe addition with overflow/underflow protection
+    private static long addTPSafe(long current, long gain) {
+        if (gain > 0) {
+            if (current > Long.MAX_VALUE - gain) return Long.MAX_VALUE;
+        } else if (gain < 0) {
+            if (current < Long.MIN_VALUE - gain) return Long.MIN_VALUE;
+        }
+        return current + gain;
+    }
+
     public static void addTP(NBTTagCompound tag, long gain) {
         if (tag == null) return;
-        setTP(tag, getTP(tag) + gain);
+        long cur = getTP(tag);
+        setTP(tag, addTPSafe(cur, gain));
     }
 
     public static void addTP(EntityPlayer p, long gain) {
         if (p == null) return;
-        setTP(p, getTP(p) + gain);
+        long cur = getTP(p);
+        setTP(p, addTPSafe(cur, gain));
     }
 
     /** Escrita legada de int: v e tratado como valor absoluto dentro da janela saturada. */

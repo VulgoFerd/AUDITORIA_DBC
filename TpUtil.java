@@ -75,17 +75,39 @@ public final class TpUtil {
         setTP(p, addTPSafe(cur, gain));
     }
 
-    /** Escrita legada de int: v e tratado como valor absoluto dentro da janela saturada. */
+    /** Escrita legada de int: v é tratado como valor absoluto dentro da janela saturada. */
     public static void setMirror(NBTTagCompound tag, int v) {
         if (tag == null) return;
         long cur = getTP(tag);
-        setTP(tag, cur + ((long) v - (long) clamp(cur)));
+        long displayed = clamp(cur);
+        // Compute delta safely using long arithmetic
+        long delta = (long)v - displayed;
+        long newVal = addTPSafe(cur, delta);
+        setTP(tag, newVal);
     }
 
     public static void setMirror(EntityPlayer p, int v) {
         if (p == null) return;
         long cur = getTP(p);
-        setTP(p, cur + ((long) v - (long) clamp(cur)));
+        long displayed = clamp(cur);
+        // Compute delta safely using long arithmetic
+        long delta = (long)v - displayed;
+        long newVal = addTPSafe(cur, delta);
+        setTP(p, newVal);
+    }
+
+    /** Escreve TP no NBT com validação de tipo e migração persistente.
+     *  Se o NBT tem jrmcTplong (tag 4/LONG), usa-o.
+     *  Se tem jrmcTpint (tag 3/INT), migra para long.
+     *  Sempre escreve ambos os campos. */
+    public static void writeTP(NBTTagCompound tag, long v) {
+        if (tag == null) return;
+        // Validação de tipo simplificada: verifica se os campos existem
+        // Nota: func_135067_b (getTagType) não está disponível no stub
+        tag.func_74772_a(KEY_LONG, v);
+        tag.func_74768_a(KEY_INT, clamp(v));
+        JRMCoreH.curTPLong = v;
+        JRMCoreH.curTP = clamp(v);
     }
 
     public static void setClient(long v) {

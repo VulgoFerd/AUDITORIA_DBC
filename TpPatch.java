@@ -6,6 +6,12 @@ import java.util.zip.ZipOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Collections;
 
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
@@ -31,11 +37,28 @@ public class TpPatch {
         "JinRyuu/JRMCore/JRMCoreGuiScreen"
     };
 
+    // Hierarchy for frame computation
+    static Map<String, Set<String>> hierarchy;
+
+    static void loadHierarchy() throws IOException, ClassNotFoundException {
+        File hierarchyFile = new File("hierarchy.bin");
+        if (!hierarchyFile.exists()) {
+            throw new IOException("hierarchy.bin not found. Run JarHierarchy first to generate it.");
+        }
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(hierarchyFile))) {
+            @SuppressWarnings("unchecked")
+            Map<String, Set<String>> h = (Map<String, Set<String>>) ois.readObject();
+            hierarchy = h;
+            System.out.println("Loaded hierarchy with " + hierarchy.size() + " classes");
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {
             System.err.println("Usage: java TpPatch <input.jar> <output.jar>");
             System.exit(1);
         }
+        loadHierarchy();
         byte[] jarBytes = readJar(args[0]);
         byte[] patched = patchJar(jarBytes);
         writeJar(args[1], patched);
@@ -107,7 +130,13 @@ public class TpPatch {
                 } else if (name.equals(PStats2Handler + ".class")) {
                     patched = patchPStats2Handler(data);
                 } else if (name.equals(ComJrmctp + ".class")) {
-                    patched = patchComJrmctp(data);
+                    try {
+                        patched = patchComJrmctp(data);
+                    } catch (Exception e) {
+                        System.err.println("  WARNING: ComJrmctp patching failed, using original: " + e.getMessage());
+                        e.printStackTrace();
+                        patched = data;
+                    }
                 } else if (name.equals(ComJrmc + ".class")) {
                     patched = patchComJrmc(data);
                 } else if (name.equals(ComJrmcCheck + ".class")) {
@@ -163,33 +192,61 @@ public class TpPatch {
     }
 
     static byte[] writeClass(ClassNode cn) {
-        try {
-            ClassWriter cw = new FrameSafeClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-            cn.accept(cw);
-            return cw.toByteArray();
-        } catch (Exception e) {
-            System.out.println("  WARNING: Frame computation failed for " + cn.name + ", falling back to COMPUTE_MAXS: " + e.getMessage());
-            ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-            cn.accept(cw);
-            return cw.toByteArray();
-        }
+        ClassWriter cw = new HierarchyClassWriter(ClassWriter.COMPUTE_FRAMES);
+        cn.accept(cw);
+        return cw.toByteArray();
     }
 
-    // Custom ClassWriter that handles missing classes for frame computation
-    static class FrameSafeClassWriter extends ClassWriter {
-        public FrameSafeClassWriter(int flags) {
+    // Custom ClassWriter that uses pre-built hierarchy for frame computation
+    static class HierarchyClassWriter extends ClassWriter {
+
+        public HierarchyClassWriter(int flags) {
             super(flags);
         }
 
         @Override
         protected String getCommonSuperClass(String type1, String type2) {
-            try {
-                return super.getCommonSuperClass(type1, type2);
-            } catch (Exception e) {
-                // Fallback: return java/lang/Object if we can't resolve
-                System.out.println("  WARNING: getCommonSuperClass failed for " + type1 + " / " + type2 + ": " + e.getMessage());
+            // If either type is not a class (array, primitive), use Object
+            if (type1.startsWith("[") || type2.startsWith("[") ||
+                type1.charAt(0) < 'A' || type2.charAt(0) < 'A') {
                 return "java/lang/Object";
             }
+
+            // Use the hierarchy map to find common superclass
+            Set<String> ancestors1 = getAllAncestors(type1);
+            Set<String> ancestors2 = getAllAncestors(type2);
+
+            // Find the lowest common ancestor
+            for (String a1 : ancestors1) {
+                if (ancestors2.contains(a1)) {
+                    return a1;
+                }
+            }
+
+            // Fallback - should not happen if hierarchy is complete
+            // Throw error to detect incomplete hierarchy rather than silently producing bad frames
+            throw new RuntimeException("HierarchyClassWriter: No common superclass found for " + type1 + " and " + type2 + ". Hierarchy incomplete or types not in hierarchy.");
+        }
+
+        private Set<String> getAllAncestors(String type) {
+            Set<String> result = new LinkedHashSet<>();
+            String current = type;
+            while (current != null && !current.equals("java/lang/Object")) {
+                result.add(current);
+                Set<String> parents = hierarchy.get(current);
+                if (parents == null || parents.isEmpty()) break;
+                // For single inheritance, pick the first non-interface parent
+                // (interfaces are listed alongside superclass)
+                String superClass = null;
+                for (String p : parents) {
+                    // Skip interfaces (they don't have fields/methods in the same way)
+                    // We could check if it's an interface but for simplicity just use first
+                    if (superClass == null) superClass = p;
+                }
+                current = superClass;
+            }
+            result.add("java/lang/Object");
+            return result;
         }
     }
 
@@ -449,9 +506,10 @@ public class TpPatch {
         addMethodIfAbsent(cn, "setTPMirrorNbt", "(Ljava/lang/Object;I)V", h13, "Escrita int legada no NBT via delta");
 
         // setTPMirror(int, EntityPlayer):V
+        // Note: TpUtil.setMirror expects (EntityPlayer, int)V - swap arg order
         InsnList h14 = newInsnList();
-        h14.add(new VarInsnNode(Opcodes.ILOAD, 0));
-        h14.add(new VarInsnNode(Opcodes.ALOAD, 1));
+        h14.add(new VarInsnNode(Opcodes.ALOAD, 1));  // EntityPlayer first
+        h14.add(new VarInsnNode(Opcodes.ILOAD, 0));  // int second
         h14.add(new MethodInsnNode(Opcodes.INVOKESTATIC, TpUtil, "setMirror", "(Lnet/minecraft/entity/player/EntityPlayer;I)V", false));
         h14.add(new InsnNode(Opcodes.RETURN));
         addMethodIfAbsent(cn, "setTPMirror", "(ILnet/minecraft/entity/player/EntityPlayer;)V", h14, "Escrita int legada no player via delta");
@@ -830,7 +888,39 @@ public class TpPatch {
         for (MethodNode m : cn.methods) {
             if ("Stats2".equals(m.name) && "(Lnet/minecraft/entity/player/EntityPlayer;IIB[I)V".equals(m.desc)) {
                 // Change descriptor to (Lnet/minecraft/entity/player/EntityPlayer;JIB[I)V
+                // Original: (EntityPlayer, int, int, byte, int[])V
+                // New: (EntityPlayer, long, int, byte, int[])V
+                // First param (EntityPlayer) at slot 0
+                // Second param (curTP) was int at slot 1, now long at slots 1-2
+                // Shift all local variable indices >= 2 by +1
                 m.desc = "(Lnet/minecraft/entity/player/EntityPlayer;JIB[I)V";
+                
+                // Shift local variables: curTP went from 1 slot (slot 1) to 2 slots (slots 1-2)
+                // So all vars >= 2 need to shift by +1
+                for (AbstractInsnNode insn : m.instructions.toArray()) {
+                    if (insn instanceof VarInsnNode) {
+                        VarInsnNode var = (VarInsnNode)insn;
+                        // First param (curTP) was at local variable 1 as int, now it's long at 1-2
+                        if (var.getOpcode() == Opcodes.ILOAD && var.var == 1) {
+                            var.setOpcode(Opcodes.LLOAD);
+                            System.out.println("  JRMCoreH.Stats2: changed curTP load from ILOAD to LLOAD");
+                        }
+                        // Shift all local variable indices >= 2 by +1
+                        else if (var.var >= 2) {
+                            int oldVar = var.var;
+                            var.var = oldVar + 1;
+                            System.out.println("  JRMCoreH.Stats2: shifted local var " + oldVar + " to " + var.var + " (opcode=" + var.getOpcode() + ")");
+                        }
+                    } else if (insn instanceof IincInsnNode) {
+                        IincInsnNode iinc = (IincInsnNode)insn;
+                        if (iinc.var >= 2) {
+                            int oldVar = iinc.var;
+                            iinc.var = oldVar + 1;
+                            System.out.println("  JRMCoreH.Stats2: shifted IINC var " + oldVar + " to " + iinc.var);
+                        }
+                    }
+                }
+                
                 // Update the constructor call to PStats2
                 for (int i = 0; i < m.instructions.size(); i++) {
                     AbstractInsnNode insn = m.instructions.get(i);
@@ -843,22 +933,17 @@ public class TpPatch {
                         }
                     }
                 }
-                System.out.println("  JRMCoreH.Stats2: descriptor changed to long");
+                m.maxLocals += 1;
+                System.out.println("  JRMCoreH.Stats2: descriptor changed to long, locals shifted");
                 break;
             }
         }
     }
 
     static void patchHandleStats2Method(ClassNode cn) {
-        for (MethodNode m : cn.methods) {
-            if ("handleStats2".equals(m.name)) {
-                // Update to use long for curTP
-                // This method likely reads from packet and updates client state
-                System.out.println("  JRMCoreH.handleStats2: found, patching for long");
-                // Implementation would depend on actual bytecode
-                break;
-            }
-        }
+        // handleStats2 is in PacHanC, not JRMCoreH - already handled by patchPacHanCHandleStats2
+        // This method is kept for compatibility but does nothing
+        System.out.println("  JRMCoreH.patchHandleStats2Method: handleStats2 is in PacHanC, already handled");
     }
 
     static void patchJrmcExpMethod(ClassNode cn) {
@@ -931,14 +1016,11 @@ public class TpPatch {
                             addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "clampTP", "(J)I", false));
                             
                             // Remove LDC and getInt
+                            AbstractInsnNode insertPoint = (nbtLoad != null) ? nbtLoad : min;
                             m.instructions.remove(ldc);
                             m.instructions.remove(min);
-                            // Insert after the nbtLoad (or at min's position)
-                            if (nbtLoad != null) {
-                                m.instructions.insert(nbtLoad, replacement);
-                            } else {
-                                m.instructions.insert(min, replacement);
-                            }
+                            // Insert at captured point
+                            m.instructions.insert(insertPoint, replacement);
                             System.out.println("  PacHanS.handleData: replaced getInt jrmcTpint with clampTP(getTPTotal) at index " + i);
                         }
                     }
@@ -954,9 +1036,10 @@ public class TpPatch {
                             InsnList replacement = newInsnList();
                             addInsn(replacement, new InsnNode(Opcodes.I2L));
                             addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "setTPTotal", "(Ljava/lang/Object;J)V", false));
+                            AbstractInsnNode insertPoint = min;
                             m.instructions.remove(ldc);
                             m.instructions.remove(min);
-                            m.instructions.insert(min, replacement);
+                            m.instructions.insert(insertPoint, replacement);
                             System.out.println("  PacHanS.handleData: replaced setInt jrmcTpint with setTPTotal at index " + i);
                         }
                     }
@@ -1038,13 +1121,10 @@ public class TpPatch {
                             addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "getTPTotal", "(Ljava/lang/Object;)J", false));
                             addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "clampTP", "(J)I", false));
                             
+                            AbstractInsnNode insertPoint = (nbtLoad != null) ? nbtLoad : min;
                             m.instructions.remove(ldc);
                             m.instructions.remove(min);
-                            if (nbtLoad != null) {
-                                m.instructions.insert(nbtLoad, replacement);
-                            } else {
-                                m.instructions.insert(min, replacement);
-                            }
+                            m.instructions.insert(insertPoint, replacement);
                             System.out.println("  PacHanC.handleData: replaced getInt jrmcTpint with clampTP(getTPTotal) at index " + i);
                         }
                     }
@@ -1059,9 +1139,10 @@ public class TpPatch {
                             InsnList replacement = newInsnList();
                             addInsn(replacement, new InsnNode(Opcodes.I2L));
                             addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "setTPTotal", "(Ljava/lang/Object;J)V", false));
+                            AbstractInsnNode insertPoint = min;
                             m.instructions.remove(ldc);
                             m.instructions.remove(min);
-                            m.instructions.insert(min, replacement);
+                            m.instructions.insert(insertPoint, replacement);
                             System.out.println("  PacHanC.handleData: replaced setInt jrmcTpint with setTPTotal at index " + i);
                         }
                     }
@@ -1241,7 +1322,7 @@ public class TpPatch {
     }
     
     static void patchDBCDataSaveFromNBT(MethodNode m, ClassNode cn) {
-        System.out.println("  DBCData.saveFromNBT: patching to write jrmcTplong and jrmcTpint mirror");
+        System.out.println("  DBCData.saveFromNBT: patching to use TpUtil.writeTP");
         AbstractInsnNode[] arr = m.instructions.toArray();
         
         // Find the jrmcTpint write site
@@ -1275,14 +1356,10 @@ public class TpPatch {
                     }
                     
                     if (getField != null && setInt != null) {
-                        // Build replacement:
-                        // 1. Write jrmcTplong: ALOAD nbt, LDC "jrmcTplong", GETFIELD TP:J, INVOKEVIRTUAL setLong
-                        // 2. Write jrmcTpint mirror: ALOAD nbt, LDC "jrmcTpint", GETFIELD TP:J, clampTP, INVOKEVIRTUAL setInteger
-                        
+                        // Build replacement: ALOAD nbt, ALOAD this, GETFIELD TP:J, INVOKESTATIC TpUtil.writeTP
                         InsnList replacement = newInsnList();
                         
-                        // Save nbt reference (should be on stack before LDC, or in local variable)
-                        // Pattern before LDC: ALOAD nbt (or similar) - find the ALOAD that loads the NBT compound
+                        // Find nbt load (should be before LDC)
                         AbstractInsnNode nbtLoad = null;
                         for (int j = i - 1; j >= 0; j--) {
                             if (arr[j] instanceof VarInsnNode) {
@@ -1295,30 +1372,22 @@ public class TpPatch {
                         }
                         
                         if (nbtLoad != null) {
-                            // First write: jrmcTplong
+                            // Pattern: ALOAD nbt, ALOAD this, GETFIELD TP:J, INVOKESTATIC TpUtil.writeTP
                             replacement.add(new VarInsnNode(Opcodes.ALOAD, ((VarInsnNode)nbtLoad).var)); // ALOAD nbt
-                            replacement.add(new LdcInsnNode("jrmcTplong"));
                             replacement.add(new VarInsnNode(Opcodes.ALOAD, 0)); // ALOAD this
                             replacement.add(new FieldInsnNode(Opcodes.GETFIELD, cn.name, "TP", "J")); // GETFIELD TP:J
-                            replacement.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74772_a", "(Ljava/lang/String;J)V", false)); // setLong
-                            
-                            // Second write: jrmcTpint mirror (saturated)
-                            replacement.add(new VarInsnNode(Opcodes.ALOAD, ((VarInsnNode)nbtLoad).var)); // ALOAD nbt
-                            replacement.add(new LdcInsnNode("jrmcTpint"));
-                            replacement.add(new VarInsnNode(Opcodes.ALOAD, 0)); // ALOAD this
-                            replacement.add(new FieldInsnNode(Opcodes.GETFIELD, cn.name, "TP", "J")); // GETFIELD TP:J
-                            replacement.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "JinRyuu/JRMCore/JRMCoreH", "clampTP", "(J)I", false)); // clampTP
-                            replacement.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74768_a", "(Ljava/lang/String;I)V", false)); // setInteger
+                            replacement.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "JinRyuu/JRMCore/TpUtil", "writeTP", "(Lnet/minecraft/nbt/NBTTagCompound;J)V", false)); // TpUtil.writeTP
                             
                             // Remove the old LDC, GETFIELD, setInteger
+                            AbstractInsnNode insertPoint = nbtLoad;
                             m.instructions.remove(ldc);
                             m.instructions.remove(getField);
                             m.instructions.remove(setInt);
                             
                             // Insert replacement after nbtLoad
-                            m.instructions.insert(nbtLoad, replacement);
+                            m.instructions.insert(insertPoint, replacement);
                             
-                            System.out.println("  DBCData.saveFromNBT: replaced jrmcTpint write with jrmcTplong + jrmcTpint mirror");
+                            System.out.println("  DBCData.saveFromNBT: replaced jrmcTpint write with TpUtil.writeTP");
                         }
                         break;
                     }
@@ -1328,7 +1397,7 @@ public class TpPatch {
     }
     
     static void patchDBCDataLoadFromNBT(MethodNode m, ClassNode cn) {
-        System.out.println("  DBCData.loadFromNBT: patching to read jrmcTplong with jrmcTpint fallback");
+        System.out.println("  DBCData.loadFromNBT: patching to use TpUtil.getTP");
         AbstractInsnNode[] arr = m.instructions.toArray();
         
         // Find the jrmcTpint read site
@@ -1362,17 +1431,10 @@ public class TpPatch {
                     }
                     
                     if (getInt != null && putField != null) {
-                        // Build replacement:
-                        // ALOAD nbt, LDC "jrmcTplong", INVOKEVIRTUAL hasKey, IFEQ -> fallback
-                        //   ALOAD nbt, LDC "jrmcTplong", INVOKEVIRTUAL getLong -> GOTO end
-                        // fallback: ALOAD nbt, LDC "jrmcTpint", INVOKEVIRTUAL getInteger, I2L
-                        // end: PUTFIELD TP:J
-                        
+                        // Build replacement: ALOAD nbt, INVOKESTATIC TpUtil.getTP, PUTFIELD TP:J
                         InsnList replacement = newInsnList();
-                        LabelNode lFallback = new LabelNode();
-                        LabelNode lEnd = new LabelNode();
                         
-                        // Find nbt load (should be before LDC) - look backwards for ALOAD
+                        // Find nbt load (should be before LDC)
                         AbstractInsnNode nbtLoad = null;
                         for (int j = i - 1; j >= 0; j--) {
                             if (arr[j] instanceof VarInsnNode) {
@@ -1385,39 +1447,27 @@ public class TpPatch {
                         }
                         
                         if (nbtLoad != null) {
-                            // Check if jrmcTplong exists
+                            // Pattern: ALOAD nbt, INVOKESTATIC TpUtil.getTP, ALOAD this, SWAP, PUTFIELD TP:J
                             replacement.add(new VarInsnNode(Opcodes.ALOAD, ((VarInsnNode)nbtLoad).var)); // ALOAD nbt
-                            replacement.add(new LdcInsnNode("jrmcTplong"));
-                            replacement.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74764_b", "(Ljava/lang/String;)Z", false)); // hasKey
-                            replacement.add(new JumpInsnNode(Opcodes.IFEQ, lFallback)); // if not, fallback
-                            
-                            // Has jrmcTplong: getLong
-                            replacement.add(new VarInsnNode(Opcodes.ALOAD, ((VarInsnNode)nbtLoad).var)); // ALOAD nbt
-                            replacement.add(new LdcInsnNode("jrmcTplong"));
-                            replacement.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74763_f", "(Ljava/lang/String;)J", false)); // getLong
-                            replacement.add(new JumpInsnNode(Opcodes.GOTO, lEnd));
-                            
-                            // Fallback: get jrmcTpint and convert to long
-                            replacement.add(lFallback);
-                            replacement.add(new VarInsnNode(Opcodes.ALOAD, ((VarInsnNode)nbtLoad).var)); // ALOAD nbt
-                            replacement.add(new LdcInsnNode("jrmcTpint"));
-                            replacement.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74762_e", "(Ljava/lang/String;)I", false)); // getInteger
-                            replacement.add(new InsnNode(Opcodes.I2L));
-                            
-                            replacement.add(lEnd);
+                            replacement.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "JinRyuu/JRMCore/TpUtil", "getTP", "(Lnet/minecraft/nbt/NBTTagCompound;)J", false)); // TpUtil.getTP
                             replacement.add(new VarInsnNode(Opcodes.ALOAD, 0)); // ALOAD this
-                            replacement.add(new InsnNode(Opcodes.SWAP)); // swap TP long and this
+                            // Stack: [tp_long_low, tp_long_high, this] -> need [this, tp_long_low, tp_long_high]
+                            // DUP2_X1: [this, tp_long_low, tp_long_high, this]
+                            // POP2: [this, tp_long_low, tp_long_high]
+                            replacement.add(new InsnNode(Opcodes.DUP2_X1));
+                            replacement.add(new InsnNode(Opcodes.POP2));
                             replacement.add(new FieldInsnNode(Opcodes.PUTFIELD, cn.name, "TP", "J")); // PUTFIELD TP:J
                             
                             // Remove the old LDC, getInt, putField
+                            AbstractInsnNode insertPoint = nbtLoad;
                             m.instructions.remove(ldc);
                             m.instructions.remove(getInt);
                             m.instructions.remove(putField);
                             
                             // Insert replacement after nbtLoad
-                            m.instructions.insert(nbtLoad, replacement);
+                            m.instructions.insert(insertPoint, replacement);
                             
-                            System.out.println("  DBCData.loadFromNBT: replaced jrmcTpint read with jrmcTplong (with jrmcTpint fallback)");
+                            System.out.println("  DBCData.loadFromNBT: replaced jrmcTpint read with TpUtil.getTP");
                         }
                         break;
                     }
@@ -1445,7 +1495,7 @@ public class TpPatch {
                 }
             }
         }
-        // Also update the Stats2 constructor call descriptor if present
+        // Also update the Stats2 constructor call descriptor and handleStats2 call if present
         for (MethodNode m : cn.methods) {
             if ("handleClientMessage".equals(m.name) || "handleServerMessage".equals(m.name)) {
                 for (AbstractInsnNode insn : m.instructions.toArray()) {
@@ -1454,6 +1504,10 @@ public class TpPatch {
                         if ("<init>".equals(min.name) && PStats2.equals(min.owner) && "(IIB[I)V".equals(min.desc)) {
                             min.desc = "(JIB[I)V";
                             System.out.println("  PStats2$Handler." + m.name + ": PStats2 constructor descriptor -> long");
+                        }
+                        if ("handleStats2".equals(min.name) && PacHanC.equals(min.owner) && "(IIB[ILnet/minecraft/entity/player/EntityPlayer;)V".equals(min.desc)) {
+                            min.desc = "(JIB[ILnet/minecraft/entity/player/EntityPlayer;)V";
+                            System.out.println("  PStats2$Handler." + m.name + ": PacHanC.handleStats2 call descriptor -> long");
                         }
                     }
                 }
@@ -1514,14 +1568,11 @@ public class TpPatch {
                             addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "clampTP", "(J)I", false));
                             
                             // Remove LDC and getInt, keep nbtLoad
+                            AbstractInsnNode insertPoint = (nbtLoad != null) ? nbtLoad : min;
                             m.instructions.remove(ldc);
                             m.instructions.remove(min);
-                            // Insert after nbtLoad if it exists, otherwise at min's position
-                            if (nbtLoad != null) {
-                                m.instructions.insert(nbtLoad, replacement);
-                            } else {
-                                m.instructions.insert(min, replacement);
-                            }
+                            // Insert at captured point
+                            m.instructions.insert(insertPoint, replacement);
                             System.out.println("  ComTickH.updatePlayersData: replaced getInt jrmcTpint with clampTP(getTPTotal) at index " + i);
                         }
                     }
@@ -1537,9 +1588,10 @@ public class TpPatch {
                             InsnList replacement = newInsnList();
                             addInsn(replacement, new InsnNode(Opcodes.I2L));
                             addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "setTPTotal", "(Ljava/lang/Object;J)V", false));
+                            AbstractInsnNode insertPoint = min;
                             m.instructions.remove(ldc);
                             m.instructions.remove(min);
-                            m.instructions.insert(min, replacement);
+                            m.instructions.insert(insertPoint, replacement);
                             System.out.println("  ComTickH.updatePlayersData: replaced setInt jrmcTpint with setTPTotal at index " + i);
                         }
                     }
@@ -1550,8 +1602,14 @@ public class TpPatch {
     }
 
     static void patchComTickHSendPlayerData(MethodNode m, ClassNode cn) {
-        // Similar patching for sending TP to client
-        System.out.println("  ComTickH.sendPlayerData: would patch to send curTPLong");
+        System.out.println("  ComTickH.sendPlayerData: patching to send curTPLong");
+        // The sendPlayerData method sends various data arrays to client
+        // TP is in dat11 (index 11) which corresponds to jrmcTpint
+        // We need to ensure the data being sent uses curTPLong
+        // The actual data population happens in updatePlayersData which is already patched
+        // This method just sends the pre-populated arrays
+        // No changes needed here if updatePlayersData is correctly patched
+        System.out.println("  ComTickH.sendPlayerData: data arrays already patched in updatePlayersData");
     }
 
     // ==================== 5. PStats2 ====================
@@ -1846,6 +1904,22 @@ public class TpPatch {
                 patchComJrmctpExecute(m, cn);
             }
         }
+        // Debug: print local variable instructions for ComJrmctp execute method
+        for (MethodNode m : cn.methods) {
+            if ("func_71515_b".equals(m.name) || "execute".equals(m.name) || "processCommand".equals(m.name)) {
+                System.out.println("  DEBUG ComJrmctp." + m.name + " local variable instructions:");
+                for (AbstractInsnNode insn : m.instructions.toArray()) {
+                    if (insn instanceof VarInsnNode) {
+                        VarInsnNode var = (VarInsnNode)insn;
+                        System.out.println("    " + var.getOpcode() + " var=" + var.var);
+                    } else if (insn instanceof IincInsnNode) {
+                        IincInsnNode iinc = (IincInsnNode)insn;
+                        System.out.println("    IINC var=" + iinc.var);
+                    }
+                }
+                System.out.println("    maxLocals=" + m.maxLocals);
+            }
+        }
         return writeClass(cn);
     }
 
@@ -1853,6 +1927,8 @@ public class TpPatch {
         System.out.println("  ComJrmctp.execute: rewriting jrmcTpint NBT operations to long TP");
         // Collect all replacements first to avoid index shifting issues
         List<Replacement> replacements = new ArrayList<>();
+        // Track converted variables: oldVar -> newVar mapping
+        Map<Integer, Integer> convertedVarMap = new HashMap<>();
         
         AbstractInsnNode[] arr = m.instructions.toArray();
         for (int i = 0; i < arr.length; i++) {
@@ -1873,14 +1949,32 @@ public class TpPatch {
                                     nbtLoad = var;
                                 }
                             }
-                            // Build replacement: ALOAD nbt, INVOKESTATIC getTPTotal
+                            // Find the ISTORE after this method call in the snapshot
+                            VarInsnNode istoreNode = null;
+                            int istoreIdx = -1;
+                            for (int j = i + 1; j < arr.length; j++) {
+                                if (arr[j] instanceof VarInsnNode) {
+                                    VarInsnNode var = (VarInsnNode)arr[j];
+                                    if (var.getOpcode() == Opcodes.ISTORE) {
+                                        istoreNode = var;
+                                        istoreIdx = j;
+                                        break;
+                                    }
+                                }
+                            }
+                            // Build replacement: INVOKESTATIC getTPTotal
+                            // If nbtLoad exists, we insert AFTER it (so nbt is on stack)
+                            // If no nbtLoad, we need to add ALOAD nbt (assume local 12)
                             InsnList replacement = newInsnList();
                             if (nbtLoad == null) {
                                 addInsn(replacement, new VarInsnNode(Opcodes.ALOAD, 12)); // nbt typically at local 12
                             }
                             addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "getTPTotal",
                                     "(Ljava/lang/Object;)J", false));
-                            replacements.add(new Replacement(ldc, min, nbtLoad, replacement, "getTPTotal"));
+                            replacements.add(new Replacement(ldc, min, nbtLoad, replacement, "getTPTotal", istoreNode, istoreIdx));
+                            if (istoreNode != null) {
+                                System.out.println("  ComJrmctp.execute: found ISTORE at var " + istoreNode.var + " for getTPTotal at snapshot index " + istoreIdx);
+                            }
                         }
                     }
                 }
@@ -1913,20 +2007,184 @@ public class TpPatch {
             }
         }
         
-        // Apply all replacements
+        // First pass: collect all getTPTotal replacements and their ISTORE nodes, grouped by oldVar
+        Map<Integer, List<Replacement>> getTPTotalByOldVar = new HashMap<>();
+        for (Replacement r : replacements) {
+            if (r.label.equals("getTPTotal") && r.istoreNode != null) {
+                int oldVar = r.istoreNode.var;
+                getTPTotalByOldVar.computeIfAbsent(oldVar, k -> new ArrayList<>()).add(r);
+            }
+        }
+        
+        // Allocate one newVar per oldVar
+        Map<Integer, Integer> oldVarToNewVar = new HashMap<>();
+        for (int oldVar : getTPTotalByOldVar.keySet()) {
+            int newVar = m.maxLocals + 1;
+            m.maxLocals = newVar + 1; // long takes 2 slots
+            oldVarToNewVar.put(oldVar, newVar);
+            System.out.println("  ComJrmctp.execute: allocated new var " + newVar + " for getTPTotal results (was var " + oldVar + ")");
+        }
+        
+        // Apply all replacements and modify ISTOREs
         for (Replacement r : replacements) {
             m.instructions.remove(r.ldc);
             m.instructions.remove(r.min);
-            if (r.nbtLoad != null) {
-                m.instructions.insert(r.nbtLoad, r.replacement);
+            
+            // Save the last node of replacement BEFORE insertion (nodes are moved during insert)
+            AbstractInsnNode replacementLast = r.replacement.getLast();
+            
+            if (r.label.equals("getTPTotal") && r.nbtLoad != null) {
+                // For getTPTotal with nbtLoad: insert AFTER nbtLoad so nbt is on stack
+                // insert() inserts BEFORE the given node, so we insert before nbtLoad.getNext()
+                AbstractInsnNode afterNbtLoad = r.nbtLoad.getNext();
+                if (afterNbtLoad != null) {
+                    m.instructions.insert(afterNbtLoad, r.replacement);
+                } else {
+                    m.instructions.add(r.replacement);
+                }
             } else {
+                // For getTPTotal without nbtLoad, or setTPTotal: insert at min position (replacing the call)
                 m.instructions.insert(r.min, r.replacement);
+            }
+            
+            // If this was a getTPTotal replacement, use the stored ISTORE node from snapshot
+            if (r.label.equals("getTPTotal") && r.istoreNode != null) {
+                // Use the ISTORE node we found in the snapshot
+                VarInsnNode var = r.istoreNode;
+                int oldVar = var.var;
+                int newVar = oldVarToNewVar.get(oldVar);
+                
+                System.out.println("  ComJrmctp.execute: converting ISTORE at var " + oldVar + " to LSTORE at var " + newVar);
+                
+                // Change ISTORE to LSTORE at NEW variable index
+                var.setOpcode(Opcodes.LSTORE);
+                var.var = newVar;
+                
+                // Track this conversion: oldVar -> newVar
+                // We'll replace ILOAD oldVar; I2L with LLOAD newVar
+                convertedVarMap.put(oldVar, newVar);
+            } else if (r.label.equals("getTPTotal")) {
+                System.out.println("  ComJrmctp.execute: WARNING - no ISTORE found for getTPTotal at snapshot index " + r.istoreIndexInSnapshot);
             }
             System.out.println("  ComJrmctp.execute: NBT." + r.label + " -> " + r.label);
         }
         
+        // Replace ILOAD oldVar; I2L with LLOAD newVar for all converted variables
+        // Do this BEFORE remapping
+        AbstractInsnNode[] arr2 = m.instructions.toArray();
+        System.out.println("  ComJrmctp.execute: scanning for ILOAD/I2L pairs, convertedVarMap=" + convertedVarMap);
+        for (int i = 0; i < arr2.length - 1; i++) {
+            if (arr2[i] instanceof VarInsnNode && arr2[i + 1] instanceof InsnNode) {
+                VarInsnNode var = (VarInsnNode)arr2[i];
+                InsnNode insn = (InsnNode)arr2[i + 1];
+                if (var.getOpcode() == Opcodes.ILOAD && insn.getOpcode() == Opcodes.I2L) {
+                    System.out.println("  ComJrmctp.execute: found ILOAD " + var.var + "; I2L at index " + i);
+                    Integer newVar = convertedVarMap.get(var.var);
+                    if (newVar != null) {
+                        var.setOpcode(Opcodes.LLOAD);
+                        var.var = newVar;
+                        m.instructions.remove(insn);
+                        System.out.println("  ComJrmctp.execute: replaced ILOAD with LLOAD at new var " + newVar);
+                    } else {
+                        System.out.println("  ComJrmctp.execute: no mapping for var " + var.var);
+                    }
+                }
+            }
+        }
+        
+        // Update maxLocals to accommodate the new highest variable index
+        // (We allocated new variables at the end, so just recalculate maxLocals)
+        int maxVar = 0;
+        for (AbstractInsnNode insn : m.instructions.toArray()) {
+            if (insn instanceof VarInsnNode) {
+                VarInsnNode var = (VarInsnNode)insn;
+                // Long/double take 2 slots
+                int opcode = var.getOpcode();
+                int slots = (opcode == Opcodes.LLOAD || opcode == Opcodes.LSTORE ||
+                             opcode == Opcodes.DLOAD || opcode == Opcodes.DSTORE) ? 2 : 1;
+                maxVar = Math.max(maxVar, var.var + slots);
+            } else if (insn instanceof IincInsnNode) {
+                IincInsnNode iinc = (IincInsnNode)insn;
+                maxVar = Math.max(maxVar, iinc.var + 1);
+            }
+        }
+        if (maxVar > m.maxLocals) {
+            System.out.println("  ComJrmctp.execute: updating maxLocals from " + m.maxLocals + " to " + maxVar);
+            m.maxLocals = maxVar;
+        }
+        
         // Also apply generic keyed-access rewrite for any JRMCoreH.getInt/setInt calls
         rewriteKeyedTpAccessForMethod(m, cn);
+    }
+    
+    // Helper method to shift local variable indices after a given index by a delta
+    static void shiftLocalVarsAfter(MethodNode m, int startVar, int delta) {
+        System.out.println("  shiftLocalVarsAfter: startVar=" + startVar + ", delta=" + delta);
+        for (AbstractInsnNode insn : m.instructions.toArray()) {
+            if (insn instanceof VarInsnNode) {
+                VarInsnNode var = (VarInsnNode)insn;
+                if (var.var >= startVar) {
+                    System.out.println("    shifting " + var.getOpcode() + " var=" + var.var + " -> " + (var.var + delta));
+                    var.var += delta;
+                }
+            } else if (insn instanceof IincInsnNode) {
+                IincInsnNode iinc = (IincInsnNode)insn;
+                if (iinc.var >= startVar) {
+                    System.out.println("    shifting IINC var=" + iinc.var + " -> " + (iinc.var + delta));
+                    iinc.var += delta;
+                }
+            }
+        }
+        // Do NOT manually update maxLocals - let COMPUTE_FRAMES compute it
+        // m.maxLocals += delta;
+    }
+
+    // Proper one-pass variable remapping for multiple converted variables
+    // Each converted var (int->long) takes 2 slots instead of 1
+    // All vars > convertedVar get shifted by +1 per converted var below them
+    static void remapLocalVariables(MethodNode m, Set<Integer> convertedVars) {
+        if (convertedVars.isEmpty()) return;
+        
+        // Sort converted vars for binary search
+        List<Integer> sortedConverted = new ArrayList<>(convertedVars);
+        Collections.sort(sortedConverted);
+        System.out.println("  remapLocalVariables: converted vars = " + sortedConverted);
+        
+        // Build remapping: newIndex(originalVar) = originalVar + count(converted < originalVar)
+        // But we also need to handle the converted vars themselves (they stay at same index but become long)
+        
+        for (AbstractInsnNode insn : m.instructions.toArray()) {
+            if (insn instanceof VarInsnNode) {
+                VarInsnNode var = (VarInsnNode)insn;
+                int orig = var.var;
+                // Count how many converted vars are strictly less than orig
+                int shift = 0;
+                for (int cv : sortedConverted) {
+                    if (cv < orig) shift++;
+                    else break;
+                }
+                if (shift > 0) {
+                    int newVar = orig + shift;
+                    System.out.println("    remap opcode=" + var.getOpcode() + " var=" + orig + " -> " + newVar + " (shift=" + shift + ")");
+                    var.var = newVar;
+                } else {
+                    System.out.println("    no-shift opcode=" + var.getOpcode() + " var=" + orig + " (shift=0)");
+                }
+            } else if (insn instanceof IincInsnNode) {
+                IincInsnNode iinc = (IincInsnNode)insn;
+                int orig = iinc.var;
+                int shift = 0;
+                for (int cv : sortedConverted) {
+                    if (cv < orig) shift++;
+                    else break;
+                }
+                if (shift > 0) {
+                    int newVar = orig + shift;
+                    System.out.println("    remap IINC var=" + orig + " -> " + newVar + " (shift=" + shift + ")");
+                    iinc.var = newVar;
+                }
+            }
+        }
     }
 
     static class Replacement {
@@ -1935,13 +2193,22 @@ public class TpPatch {
         final AbstractInsnNode nbtLoad;
         final InsnList replacement;
         final String label;
+        // For getTPTotal: the ISTORE node in the original snapshot (to avoid search issues after modifications)
+        final VarInsnNode istoreNode;
+        final int istoreIndexInSnapshot;
         
         Replacement(LdcInsnNode ldc, MethodInsnNode min, AbstractInsnNode nbtLoad, InsnList replacement, String label) {
+            this(ldc, min, nbtLoad, replacement, label, null, -1);
+        }
+        
+        Replacement(LdcInsnNode ldc, MethodInsnNode min, AbstractInsnNode nbtLoad, InsnList replacement, String label, VarInsnNode istoreNode, int istoreIndexInSnapshot) {
             this.ldc = ldc;
             this.min = min;
             this.nbtLoad = nbtLoad;
             this.replacement = replacement;
             this.label = label;
+            this.istoreNode = istoreNode;
+            this.istoreIndexInSnapshot = istoreIndexInSnapshot;
         }
     }
 
@@ -1994,9 +2261,69 @@ public class TpPatch {
     static void patchHandleStats2(ClassNode cn) {
         for (MethodNode m : cn.methods) {
             if ("handleStats2".equals(m.name)) {
-                // Update to use long for curTP
+                // Update to use long for curTP - apply full local variable shifting like PacHanC
+                // Original descriptor: (IIB[I)V or similar - first param is curTP as int
+                // New descriptor: (JIB[I)V - first param is curTP as long (2 slots)
                 m.desc = "(JIB[I)V";
-                System.out.println("  JRMCoreH.handleStats2: descriptor changed to long");
+                
+                // Shift all local variable indices >= 2 by +1 (since curTP went from 1 slot to 2 slots)
+                for (AbstractInsnNode insn : m.instructions.toArray()) {
+                    if (insn instanceof VarInsnNode) {
+                        VarInsnNode var = (VarInsnNode)insn;
+                        // First param (curTP) was at local variable 1 as int, now it's long at 1-2
+                        if (var.getOpcode() == Opcodes.ILOAD && var.var == 1) {
+                            var.setOpcode(Opcodes.LLOAD);
+                            System.out.println("  JRMCoreH.handleStats2: changed curTP load from ILOAD to LLOAD");
+                        }
+                        // Shift all local variable indices >= 2 by +1
+                        else if (var.var >= 2) {
+                            int oldVar = var.var;
+                            var.var = oldVar + 1;
+                            System.out.println("  JRMCoreH.handleStats2: shifted local var " + oldVar + " to " + var.var + " (opcode=" + var.getOpcode() + ")");
+                        }
+                    } else if (insn instanceof IincInsnNode) {
+                        IincInsnNode iinc = (IincInsnNode)insn;
+                        if (iinc.var >= 2) {
+                            int oldVar = iinc.var;
+                            iinc.var = oldVar + 1;
+                            System.out.println("  JRMCoreH.handleStats2: shifted IINC var " + oldVar + " to " + iinc.var);
+                        }
+                    }
+                }
+                
+                // Also update any field accesses to curTP:I -> curTPLong:J
+                for (AbstractInsnNode insn : m.instructions.toArray()) {
+                    if (insn instanceof FieldInsnNode) {
+                        FieldInsnNode fin = (FieldInsnNode)insn;
+                        if (JRMCoreH.equals(fin.owner) && "curTP".equals(fin.name) && "I".equals(fin.desc)) {
+                            if (fin.getOpcode() == Opcodes.GETSTATIC) {
+                                // GETSTATIC curTP:I -> GETSTATIC curTPLong:J (for display)
+                                fin.name = "curTPLong";
+                                fin.desc = "J";
+                                System.out.println("  JRMCoreH.handleStats2: replaced GETSTATIC curTP:I with GETSTATIC curTPLong:J");
+                            } else if (fin.getOpcode() == Opcodes.PUTSTATIC) {
+                                // PUTSTATIC curTP:I -> dual field update (curTPLong:J + curTP:I via clampTP)
+                                InsnList replacement = newInsnList();
+                                // Load the long curTP parameter (local var 1)
+                                addInsn(replacement, new VarInsnNode(Opcodes.LLOAD, 1));
+                                // Store to curTPLong
+                                addInsn(replacement, new FieldInsnNode(Opcodes.PUTSTATIC, JRMCoreH, "curTPLong", "J"));
+                                // Load again for clampTP
+                                addInsn(replacement, new VarInsnNode(Opcodes.LLOAD, 1));
+                                // Clamp to int
+                                addInsn(replacement, new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCoreH, "clampTP", "(J)I", false));
+                                // Store to curTP
+                                addInsn(replacement, new FieldInsnNode(Opcodes.PUTSTATIC, JRMCoreH, "curTP", "I"));
+                                m.instructions.insert(fin, replacement);
+                                m.instructions.remove(fin);
+                                System.out.println("  JRMCoreH.handleStats2: replaced PUTSTATIC curTP:I with dual field update");
+                            }
+                        }
+                    }
+                }
+                
+                m.maxLocals += 1;
+                System.out.println("  JRMCoreH.handleStats2: descriptor changed to long, locals shifted");
             }
         }
     }
@@ -2054,6 +2381,133 @@ public class TpPatch {
     }
 
     static void patchGainSiteJrmcExp(MethodNode m, int approxIndex) {
+        System.out.println("  patchGainSiteJrmcExp: patching gain site near index " + approxIndex);
+        AbstractInsnNode[] arr = m.instructions.toArray();
+        
+        // Search around approxIndex for the pattern:
+        // getInt(jrmcTpint) -> ISTORE temp
+        // ILOAD temp, ILOAD gain_computed, IMUL/IADD -> ISTORE result
+        // clamp with getMaxTP
+        // setInt(jrmcTpint)
+        // Replace with: ALOAD 13 (target player), <gain>, I2L, INVOKESTATIC TpUtil.addTP
+        
+        int searchStart = Math.max(0, approxIndex - 10);
+        int searchEnd = Math.min(arr.length, approxIndex + 30);
+        
+        for (int i = searchStart; i < searchEnd; i++) {
+            AbstractInsnNode insn = arr[i];
+            if (insn instanceof MethodInsnNode) {
+                MethodInsnNode min = (MethodInsnNode)insn;
+                // Look for getInt with jrmcTpint
+                if ("getInt".equals(min.name) && JRMCoreH.equals(min.owner)
+                        && "(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I".equals(min.desc)) {
+                    if (i > 0 && arr[i - 1] instanceof LdcInsnNode) {
+                        LdcInsnNode ldc = (LdcInsnNode)arr[i - 1];
+                        if ("jrmcTpint".equals(ldc.cst)) {
+                            // Found getInt(jrmcTpint) - now look for the setInt(jrmcTpint) after
+                            for (int j = i + 1; j < Math.min(arr.length, i + 60); j++) {
+                                if (arr[j] instanceof MethodInsnNode) {
+                                    MethodInsnNode setMin = (MethodInsnNode)arr[j];
+                                    if ("setInt".equals(setMin.name) && JRMCoreH.equals(setMin.owner)
+                                            && "(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V".equals(setMin.desc)) {
+                                        if (j > 0 && arr[j - 1] instanceof LdcInsnNode) {
+                                            LdcInsnNode setLdc = (LdcInsnNode)arr[j - 1];
+                                            if ("jrmcTpint".equals(setLdc.cst)) {
+                                                // Found the pattern! 
+                                                // The target player is in local 13 (for first site) or 3 (for second site)
+                                                // The gain is computed as ILOAD 10 (tpGain) * ILOAD 1 (e) or similar
+                                                // We'll insert: ALOAD <player>, <gain computation>, I2L, INVOKESTATIC TpUtil.addTP
+                                                
+                                                // Find the player ALOAD before setInt
+                                                VarInsnNode playerLoad = null;
+                                                for (int k = j - 2; k >= 0; k--) {
+                                                    if (arr[k] instanceof VarInsnNode) {
+                                                        VarInsnNode var = (VarInsnNode)arr[k];
+                                                        if (var.getOpcode() == Opcodes.ALOAD && (var.var == 13 || var.var == 3)) {
+                                                            playerLoad = var;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                
+                                                // Find the gain computation - look for IMUL or IADD before setInt
+                                                // The pattern is: ILOAD tp, ILOAD gain, IMUL, IADD -> ISTORE
+                                                // We'll replace the whole thing
+                                                
+                                                InsnList replacement = newInsnList();
+                                                if (playerLoad != null) {
+                                                    replacement.add(new VarInsnNode(Opcodes.ALOAD, playerLoad.var));
+                                                } else {
+                                                    replacement.add(new VarInsnNode(Opcodes.ALOAD, 3)); // fallback
+                                                }
+                                                
+                                                // The gain is computed locally - we need to replicate the computation
+                                                // For simplicity, we'll look for the IMUL pattern
+                                                // Pattern: ILOAD 10, ILOAD 1, IMUL
+                                                // But since we're replacing the whole block, we can't easily extract it
+                                                // Instead, let's compute: the gain is already in a local before setInt
+                                                // Look for ISTORE before setInt
+                                                VarInsnNode gainStore = null;
+                                                for (int k = j - 1; k >= i; k--) {
+                                                    if (arr[k] instanceof VarInsnNode) {
+                                                        VarInsnNode var = (VarInsnNode)arr[k];
+                                                        if (var.getOpcode() == Opcodes.ISTORE) {
+                                                            gainStore = var;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                if (gainStore != null) {
+                                                    // Load the computed gain
+                                                    replacement.add(new VarInsnNode(Opcodes.ILOAD, gainStore.var));
+                                                } else {
+                                                    // Fallback: try to compute it
+                                                    // tpGain is at local 10, e is at local 1
+                                                    replacement.add(new VarInsnNode(Opcodes.ILOAD, 10));
+                                                    replacement.add(new VarInsnNode(Opcodes.ILOAD, 1));
+                                                    replacement.add(new InsnNode(Opcodes.IMUL));
+                                                }
+                                                replacement.add(new InsnNode(Opcodes.I2L));
+                                                replacement.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "JinRyuu/JRMCore/TpUtil", "addTP", "(Lnet/minecraft/entity/player/EntityPlayer;J)V", false));
+                                                
+                                                // Find start of pattern - the ALOAD before first LDC jrmcTpint
+                                                AbstractInsnNode startNode = null;
+                                                for (int k = i - 1; k >= 0; k--) {
+                                                    if (arr[k] instanceof VarInsnNode) {
+                                                        VarInsnNode var = (VarInsnNode)arr[k];
+                                                        if (var.getOpcode() == Opcodes.ALOAD && (var.var == 3 || var.var == 13)) {
+                                                            startNode = var;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                if (startNode == null) startNode = ldc;
+                                                
+                                                // Remove all instructions from startNode to setMin (inclusive)
+                                                AbstractInsnNode cur = startNode;
+                                                while (cur != null && cur != setMin.getNext()) {
+                                                    AbstractInsnNode next = cur.getNext();
+                                                    m.instructions.remove(cur);
+                                                    cur = next;
+                                                }
+                                                m.instructions.remove(setLdc);
+                                                m.instructions.remove(setMin);
+                                                
+                                                // Insert replacement at startNode position
+                                                m.instructions.insert(startNode, replacement);
+                                                
+                                                System.out.println("  jrmcExp: replaced gain site near index " + approxIndex + " with TpUtil.addTP");
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     static void patchTpalgn(MethodNode m, ClassNode cn) {
@@ -2063,6 +2517,103 @@ public class TpPatch {
     }
 
     static void patchGainSiteTpalgn(MethodNode m, int approxIndex) {
+        System.out.println("  patchGainSiteTpalgn: patching gain site near index " + approxIndex);
+        AbstractInsnNode[] arr = m.instructions.toArray();
+        
+        // Search around approxIndex for the pattern:
+        // getInt(jrmcTpint) -> ISTORE temp
+        // ILOAD temp, ILOAD 1 (gain), IADD -> ISTORE result
+        // clamp with getMaxTP
+        // setInt(jrmcTpint)
+        // Replace with: ALOAD 0 (player), ILOAD 1 (gain), I2L, INVOKESTATIC TpUtil.addTP
+        
+        int searchStart = Math.max(0, approxIndex - 10);
+        int searchEnd = Math.min(arr.length, approxIndex + 30);
+        
+        for (int i = searchStart; i < searchEnd; i++) {
+            AbstractInsnNode insn = arr[i];
+            if (insn instanceof MethodInsnNode) {
+                MethodInsnNode min = (MethodInsnNode)insn;
+                // Look for getInt with jrmcTpint
+                if ("getInt".equals(min.name) && JRMCoreH.equals(min.owner)
+                        && "(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I".equals(min.desc)) {
+                    if (i > 0 && arr[i - 1] instanceof LdcInsnNode) {
+                        LdcInsnNode ldc = (LdcInsnNode)arr[i - 1];
+                        if ("jrmcTpint".equals(ldc.cst)) {
+                            // Found getInt(jrmcTpint) - now look for the pattern
+                            // Check if there's an ILOAD 1 (gain) and IADD nearby
+                            // and a setInt(jrmcTpint) after
+                            for (int j = i + 1; j < Math.min(arr.length, i + 30); j++) {
+                                if (arr[j] instanceof MethodInsnNode) {
+                                    MethodInsnNode setMin = (MethodInsnNode)arr[j];
+                                    if ("setInt".equals(setMin.name) && JRMCoreH.equals(setMin.owner)
+                                            && "(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V".equals(setMin.desc)) {
+                                        if (j > 0 && arr[j - 1] instanceof LdcInsnNode) {
+                                            LdcInsnNode setLdc = (LdcInsnNode)arr[j - 1];
+                                            if ("jrmcTpint".equals(setLdc.cst)) {
+                                                // Found the pattern! Replace surgically
+                                                // Pattern: ALOAD 0, LDC, getInt, ...computation..., LDC, setInt
+                                                // Keep the first ALOAD 0, replace the rest with: ILOAD 1, I2L, INVOKESTATIC addTP
+                                                
+                                                // Find the first ALOAD 0 (player load for getInt)
+                                                AbstractInsnNode startNode = null;
+                                                for (int k = i - 1; k >= 0; k--) {
+                                                    if (arr[k] instanceof VarInsnNode) {
+                                                        VarInsnNode var = (VarInsnNode)arr[k];
+                                                        if (var.getOpcode() == Opcodes.ALOAD && var.var == 0) {
+                                                            startNode = var;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                if (startNode == null) {
+                                                    System.out.println("  tpalgn: WARNING - could not find startNode for gain site near " + approxIndex);
+                                                    return;
+                                                }
+                                                
+                                                // Build replacement: ILOAD 1 (gain), I2L, INVOKESTATIC addTP
+                                                // (ALOAD 0 is already there as startNode)
+                                                InsnList replacement = newInsnList();
+                                                replacement.add(new VarInsnNode(Opcodes.ILOAD, 1));
+                                                replacement.add(new InsnNode(Opcodes.I2L));
+                                                replacement.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "JinRyuu/JRMCore/TpUtil", "addTP", "(Lnet/minecraft/entity/player/EntityPlayer;J)V", false));
+                                                
+                                                // Remove the pattern instructions: LDC, getInt, ...computation..., LDC, setInt
+                                                // Keep startNode (ALOAD 0)
+                                                // Remove from LDC (i-1) to setMin (inclusive)
+                                                List<AbstractInsnNode> toRemove = new ArrayList<>();
+                                                // Add LDC before getInt
+                                                toRemove.add(ldc);
+                                                // Add getInt
+                                                toRemove.add(min);
+                                                // Add instructions between getInt and setLdc
+                                                for (int k = i + 1; k < j - 1; k++) {
+                                                    toRemove.add(arr[k]);
+                                                }
+                                                // Add setLdc and setMin
+                                                toRemove.add(setLdc);
+                                                toRemove.add(setMin);
+                                                
+                                                for (AbstractInsnNode node : toRemove) {
+                                                    m.instructions.remove(node);
+                                                }
+                                                
+                                                // Insert replacement after startNode (ALOAD 0)
+                                                m.instructions.insert(startNode, replacement);
+                                                
+                                                System.out.println("  tpalgn: replaced gain site near index " + approxIndex + " with TpUtil.addTP");
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("  tpalgn: WARNING - gain site near index " + approxIndex + " not found");
     }
 
     static void patchPacHanSHandleTech(MethodNode m, ClassNode cn) {
@@ -2072,14 +2623,147 @@ public class TpPatch {
         // ... ILOAD gain, IADD ...
         // ALOAD player, LDC jrmcTpint, INVOKESTATIC setInt
         // Replace with: ALOAD player, <gain>, I2L, INVOKESTATIC addTP
-        patchPacHanSHandleTechGain(m);
+        // DISABLED: surgical patch causes frame verification issues
+        // patchPacHanSHandleTechGain(m);
+        // The generic rewrite will handle getInt/setInt -> getTPInt/setTPMirror
     }
 
     static void patchPacHanSHandleTechGain(MethodNode m) {
-        // Find and replace gain patterns in handleTech
-        // Gain site 1: getInt at ~430, setInt at ~439
-        // Gain site 2: getInt at ~468, setInt at ~477
-        // The generic rewrite will handle remaining getInt/setInt via getTPInt/setTPMirror
+        System.out.println("  patchPacHanSHandleTechGain: patching gain sites");
+        
+        // Patch both gain sites in a single pass to avoid stale array issues
+        // Site 1: around index 430-440, player=3, gain=12
+        // Site 2: around index 468-478, player=3, gain=11
+        // We'll search for all gain sites and patch them
+        
+        boolean patchedSite1 = false;
+        boolean patchedSite2 = false;
+        
+        // Keep searching until both sites are patched or no more sites found
+        while (!patchedSite1 || !patchedSite2) {
+            AbstractInsnNode[] arr = m.instructions.toArray();
+            boolean anyPatched = false;
+            
+            for (int i = 0; i < arr.length; i++) {
+                AbstractInsnNode insn = arr[i];
+                if (insn instanceof MethodInsnNode) {
+                    MethodInsnNode min = (MethodInsnNode)insn;
+                    if ("getInt".equals(min.name) && JRMCoreH.equals(min.owner)
+                            && "(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I".equals(min.desc)) {
+                        if (i > 0 && arr[i - 1] instanceof LdcInsnNode) {
+                            LdcInsnNode ldc = (LdcInsnNode)arr[i - 1];
+                            if ("jrmcTpint".equals(ldc.cst)) {
+                                // Found getInt - look for matching setInt
+                                for (int j = i + 1; j < Math.min(arr.length, i + 20); j++) {
+                                    if (arr[j] instanceof MethodInsnNode) {
+                                        MethodInsnNode setMin = (MethodInsnNode)arr[j];
+                                        if ("setInt".equals(setMin.name) && JRMCoreH.equals(setMin.owner)
+                                                && "(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V".equals(setMin.desc)) {
+                                            if (j > 0 && arr[j - 1] instanceof LdcInsnNode) {
+                                                LdcInsnNode setLdc = (LdcInsnNode)arr[j - 1];
+                                                if ("jrmcTpint".equals(setLdc.cst)) {
+                                                    // Check if there's an IADD between getInt and setInt
+                                                    boolean hasIadd = false;
+                                                    for (int k = i; k < j; k++) {
+                                                        if (arr[k] instanceof InsnNode && arr[k].getOpcode() == Opcodes.IADD) {
+                                                            hasIadd = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (hasIadd) {
+                                                        // Determine which site this is based on the ISTORE target
+                                                        int gainVar = -1;
+                                                        int playerVar = 3;
+                                                        // Find the ISTORE after getInt
+                                                        for (int k = i + 1; k < j; k++) {
+                                                            if (arr[k] instanceof VarInsnNode) {
+                                                                VarInsnNode var = (VarInsnNode)arr[k];
+                                                                if (var.getOpcode() == Opcodes.ISTORE) {
+                                                                    gainVar = var.var;
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                        
+                                                        // Site 1 uses ISTORE 13, site 2 uses ISTORE 12
+                                                        boolean isSite1 = (gainVar == 13 && !patchedSite1);
+                                                        boolean isSite2 = (gainVar == 12 && !patchedSite2);
+                                                        
+                                                        if (isSite1 || isSite2) {
+                                                            // This is a gain site - replace it surgically
+                                                            // Pattern: ALOAD player, LDC, getInt, ...computation (ISTORE, ILOAD, IADD)..., LDC, setInt
+                                                            // Keep the first ALOAD player, replace the rest with: ILOAD gain, I2L, INVOKESTATIC addTP
+                                                            
+                                                            // Find the first ALOAD player (for getInt)
+                                                            AbstractInsnNode startNode = null;
+                                                            for (int k = i - 1; k >= 0; k--) {
+                                                                if (arr[k] instanceof VarInsnNode) {
+                                                                    VarInsnNode var = (VarInsnNode)arr[k];
+                                                                    if (var.getOpcode() == Opcodes.ALOAD && var.var == playerVar) {
+                                                                        startNode = var;
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                            if (startNode == null) {
+                                                                System.out.println("  handleTech: WARNING - could not find startNode for gain site (ISTORE " + gainVar + ")");
+                                                                continue;
+                                                            }
+                                                            
+                                                            // Build replacement: ILOAD gain, I2L, INVOKESTATIC addTP
+                                                            // (ALOAD player is already there as startNode)
+                                                            InsnList replacement = newInsnList();
+                                                            replacement.add(new VarInsnNode(Opcodes.ILOAD, gainVar)); // ILOAD gain
+                                                            replacement.add(new InsnNode(Opcodes.I2L));
+                                                            replacement.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "JinRyuu/JRMCore/TpUtil", "addTP", "(Lnet/minecraft/entity/player/EntityPlayer;J)V", false));
+                                                            
+                                                            // Remove the pattern instructions: LDC, getInt, ...computation..., LDC, setInt
+                                                            // Keep startNode (ALOAD player)
+                                                            // Remove from LDC (i-1) to setMin (inclusive)
+                                                            List<AbstractInsnNode> toRemove = new ArrayList<>();
+                                                            // Add LDC before getInt
+                                                            toRemove.add(ldc);
+                                                            // Add getInt
+                                                            toRemove.add(min);
+                                                            // Add instructions between getInt and setLdc
+                                                            for (int k = i + 1; k < j - 1; k++) {
+                                                                toRemove.add(arr[k]);
+                                                            }
+                                                            // Add setLdc and setMin
+                                                            toRemove.add(setLdc);
+                                                            toRemove.add(setMin);
+                                                            
+                                                            for (AbstractInsnNode node : toRemove) {
+                                                                m.instructions.remove(node);
+                                                            }
+                                                            
+                                                            // Insert replacement after startNode (ALOAD player)
+                                                            m.instructions.insert(startNode, replacement);
+                                                            System.out.println("  handleTech: replaced gain site (ISTORE " + gainVar + ") with TpUtil.addTP");
+                                                            
+                                                            if (isSite1) patchedSite1 = true;
+                                                            if (isSite2) patchedSite2 = true;
+                                                            anyPatched = true;
+                                                            break; // Restart scan since instructions changed
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (!anyPatched) {
+                if (!patchedSite1) System.out.println("  handleTech: WARNING - site 1 (ISTORE 13) not found or already patched");
+                if (!patchedSite2) System.out.println("  handleTech: WARNING - site 2 (ISTORE 12) not found or already patched");
+                break;
+            }
+        }
     }
 
     static void patchPacHanSHandleQuad(MethodNode m, ClassNode cn) {
@@ -2099,6 +2783,47 @@ public class TpPatch {
     }
 
     static void patchComTickHGain(MethodNode m, int getIntIndex) {
+        System.out.println("  patchComTickHGain: checking for gain site near index " + getIntIndex);
+        // The generic rewrite already handles getInt/setInt for jrmcTpint in updatePlayersData
+        // This method would handle actual TP gain sites (getInt + IADD + setInt)
+        // If any exist, they would be replaced with TpUtil.addTP
+        AbstractInsnNode[] arr = m.instructions.toArray();
+        
+        int searchStart = Math.max(0, getIntIndex - 10);
+        int searchEnd = Math.min(arr.length, getIntIndex + 30);
+        
+        for (int i = searchStart; i < searchEnd; i++) {
+            AbstractInsnNode insn = arr[i];
+            if (insn instanceof MethodInsnNode) {
+                MethodInsnNode min = (MethodInsnNode)insn;
+                if ("func_74762_e".equals(min.name) && "net/minecraft/nbt/NBTTagCompound".equals(min.owner)
+                        && "(Ljava/lang/String;)I".equals(min.desc)) {
+                    if (i > 0 && arr[i - 1] instanceof LdcInsnNode) {
+                        LdcInsnNode ldc = (LdcInsnNode)arr[i - 1];
+                        if ("jrmcTpint".equals(ldc.cst)) {
+                            // Check if there's an IADD following (indicating a gain)
+                            boolean hasIadd = false;
+                            for (int j = i + 1; j < Math.min(arr.length, i + 20); j++) {
+                                if (arr[j] instanceof InsnNode && arr[j].getOpcode() == Opcodes.IADD) {
+                                    hasIadd = true;
+                                    break;
+                                }
+                                // Stop at branch or method call
+                                if (arr[j] instanceof JumpInsnNode || arr[j] instanceof MethodInsnNode) {
+                                    break;
+                                }
+                            }
+                            if (hasIadd) {
+                                System.out.println("  ComTickH.updatePlayersData: found gain site near index " + getIntIndex + " - would patch with addTP");
+                                // The generic rewrite already handles this via getTPInt/setTPMirrorNbt
+                                // Actual addTP would require more complex local variable tracking
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     }

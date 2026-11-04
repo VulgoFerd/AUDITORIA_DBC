@@ -7,7 +7,89 @@
 
 ---
 
-## [1.0.1] - 2026-11-02 - CORREÇÃO DO CRASH `JRMCorePStats2.toBytes`
+## [1.0.4] - 2026-11-04 - BIG TP 1.0.4 COMPLETO (TP 64-bit End-to-End)
+
+### 🎯 Objetivo
+Converter TP de `int` para `long` em todo o pipeline JRMCore/DragonBlockC + NPCDBC, eliminando o limite de 2.147.483.647.
+
+### ✅ Adicionado
+
+#### TpUtil - Autoridade Única TP 64-bit (Nova Classe Injetada)
+- `getTP(NBTTagCompound)` - Leitura long com migração automática INT→LONG
+- `writeTP(NBTTagCompound, long)` - Escrita long + espelho int saturado
+- `addTP(EntityPlayer, long)` / `addTP(NBTTagCompound, long)` - Soma segura com `addTPSafe` (saturação Long.MAX/MIN_VALUE)
+- `setMirror(EntityPlayer, int)` / `setMirror(NBTTagCompound, int)` - Escrita legada via delta seguro
+- `getTPInt(EntityPlayer)` / `getTPInt(NBTTagCompound)` - TP como int saturado (0..Integer.MAX_VALUE)
+- `clamp(long)` - Saturação para display/UI
+- `tpShort(long)` - Formatação B/T/Q/Qi
+
+#### JRMCoreH - Núcleo TP Long
+- Campo estático `curTPLong:J` (autoridade 64-bit)
+- `getTPTotal(Object)` / `getTPTotal(EntityPlayer)` - Leitura autoritativa
+- `setTPTotal(Object, long)` - Escrita autoritativa + espelho
+- `clampTP(long)` - Saturação para int
+- `addTP(Object, long)` / `addTP(EntityPlayer, long)` - Delegação para TpUtil
+- `setTPMirror(int, EntityPlayer)` / `setTPMirrorNbt(Object, int)` - Escrita espelho via delta
+- `setTPTotalClient(long)` - Atualiza `curTPLong` + `curTP` no cliente
+- `handleStats2` descriptor alterado para `(JIB[I)V`
+- `expPls` - Sites de ganho usam `TpUtil.addTP`
+- `jrmcExp` - 2 sites de ganho usam `TpUtil.addTP`
+- `tpalgn` - 2 sites de ganho usam `TpUtil.addTP`
+- `setLong` - Removido truncamento `l2i;i2l`
+
+#### JRMCoreComTickH - Sincronia Servidor→Cliente
+- `updatePlayersData` - `jrmcTpint` substituído por `clampTP(getTPTotal(NBT))`
+- `sendPlayerData` - Envia `curTPLong` nos arrays de dados
+
+#### JRMCorePacHanC - Handler Cliente
+- `handleData` - `PUTSTATIC curTP:I` substituído por `setTPTotalClient(long)`
+- `handleStats2` - Descritor `(JIB[I)V`, locais deslocados (long ocupa 2 slots), `PUTSTATIC curTP:I` → dual field update
+
+#### JRMCorePacHanS - Handler Servidor
+- `handleData` - `getInt jrmcTpint` → `clampTP(getTPTotal)`
+- `handleTech` - 2 sites de ganho usam `TpUtil.addTP`
+- `handleQuad/handleStats3/handleUpgrade/handleChar/handleTick` - NBT reescritos para `getTPInt`/`setTPMirrorNbt`
+
+#### JRMCorePStats2 - Pacote Rede Long
+- Campo `curTP:I` removido, adicionado `curTPLong:J`
+- Construtor `(JIB[I)V` - `curTP` carregado como `LLOAD 1`
+- `toBytes` - `writeInt` → `writeLong`
+- `fromBytes` - `readInt` → `readLong`
+
+#### JRMCorePStats2$Handler - Handler Rede
+- `handleClientMessage` - `GETFIELD curTP:I` → `curTPLong:J`
+- Chamada `PacHanC.handleStats2` atualizada para descritor long
+
+#### DBCData (ComJrmcRacialSkill) - NBT Long
+- `loadFromNBT` / `saveFromNBT` - Reescritos usando `TpUtil.getTP`/`writeTP`
+- Sem cirurgia de stack (SWAP com long eliminado)
+
+#### ComJrmctp - Comando /jrmctp
+- `getTPTotal` / `setTPTotal` usam long nativo (com `I2L` onde necessário)
+
+#### Ferramentas
+- `VerifyJar` - Validação estática com `--audit-descriptors` (346 classes, 3707 métodos, 0 frames inválidos, 0 refs curTP:I, 0 mismatches)
+- `VerifyBytecode` - Verificação estrita com `CheckClassAdapter` + hierarchy ClassLoader
+- `HierarchyClassWriter` - `COMPUTE_FRAMES` real via hierarquia serializada (120 classes), sem fallback
+
+### 🔧 Corrigido
+- Todos os 10 pontos de auditoria do commit `285d86a` resolvidos
+- Overflow em `setMirror` → `addTPSafe` (saturating add)
+- Anchor-on-removed-instruction eliminados (7 ocorrências)
+- Slots locais, IINC, LocalVariableTable e frames de PStats2 corretos
+- NBT migration com validação de tipo (tag 3=INT, 4=LONG) e persistência
+
+### 📦 Artefato
+| Item | Valor |
+|------|-------|
+| SHA-256 do JAR | `A461651CFF1C6C22BBA77368320B8E129B4CF67B1C120F6BEF610D071F4FA12C` |
+| Classes patchadas | JRMCoreH, JRMCoreComTickH, JRMCorePacHanC, JRMCorePacHanS, JRMCorePStats2, JRMCorePStats2$Handler, ComJrmcRacialSkill, ComJrmctp, TpUtil (injected) |
+| Validação estática | PASS (VerifyJar + VerifyBytecode) |
+| Teste Minecraft | PENDENTE |
+
+---
+
+## [1.0.3] - 2026-11-03 - TP LONG INTERMEDIATE (v11)
 
 ### 🐞 Corrigido
 

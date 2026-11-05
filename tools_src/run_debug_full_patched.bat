@@ -1,0 +1,2 @@
+@echo off
+"C:\Program Files\Eclipse Adoptium\jdk-17.0.20.101-hotspot\bin\java.exe" -cp ".;C:\Users\Fernando\AppData\Local\Temp\opencode\dbc-re\asm.jar;C:\Users\Fernando\AppData\Local\Temp\opencode\dbc-re\asm-tree.jar" DebugMethodFull "C:\Users\Fernando\Desktop\NanatsuCore\artifacts\JRMCore-v1.3.51-tp-long-v9.jar" JinRyuu/JRMCore/JRMCoreComTickH.class updatePlayersData 1500 1540

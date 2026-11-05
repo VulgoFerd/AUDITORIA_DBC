@@ -1,0 +1,2 @@
+@echo off
+"C:\Program Files\Eclipse Adoptium\jdk-17.0.20.101-hotspot\bin\jar.exe" tf "C:\Users\Fernando\AppData\Roaming\.minecraft\libraries\net\minecraftforge\forge\1.7.10-10.13.4.1614-1.7.10\forge-1.7.10-10.13.4.1614-1.7.10.jar" | findstr "net/minecraft/nbt net/minecraft/entity/player"

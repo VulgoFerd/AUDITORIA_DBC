@@ -1,0 +1,14 @@
+classe,metodo,descritor,offset,chave,operacao,descritor_operacao,contexto
+JinRyuu/JRMCore/TpUtil,getTP,(Lnet/minecraft/nbt/NBTTagCompound;)J,11,jrmcTplong,nbt-has-key(func_74764_b),(Ljava/lang/String;)Z,"var0 | ldc""jrmcTplong"""
+JinRyuu/JRMCore/TpUtil,getTP,(Lnet/minecraft/nbt/NBTTagCompound;)J,15,jrmcTplong,nbt-read-long(func_74763_f),(Ljava/lang/String;)J,"var0 | ldc""jrmcTplong"" | call:NBTTagCompound.func_74764_b | ifeq | var0 | ldc""jrmcTplong"""
+JinRyuu/JRMCore/TpUtil,getTP,(Lnet/minecraft/nbt/NBTTagCompound;)J,22,jrmcTpint,nbt-read-int(func_74762_e),(Ljava/lang/String;)I,"var0 | ldc""jrmcTpint"""
+JinRyuu/JRMCore/TpUtil,setClient,(J)V,3,curTPLong,field-write(curTPLong:J),J,var0
+JinRyuu/JRMCore/TpUtil,setClient,(J)V,8,curTP,field-write(curTP:I),I,var0 | getfield:JRMCoreH.curTPLong | var0 | call:TpUtil.clamp
+JinRyuu/JRMCore/TpUtil,setTP,(Lnet/minecraft/nbt/NBTTagCompound;J)V,11,jrmcTplong,nbt-write-long(func_74772_a),(Ljava/lang/String;J)V,"var0 | ldc""jrmcTplong"" | var1"
+JinRyuu/JRMCore/TpUtil,setTP,(Lnet/minecraft/nbt/NBTTagCompound;J)V,22,curTPLong,field-write(curTPLong:J),J,var1 | call:TpUtil.clamp | call:NBTTagCompound.func_74768_a | var1
+JinRyuu/JRMCore/TpUtil,setTP,(Lnet/minecraft/nbt/NBTTagCompound;J)V,27,curTP,field-write(curTP:I),I,var1 | getfield:JRMCoreH.curTPLong | var1 | call:TpUtil.clamp
+JinRyuu/JRMCore/TpUtil,writeTP,(Lnet/minecraft/nbt/NBTTagCompound;J)V,11,jrmcTplong,nbt-write-long(func_74772_a),(Ljava/lang/String;J)V,"var0 | ldc""jrmcTplong"" | var1"
+JinRyuu/JRMCore/TpUtil,writeTP,(Lnet/minecraft/nbt/NBTTagCompound;J)V,22,curTPLong,field-write(curTPLong:J),J,var1 | call:TpUtil.clamp | call:NBTTagCompound.func_74768_a | var1
+JinRyuu/JRMCore/TpUtil,writeTP,(Lnet/minecraft/nbt/NBTTagCompound;J)V,27,curTP,field-write(curTP:I),I,var1 | getfield:JRMCoreH.curTPLong | var1 | call:TpUtil.clamp
+kamkeel/npcdbc/client/gui/dbc/StatSheetGui,func_73876_c,()V,669,curTPLong,field-read(curTPLong:J),J,call:HashMap.get | 1 | dup | 0
+kamkeel/npcdbc/client/gui/dbc/StatSheetGui,func_73876_c,()V,919,curTPLong,field-read(curTPLong:J),J,var0 | getfield:StatSheetGui.upgradeCounter | call:JRMCoreH.attrCst | var20

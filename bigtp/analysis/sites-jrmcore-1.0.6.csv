@@ -1,0 +1,42 @@
+classe,metodo,descritor,offset,chave,operacao,descritor_operacao,contexto
+JinRyuu/JRMCore/ComJrmctp,func_71515_b,(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V,506,jrmcTpint,nbt-read-int(func_74762_e),(Ljava/lang/String;)I,"var8 | ifeq | var12 | ldc""jrmcTpint"""
+JinRyuu/JRMCore/ComJrmctp,func_71515_b,(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V,534,jrmcTpint,nbt-write-int(func_74768_a),(Ljava/lang/String;I)V,"var12 | ldc""jrmcTpint"" | var14"
+JinRyuu/JRMCore/ComJrmctp,func_71515_b,(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V,578,jrmcTpint,nbt-read-int(func_74762_e),(Ljava/lang/String;)I,"var12 | ldc""jrmcTpint"""
+JinRyuu/JRMCore/ComJrmctp,func_71515_b,(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V,624,jrmcTpint,nbt-write-int(func_74768_a),(Ljava/lang/String;I)V,"var12 | ldc""jrmcTpint"" | var16"
+JinRyuu/JRMCore/JRMCoreComTickH,updatePlayersData,(Lnet/minecraft/server/MinecraftServer;ILnet/minecraft/entity/player/EntityPlayerMP;LJinRyuu/JRMCore/server/JGPlayerMP;Lnet/minecraft/nbt/NBTTagCompound;)V,1341,jrmcTpint,nbt-get-tag(func_74781_a),(Ljava/lang/String;)Lnet/minecraft/nbt/NBTBase;,"call:NBTTagCompound.func_74778_a | var5 | ldc""jrmcTpint"""
+JinRyuu/JRMCore/JRMCoreComTickH,updatePlayersData,(Lnet/minecraft/server/MinecraftServer;ILnet/minecraft/entity/player/EntityPlayerMP;LJinRyuu/JRMCore/server/JGPlayerMP;Lnet/minecraft/nbt/NBTTagCompound;)V,1347,jrmcTp,nbt-read-short(func_74765_d),(Ljava/lang/String;)S,"call:NBTTagCompound.func_74781_a | var5 | ldc""jrmcTp"""
+JinRyuu/JRMCore/JRMCoreComTickH,updatePlayersData,(Lnet/minecraft/server/MinecraftServer;ILnet/minecraft/entity/player/EntityPlayerMP;LJinRyuu/JRMCore/server/JGPlayerMP;Lnet/minecraft/nbt/NBTTagCompound;)V,1359,jrmcTp,nbt-write-short(func_74777_a),(Ljava/lang/String;S)V,"call:JRMCoreH.setTPMirrorNbt | var5 | ldc""jrmcTp"" | 0"
+JinRyuu/JRMCore/JRMCoreGuiBars,renderTrainGui,()V,213,curTPLong,field-read(curTPLong:J),J,"var4 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/JRMCore/JRMCoreGuiBars,renderTrainGui,()V,223,curTPLong,field-read(curTPLong:J),J,"ifge | dup | call:StringBuilder.<init> | ldc""§2"" | call:StringBuilder.append"
+JinRyuu/JRMCore/JRMCoreGuiBars,renderTrainGui,()V,244,curTPLong,field-read(curTPLong:J),J,"dup | call:StringBuilder.<init> | ldc""§4"" | call:StringBuilder.append"
+JinRyuu/JRMCore/JRMCoreGuiSCM,func_73863_a,(IIF)V,1351,curTPLong,field-read(curTPLong:J),J,var7 | dup | call:StringBuilder.<init>
+JinRyuu/JRMCore/JRMCoreGuiSCM,func_73863_a,(IIF)V,1561,curTPLong,field-read(curTPLong:J),J,var30 | var28 | -1 | if_icmpeq
+JinRyuu/JRMCore/JRMCoreGuiScreen,func_73863_a,(IIF)V,495,curTPLong,field-read(curTPLong:J),J,0 | call:JRMCoreGuiButtons00.<init> | call:List.add | pop
+JinRyuu/JRMCore/JRMCoreGuiScreen,func_73863_a,(IIF)V,20256,curTPLong,field-read(curTPLong:J),J,"var37 | call:StringBuilder.append | ldc"": "" | call:StringBuilder.append | getfield:JRMCoreH.cldgy | call:StringBuilder.append"
+JinRyuu/JRMCore/JRMCoreGuiScreen,func_73863_a,(IIF)V,20727,curTPLong,field-read(curTPLong:J),J,0 | var88
+JinRyuu/JRMCore/JRMCoreGuiScreen,func_73863_a,(IIF)V,24773,curTPLong,field-read(curTPLong:J),J,var8 | dup | call:StringBuilder.<init>
+JinRyuu/JRMCore/JRMCoreGuiScreen,func_73863_a,(IIF)V,31045,curTPLong,field-read(curTPLong:J),J,"var8 | dup | call:StringBuilder.<init> | ldc""TP Current/Cost: §8"" | call:StringBuilder.append"
+JinRyuu/JRMCore/JRMCoreGuiScreen,func_73863_a,(IIF)V,31091,curTPLong,field-read(curTPLong:J),J,call:JRMCoreGuiButtons00.<init> | call:List.add | pop | var35
+JinRyuu/JRMCore/JRMCoreGuiScreen,func_73863_a,(IIF)V,32375,curTPLong,field-read(curTPLong:J),J,"var8 | dup | call:StringBuilder.<init> | ldc""TP Current/Cost: §8"" | call:StringBuilder.append"
+JinRyuu/JRMCore/JRMCoreGuiScreen,func_73863_a,(IIF)V,32421,curTPLong,field-read(curTPLong:J),J,call:JRMCoreGuiButtons00.<init> | call:List.add | pop | var45
+JinRyuu/JRMCore/JRMCoreGuiScreen,func_73863_a,(IIF)V,32576,curTPLong,field-read(curTPLong:J),J,var8 | dup | call:StringBuilder.<init>
+JinRyuu/JRMCore/JRMCoreGuiScreen,func_73863_a,(IIF)V,32857,curTPLong,field-read(curTPLong:J),J,getfield:JRMCoreGuiScreen.field_146289_q | var22 | call:FontRenderer.func_78256_a | var35
+JinRyuu/JRMCore/JRMCoreGuiScreen,func_73863_a,(IIF)V,33235,curTPLong,field-read(curTPLong:J),J,var8 | dup | call:StringBuilder.<init>
+JinRyuu/JRMCore/JRMCoreGuiScreen,func_73863_a,(IIF)V,33485,curTPLong,field-read(curTPLong:J),J,var35 | var29 | -1 | if_icmpeq
+JinRyuu/JRMCore/JRMCoreH,<clinit>,()V,2638,curTP,field-write(curTP:I),I,0 | getfield:JRMCoreH.curRelease | 0
+JinRyuu/JRMCore/JRMCoreH,<clinit>,()V,2640,curTPLong,field-write(curTPLong:J),J,getfield:JRMCoreH.curRelease | 0 | getfield:JRMCoreH.curTP | 0L
+JinRyuu/JRMCore/JRMCoreH,resetChar,()V,113,curTP,field-write(curTP:I),I,0 | getfield:JRMCoreH.curRelease | 0
+JinRyuu/JRMCore/JRMCoreH,resetChar,()V,115,curTPLong,field-write(curTPLong:J),J,getfield:JRMCoreH.curRelease | 0 | getfield:JRMCoreH.curTP | 0L
+JinRyuu/JRMCore/JRMCorePacHanC,handleStats2,(JIB[ILnet/minecraft/entity/player/EntityPlayer;)V,4,curTPLong,field-write(curTPLong:J),J,var1 | var1
+JinRyuu/JRMCore/JRMCorePacHanC,handleStats2,(JIB[ILnet/minecraft/entity/player/EntityPlayer;)V,7,curTP,field-write(curTP:I),I,var1 | var1 | getfield:JRMCoreH.curTPLong | var1 | call:JRMCoreH.clampTP
+JinRyuu/JRMCore/TpUtil,getTP,(Lnet/minecraft/nbt/NBTTagCompound;)J,11,jrmcTplong,nbt-has-key(func_74764_b),(Ljava/lang/String;)Z,"var0 | ldc""jrmcTplong"""
+JinRyuu/JRMCore/TpUtil,getTP,(Lnet/minecraft/nbt/NBTTagCompound;)J,15,jrmcTplong,nbt-read-long(func_74763_f),(Ljava/lang/String;)J,"var0 | ldc""jrmcTplong"" | call:NBTTagCompound.func_74764_b | ifeq | var0 | ldc""jrmcTplong"""
+JinRyuu/JRMCore/TpUtil,getTP,(Lnet/minecraft/nbt/NBTTagCompound;)J,22,jrmcTpint,nbt-read-int(func_74762_e),(Ljava/lang/String;)I,"var0 | ldc""jrmcTpint"""
+JinRyuu/JRMCore/TpUtil,setClient,(J)V,3,curTPLong,field-write(curTPLong:J),J,var0
+JinRyuu/JRMCore/TpUtil,setClient,(J)V,8,curTP,field-write(curTP:I),I,var0 | getfield:JRMCoreH.curTPLong | var0 | call:TpUtil.clamp
+JinRyuu/JRMCore/TpUtil,setTP,(Lnet/minecraft/nbt/NBTTagCompound;J)V,11,jrmcTplong,nbt-write-long(func_74772_a),(Ljava/lang/String;J)V,"var0 | ldc""jrmcTplong"" | var1"
+JinRyuu/JRMCore/TpUtil,setTP,(Lnet/minecraft/nbt/NBTTagCompound;J)V,22,curTPLong,field-write(curTPLong:J),J,var1 | call:TpUtil.clamp | call:NBTTagCompound.func_74768_a | var1
+JinRyuu/JRMCore/TpUtil,setTP,(Lnet/minecraft/nbt/NBTTagCompound;J)V,27,curTP,field-write(curTP:I),I,var1 | getfield:JRMCoreH.curTPLong | var1 | call:TpUtil.clamp
+JinRyuu/JRMCore/TpUtil,writeTP,(Lnet/minecraft/nbt/NBTTagCompound;J)V,11,jrmcTplong,nbt-write-long(func_74772_a),(Ljava/lang/String;J)V,"var0 | ldc""jrmcTplong"" | var1"
+JinRyuu/JRMCore/TpUtil,writeTP,(Lnet/minecraft/nbt/NBTTagCompound;J)V,22,curTPLong,field-write(curTPLong:J),J,var1 | call:TpUtil.clamp | call:NBTTagCompound.func_74768_a | var1
+JinRyuu/JRMCore/TpUtil,writeTP,(Lnet/minecraft/nbt/NBTTagCompound;J)V,27,curTP,field-write(curTP:I),I,var1 | getfield:JRMCoreH.curTPLong | var1 | call:TpUtil.clamp

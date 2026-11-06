@@ -1,0 +1,49 @@
+﻿Compiled from "JRMCorePStats2.java"
+public class JinRyuu.JRMCore.p.JRMCorePStats2$Handler extends JinRyuu.JRMCore.p.BAmh<JinRyuu.JRMCore.p.JRMCorePStats2> {
+  public JinRyuu.JRMCore.p.JRMCorePStats2$Handler();
+    Code:
+       0: aload_0
+       1: invokespecial #13                 // Method JinRyuu/JRMCore/p/BAmh."<init>":()V
+       4: return
+
+  public cpw.mods.fml.common.network.simpleimpl.IMessage handleClientMessage(net.minecraft.entity.player.EntityPlayer, JinRyuu.JRMCore.p.JRMCorePStats2, cpw.mods.fml.common.network.simpleimpl.MessageContext);
+    Code:
+       0: getstatic     #23                 // Field JinRyuu/JRMCore/JRMCoreClient.phc:LJinRyuu/JRMCore/JRMCorePacHanC;
+       3: aload_2
+       4: getfield      #27                 // Field JinRyuu/JRMCore/p/JRMCorePStats2.curTP:I
+       7: aload_2
+       8: getfield      #30                 // Field JinRyuu/JRMCore/p/JRMCorePStats2.curExp:I
+      11: aload_2
+      12: getfield      #34                 // Field JinRyuu/JRMCore/p/JRMCorePStats2.align:B
+      15: aload_2
+      16: getfield      #38                 // Field JinRyuu/JRMCore/p/JRMCorePStats2.PlyrAttrbts:[I
+      19: aload_1
+      20: invokevirtual #44                 // Method JinRyuu/JRMCore/JRMCorePacHanC.handleStats2:(IIB[ILnet/minecraft/entity/player/EntityPlayer;)V
+      23: aconst_null
+      24: areturn
+
+  public cpw.mods.fml.common.network.simpleimpl.IMessage handleServerMessage(net.minecraft.entity.player.EntityPlayer, JinRyuu.JRMCore.p.JRMCorePStats2, cpw.mods.fml.common.network.simpleimpl.MessageContext);
+    Code:
+       0: aconst_null
+       1: areturn
+
+  public cpw.mods.fml.common.network.simpleimpl.IMessage handleServerMessage(net.minecraft.entity.player.EntityPlayer, cpw.mods.fml.common.network.simpleimpl.IMessage, cpw.mods.fml.common.network.simpleimpl.MessageContext);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: checkcast     #8                  // class JinRyuu/JRMCore/p/JRMCorePStats2
+       6: aload_3
+       7: invokevirtual #54                 // Method handleServerMessage:(Lnet/minecraft/entity/player/EntityPlayer;LJinRyuu/JRMCore/p/JRMCorePStats2;Lcpw/mods/fml/common/network/simpleimpl/MessageContext;)Lcpw/mods/fml/common/network/simpleimpl/IMessage;
+      10: areturn
+
+  public cpw.mods.fml.common.network.simpleimpl.IMessage handleClientMessage(net.minecraft.entity.player.EntityPlayer, cpw.mods.fml.common.network.simpleimpl.IMessage, cpw.mods.fml.common.network.simpleimpl.MessageContext);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: checkcast     #8                  // class JinRyuu/JRMCore/p/JRMCorePStats2
+       6: aload_3
+       7: invokevirtual #56                 // Method handleClientMessage:(Lnet/minecraft/entity/player/EntityPlayer;LJinRyuu/JRMCore/p/JRMCorePStats2;Lcpw/mods/fml/common/network/simpleimpl/MessageContext;)Lcpw/mods/fml/common/network/simpleimpl/IMessage;
+      10: areturn
+}

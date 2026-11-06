@@ -1,0 +1,13 @@
+# Dependencias de integracao opcional.
+#
+# Prefixos de pacote de mods externos que podem estar ausentes no classpath
+# de verificacao sem invalidar o JAR. Qualquer classe fora desta lista que
+# falte no classpath continua sendo erro fatal (dependencia-ausente).
+#
+# Regra: apenas mods de integracao de terceiros entram aqui. Nada de
+# Minecraft, Forge, JRMCore, DBC ou NPCDBC.
+JinRyuu/NarutoC/
+JinRyuu/FamilyC/
+JinRyuu/JBRA/
+JinRyuu/JYearsC/
+com/jin_ryuu/

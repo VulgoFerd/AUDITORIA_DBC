@@ -88,6 +88,26 @@ public final class TpUtil {
         write(tag, value);
     }
 
+    /**
+     * Escrita absoluta sem excecao. Valor negativo e tratado como 0 e
+     * reportado no stderr. Usado por bytecode legado que pode calcular
+     * valores negativos.
+     */
+    public static TpLogic.Result writeChecked(NBTTagCompound tag, long value) {
+        TpLogic.Result result = TpLogic.absolute(value);
+        if (!result.ok()) {
+            System.err.println("BIGTP: escrita absoluta rejeitada: " + value
+                    + " (" + result.status() + ")");
+            result = TpLogic.absolute(0L);
+        }
+        TpNbtCore.write(TpNbt.of(tag), result.value());
+        return result;
+    }
+
+    public static TpLogic.Result writeChecked(EntityPlayer player, long value) {
+        return writeChecked(playerTag(player), value);
+    }
+
     // ------------------------------------------------------------------ ganho
 
     public static TpLogic.Result gain(NBTTagCompound tag, long amount) {
@@ -130,6 +150,91 @@ public final class TpUtil {
 
     public static TpLogic.Result spend(EntityPlayer player, long amount) {
         return spend(playerTag(player), amount);
+    }
+
+    // ----------------------------------------------------- adaptadores ASM
+    // Usados apenas pelo bytecode reescrito. Mantem a intencao explicita.
+
+    public static void gainVoid(NBTTagCompound tag, long amount) {
+        gain(tag, amount);
+    }
+
+    public static void gainVoid(EntityPlayer player, long amount) {
+        gain(player, amount);
+    }
+
+    public static void spendVoid(NBTTagCompound tag, long amount) {
+        spend(tag, amount);
+    }
+
+    public static void spendVoid(EntityPlayer player, long amount) {
+        spend(player, amount);
+    }
+
+    public static void writeCheckedVoid(NBTTagCompound tag, long value) {
+        writeChecked(tag, value);
+    }
+
+    public static void writeCheckedVoid(EntityPlayer player, long value) {
+        writeChecked(player, value);
+    }
+
+    // -------------------------------------------------------------- comando
+
+    /**
+     * Soma um valor positivo com teto em Long.MAX_VALUE.
+     * Usado por /jrmctp. Devolve o saldo final.
+     */
+    public static long commandAdd(NBTTagCompound tag, long amount) {
+        if (tag == null) {
+            throw new IllegalArgumentException("NBTTagCompound nulo em TpUtil.commandAdd");
+        }
+        long current = readUsable(tag);
+        long sum = current + amount;
+        if (amount > 0L && sum < current) {
+            System.err.println("BIGTP: /jrmctp soma saturada em Long.MAX_VALUE");
+            sum = Long.MAX_VALUE;
+        }
+        TpNbtCore.write(TpNbt.of(tag), sum);
+        return sum;
+    }
+
+    /**
+     * Subtrai um valor positivo com piso em 0.
+     * Usado por /jrmctp. Devolve o saldo final.
+     */
+    public static long commandTake(NBTTagCompound tag, long amount) {
+        if (tag == null) {
+            throw new IllegalArgumentException("NBTTagCompound nulo em TpUtil.commandTake");
+        }
+        long current = readUsable(tag);
+        long result = amount >= current ? 0L : current - amount;
+        TpNbtCore.write(TpNbt.of(tag), result);
+        return result;
+    }
+
+    /**
+     * Define um saldo absoluto pelo comando. Negativo vira 0 e e reportado.
+     */
+    public static long commandWrite(NBTTagCompound tag, long value) {
+        if (tag == null) {
+            throw new IllegalArgumentException("NBTTagCompound nulo em TpUtil.commandWrite");
+        }
+        long normalized = value < 0L ? 0L : value;
+        if (value < 0L) {
+            System.err.println("BIGTP: /jrmctp recebeu valor negativo, aplicado 0");
+        }
+        TpNbtCore.write(TpNbt.of(tag), normalized);
+        return normalized;
+    }
+
+    private static long readUsable(NBTTagCompound tag) {
+        TpNbtCore.ReadResult result = TpNbtCore.readAndMigrate(TpNbt.of(tag));
+        if (!result.usable()) {
+            reportInvalid(result);
+            return 0L;
+        }
+        return result.value();
     }
 
     // --------------------------------------------------------------- estado

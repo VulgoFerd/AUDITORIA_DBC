@@ -1,0 +1,1833 @@
+==== JinRyuu/JRMCore/ComJrmc :: func_71515_b(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V
+---- site @insn 319
+     305  FRAME CHOP 1
+     306  ILOAD 17
+     307  IFEQ L0
+     308  L0
+     309  LINENUMBER 114 L0
+     310  ALOAD 14
+     311  ICONST_1
+     312  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.techDBCtpc ([Ljava/lang/String;Z)I
+     313  ICONST_2
+     314  IMUL
+     315  ISTORE 18
+     316  L0
+     317  LINENUMBER 115 L0
+     318  ALOAD 11
+>>   319  LDC "jrmcTpint"
+     320  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     321  ISTORE 19
+     322  L0
+     323  LINENUMBER 116 L0
+     324  ILOAD 19
+     325  ILOAD 18
+     326  ISUB
+     327  IFLT L0
+---- site @insn 334
+     320  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     321  ISTORE 19
+     322  L0
+     323  LINENUMBER 116 L0
+     324  ILOAD 19
+     325  ILOAD 18
+     326  ISUB
+     327  IFLT L0
+     328  L0
+     329  LINENUMBER 117 L0
+     330  ILOAD 19
+     331  ILOAD 18
+     332  ISUB
+     333  ALOAD 11
+>>   334  LDC "jrmcTpint"
+     335  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setInt (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     336  L0
+     337  LINENUMBER 118 L0
+     338  ALOAD 13
+     339  ICONST_0
+     340  AALOAD
+     341  ALOAD 11
+     342  GETSTATIC JinRyuu/JRMCore/JRMCoreH.techNbt : [Ljava/lang/String;
+
+==== JinRyuu/JRMCore/ComJrmcCheck :: func_71515_b(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V
+---- site @insn 220
+     206  LINENUMBER 97 L0
+     207  ALOAD 5
+     208  LDC "jrmcDiff"
+     209  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getByte (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+     210  ISTORE 17
+     211  L0
+     212  LINENUMBER 98 L0
+     213  ALOAD 5
+     214  LDC "jrmcAlign"
+     215  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getByte (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+     216  ISTORE 18
+     217  L0
+     218  LINENUMBER 99 L0
+     219  ALOAD 5
+>>   220  LDC "jrmcTpint"
+     221  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     222  ISTORE 19
+     223  L0
+     224  LINENUMBER 101 L0
+     225  ICONST_4
+     226  ANEWARRAY java/lang/String
+     227  DUP
+     228  ICONST_0
+
+==== JinRyuu/JRMCore/ComJrmcRacialSkill :: func_71515_b(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V
+---- site @insn 529
+     515  INVOKEVIRTUAL java/lang/StringBuilder.append (I)Ljava/lang/StringBuilder;
+     516  INVOKEVIRTUAL java/lang/StringBuilder.toString ()Ljava/lang/String;
+     517  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74778_a (Ljava/lang/String;Ljava/lang/String;)V
+     518  L0
+     519  LINENUMBER 110 L0
+     520  ILOAD 3
+     521  IFEQ L0
+     522  ILOAD 23
+     523  IFEQ L0
+     524  L0
+     525  LINENUMBER 112 L0
+     526  ILOAD 3
+     527  IFEQ L0
+     528  ALOAD 8
+>>   529  LDC "jrmcTpint"
+     530  ALOAD 0
+     531  GETFIELD JinRyuu/JRMCore/ComJrmcRacialSkill.tp_current : I
+     532  ALOAD 0
+     533  GETFIELD JinRyuu/JRMCore/ComJrmcRacialSkill.tp_cost : I
+     534  ISUB
+     535  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+     536  GOTO L0
+     537  L0
+
+==== JinRyuu/JRMCore/ComJrmcRacialSkill :: canAfford(ZZLjava/lang/String;Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/nbt/NBTTagCompound;BBZZ)V
+---- site @insn 277
+     263  ALOAD 25
+     264  ILOAD 6
+     265  ALOAD 15
+     266  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.skillTPCost_X (Ljava/lang/String;I[[I)I
+     267  ISTORE 32
+     268  L0
+     269  LINENUMBER 255 L0
+     270  FRAME SAME
+     271  ILOAD 8
+     272  IFEQ L0
+     273  L0
+     274  LINENUMBER 257 L0
+     275  ALOAD 0
+     276  ALOAD 5
+>>   277  LDC "jrmcTpint"
+     278  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+     279  PUTFIELD JinRyuu/JRMCore/ComJrmcRacialSkill.tp_current : I
+     280  L0
+     281  LINENUMBER 258 L0
+     282  ILOAD 6
+     283  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.rSai (I)Z
+     284  IFEQ L0
+     285  ILOAD 1
+
+==== JinRyuu/JRMCore/ComJrmctp :: func_71515_b(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V
+---- site @insn 505
+     491  ICONST_1
+     492  ALOAD 9
+     493  INVOKEVIRTUAL net/minecraft/entity/player/EntityPlayerMP.func_70005_c_ ()Ljava/lang/String;
+     494  AASTORE
+     495  INVOKESPECIAL JinRyuu/JRMCore/ComJrmctp.notifyAdmins (Lnet/minecraft/command/ICommandSender;Ljava/lang/String;[Ljava/lang/Object;)V
+     496  GOTO L0
+     497  L0
+     498  LINENUMBER 165 L0
+     499  FRAME SAME
+     500  ILOAD 8
+     501  IFEQ L0
+     502  L0
+     503  LINENUMBER 167 L0
+     504  ALOAD 12
+>>   505  LDC "jrmcTpint"
+     506  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+     507  ISTORE 13
+     508  L0
+     509  LINENUMBER 168 L0
+     510  ILOAD 13
+     511  I2L
+     512  LLOAD 6
+     513  LSUB
+---- site @insn 532
+     518  ICONST_0
+     519  ISTORE 15
+     520  L0
+     521  LINENUMBER 170 L0
+     522  ILOAD 14
+     523  IFGE L0
+     524  ICONST_0
+     525  ISTORE 14
+     526  ICONST_1
+     527  ISTORE 15
+     528  L0
+     529  LINENUMBER 171 L0
+     530  FRAME APPEND [I I I]
+     531  ALOAD 12
+>>   532  LDC "jrmcTpint"
+     533  ILOAD 14
+     534  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+     535  L0
+     536  LINENUMBER 174 L0
+     537  ILOAD 11
+     538  IFEQ L0
+     539  ALOAD 0
+     540  ALOAD 1
+---- site @insn 577
+     563  DUP
+     564  ICONST_1
+     565  ALOAD 9
+     566  INVOKEVIRTUAL net/minecraft/entity/player/EntityPlayerMP.func_70005_c_ ()Ljava/lang/String;
+     567  AASTORE
+     568  INVOKESPECIAL JinRyuu/JRMCore/ComJrmctp.notifyAdmins (Lnet/minecraft/command/ICommandSender;Ljava/lang/String;[Ljava/lang/Object;)V
+     569  L0
+     570  LINENUMBER 175 L0
+     571  FRAME CHOP 3
+     572  GOTO L0
+     573  L0
+     574  LINENUMBER 178 L0
+     575  FRAME SAME
+     576  ALOAD 12
+>>   577  LDC "jrmcTpint"
+     578  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+     579  ISTORE 13
+     580  L0
+     581  LINENUMBER 179 L0
+     582  ILOAD 13
+     583  I2L
+     584  LLOAD 6
+     585  LADD
+---- site @insn 622
+     608  ISTORE 17
+     609  L0
+     610  LINENUMBER 186 L0
+     611  ILOAD 16
+     612  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+     613  IF_ICMPLE L0
+     614  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+     615  ISTORE 16
+     616  ICONST_1
+     617  ISTORE 17
+     618  L0
+     619  LINENUMBER 187 L0
+     620  FRAME APPEND [I I]
+     621  ALOAD 12
+>>   622  LDC "jrmcTpint"
+     623  ILOAD 16
+     624  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+     625  L0
+     626  LINENUMBER 190 L0
+     627  ILOAD 11
+     628  IFEQ L0
+     629  ALOAD 0
+     630  ALOAD 1
+
+==== JinRyuu/JRMCore/JRMCoreComTickH :: updatePlayersData(Lnet/minecraft/server/MinecraftServer;ILnet/minecraft/entity/player/EntityPlayerMP;LJinRyuu/JRMCore/server/JGPlayerMP;Lnet/minecraft/nbt/NBTTagCompound;)V
+---- site @insn 1340
+    1326  IFEQ L0
+    1327  L0
+    1328  LINENUMBER 2299 L0
+    1329  FRAME APPEND [java/lang/String]
+    1330  ALOAD 5
+    1331  LDC "jrmcFuzion"
+    1332  LDC " "
+    1333  DUP
+    1334  ASTORE 41
+    1335  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74778_a (Ljava/lang/String;Ljava/lang/String;)V
+    1336  L0
+    1337  LINENUMBER 2302 L0
+    1338  FRAME SAME
+    1339  ALOAD 5
+>>  1340  LDC "jrmcTpint"
+    1341  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74781_a (Ljava/lang/String;)Lnet/minecraft/nbt/NBTBase;
+    1342  IFNONNULL L0
+    1343  L0
+    1344  LINENUMBER 2304 L0
+    1345  ALOAD 5
+    1346  LDC "jrmcTp"
+    1347  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74765_d (Ljava/lang/String;)S
+    1348  ISTORE 42
+---- site @insn 1352
+    1338  FRAME SAME
+    1339  ALOAD 5
+    1340  LDC "jrmcTpint"
+    1341  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74781_a (Ljava/lang/String;)Lnet/minecraft/nbt/NBTBase;
+    1342  IFNONNULL L0
+    1343  L0
+    1344  LINENUMBER 2304 L0
+    1345  ALOAD 5
+    1346  LDC "jrmcTp"
+    1347  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74765_d (Ljava/lang/String;)S
+    1348  ISTORE 42
+    1349  L0
+    1350  LINENUMBER 2305 L0
+    1351  ALOAD 5
+>>  1352  LDC "jrmcTpint"
+    1353  ILOAD 42
+    1354  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+    1355  L0
+    1356  LINENUMBER 2306 L0
+    1357  ALOAD 5
+    1358  LDC "jrmcTp"
+    1359  ICONST_0
+    1360  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74777_a (Ljava/lang/String;S)V
+---- site @insn 1511
+    1497  ISTORE 44
+    1498  L0
+    1499  ILOAD 42
+    1500  BIPUSH 20
+    1501  ILOAD 44
+    1502  ICONST_2
+    1503  IDIV
+    1504  IADD
+    1505  IADD
+    1506  ISTORE 42
+    1507  L0
+    1508  LINENUMBER 2319 L0
+    1509  FRAME SAME
+    1510  ALOAD 5
+>>  1511  LDC "jrmcTpint"
+    1512  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+    1513  ILOAD 42
+    1514  IADD
+    1515  ISTORE 44
+    1516  L0
+    1517  LINENUMBER 2320 L0
+    1518  ALOAD 5
+    1519  LDC "jrmcTpint"
+---- site @insn 1519
+    1505  IADD
+    1506  ISTORE 42
+    1507  L0
+    1508  LINENUMBER 2319 L0
+    1509  FRAME SAME
+    1510  ALOAD 5
+    1511  LDC "jrmcTpint"
+    1512  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+    1513  ILOAD 42
+    1514  IADD
+    1515  ISTORE 44
+    1516  L0
+    1517  LINENUMBER 2320 L0
+    1518  ALOAD 5
+>>  1519  LDC "jrmcTpint"
+    1520  ILOAD 44
+    1521  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+    1522  L0
+    1523  LINENUMBER 2321 L0
+    1524  ALOAD 5
+    1525  GETSTATIC JinRyuu/JRMCore/JRMCoreH.techNbt : [Ljava/lang/String;
+    1526  ICONST_0
+    1527  AALOAD
+---- site @insn 2491
+    2477  INVOKEVIRTUAL java/lang/StringBuilder.toString ()Ljava/lang/String;
+    2478  AASTORE
+    2479  L0
+    2480  LINENUMBER 2465 L0
+    2481  ILOAD 42
+    2482  IFEQ L0
+    2483  GETSTATIC JinRyuu/JRMCore/JRMCoreComTickH.dat11 : [Ljava/lang/String;
+    2484  ILOAD 2
+    2485  NEW java/lang/StringBuilder
+    2486  DUP
+    2487  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+    2488  LDC ""
+    2489  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+    2490  ALOAD 5
+>>  2491  LDC "jrmcTpint"
+    2492  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+    2493  INVOKEVIRTUAL java/lang/StringBuilder.append (I)Ljava/lang/StringBuilder;
+    2494  INVOKEVIRTUAL java/lang/StringBuilder.toString ()Ljava/lang/String;
+    2495  AASTORE
+    2496  L0
+    2497  LINENUMBER 2466 L0
+    2498  FRAME SAME
+    2499  GETSTATIC JinRyuu/JRMCore/JRMCoreComTickH.dat12 : [Ljava/lang/String;
+
+==== JinRyuu/JRMCore/JRMCoreGuiBars :: renderTrainGui()V
+---- site @insn 213
+     199  IF_ICMPLE L0
+     200  L0
+     201  LINENUMBER 1460 L0
+     202  ILOAD 16
+     203  ISTORE 21
+     204  L0
+     205  LINENUMBER 1461 L0
+     206  FRAME FULL [JinRyuu/JRMCore/JRMCoreGuiBars net/minecraft/client/gui/ScaledResolution I I net/minecraft/client/gui/FontRenderer net/minecraft/util/ResourceLocation I I I I java/lang/String J I I I I F I F F I] []
+     207  ALOAD 4
+     208  NEW java/lang/StringBuilder
+     209  DUP
+     210  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+     211  LDC "TP: "
+     212  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+>>   213  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+     214  BIPUSH 100
+     215  IF_ICMPGE L0
+     216  NEW java/lang/StringBuilder
+     217  DUP
+     218  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+     219  LDC "\u00a72"
+     220  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+     221  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+---- site @insn 221
+     207  ALOAD 4
+     208  NEW java/lang/StringBuilder
+     209  DUP
+     210  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+     211  LDC "TP: "
+     212  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+     213  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+     214  BIPUSH 100
+     215  IF_ICMPGE L0
+     216  NEW java/lang/StringBuilder
+     217  DUP
+     218  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+     219  LDC "\u00a72"
+     220  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+>>   221  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+     222  I2L
+     223  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.numSep (J)Ljava/lang/String;
+     224  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+     225  LDC ", "
+     226  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+     227  FLOAD 20
+     228  F2I
+     229  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curExp : I
+---- site @insn 243
+     229  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curExp : I
+     230  ISUB
+     231  INVOKEVIRTUAL java/lang/StringBuilder.append (I)Ljava/lang/StringBuilder;
+     232  LDC " Exp till TP gain"
+     233  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+     234  INVOKEVIRTUAL java/lang/StringBuilder.toString ()Ljava/lang/String;
+     235  GOTO L0
+     236  L0
+     237  FRAME FULL [JinRyuu/JRMCore/JRMCoreGuiBars net/minecraft/client/gui/ScaledResolution I I net/minecraft/client/gui/FontRenderer net/minecraft/util/ResourceLocation I I I I java/lang/String J I I I I F I F F I] [net/minecraft/client/gui/FontRenderer java/lang/StringBuilder]
+     238  NEW java/lang/StringBuilder
+     239  DUP
+     240  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+     241  LDC "\u00a74"
+     242  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+>>   243  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+     244  I2L
+     245  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.numSep (J)Ljava/lang/String;
+     246  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+     247  LDC ", be below 100"
+     248  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+     249  INVOKEVIRTUAL java/lang/StringBuilder.toString ()Ljava/lang/String;
+     250  L0
+     251  FRAME FULL [JinRyuu/JRMCore/JRMCoreGuiBars net/minecraft/client/gui/ScaledResolution I I net/minecraft/client/gui/FontRenderer net/minecraft/util/ResourceLocation I I I I java/lang/String J I I I I F I F F I] [net/minecraft/client/gui/FontRenderer java/lang/StringBuilder java/lang/String]
+
+==== JinRyuu/JRMCore/JRMCoreGuiSCM :: func_73863_a(IIF)V
+---- site @insn 1351
+    1337  LINENUMBER 299 L0
+    1338  GETSTATIC JinRyuu/JRMCore/JRMCoreH.DBCSkillTPCost : [[I
+    1339  ASTORE 19
+    1340  L0
+    1341  LINENUMBER 301 L0
+    1342  LDC "dbc"
+    1343  ASTORE 20
+    1344  L0
+    1345  LINENUMBER 304 L0
+    1346  FRAME APPEND [[Ljava/lang/String; [[I java/lang/String]
+    1347  ALOAD 7
+    1348  NEW java/lang/StringBuilder
+    1349  DUP
+    1350  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+>>  1351  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+    1352  I2L
+    1353  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.numSep (J)Ljava/lang/String;
+    1354  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+    1355  LDC " "
+    1356  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+    1357  LDC "Training Points"
+    1358  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+    1359  INVOKEVIRTUAL java/lang/StringBuilder.toString ()Ljava/lang/String;
+---- site @insn 1562
+    1548  INVOKEVIRTUAL java/lang/StringBuilder.toString ()Ljava/lang/String;
+    1549  ASTORE 29
+    1550  L0
+    1551  LINENUMBER 325 L0
+    1552  ALOAD 0
+    1553  GETFIELD JinRyuu/JRMCore/JRMCoreGuiSCM.field_146289_q : Lnet/minecraft/client/gui/FontRenderer;
+    1554  ALOAD 24
+    1555  INVOKEVIRTUAL net/minecraft/client/gui/FontRenderer.func_78256_a (Ljava/lang/String;)I
+    1556  ISTORE 30
+    1557  L0
+    1558  LINENUMBER 327 L0
+    1559  ILOAD 28
+    1560  ICONST_M1
+    1561  IF_ICMPEQ L0
+>>  1562  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+    1563  ILOAD 28
+    1564  IF_ICMPLT L0
+    1565  L0
+    1566  LINENUMBER 329 L0
+    1567  ALOAD 0
+    1568  GETFIELD JinRyuu/JRMCore/JRMCoreGuiSCM.field_146292_n : Ljava/util/List;
+    1569  L0
+    1570  NEW JinRyuu/JRMCore/JRMCoreGuiButtons01
+
+==== JinRyuu/JRMCore/JRMCoreGuiScreen :: func_73863_a(IIF)V
+---- site @insn 495
+     481  ICONST_2
+     482  IDIV
+     483  IADD
+     484  BIPUSH 65
+     485  IADD
+     486  BIPUSH 20
+     487  BIPUSH 20
+     488  LDC "X"
+     489  ICONST_0
+     490  INVOKESPECIAL JinRyuu/JRMCore/JRMCoreGuiButtons00.<init> (IIIIILjava/lang/String;I)V
+     491  INVOKEINTERFACE java/util/List.add (Ljava/lang/Object;)Z (itf)
+     492  POP
+     493  L0
+     494  LINENUMBER 2100 L0
+>>   495  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+     496  ISTORE 16
+     497  L0
+     498  LINENUMBER 2101 L0
+     499  GETSTATIC JinRyuu/JRMCore/JRMCoreH.ServerPoints : I
+     500  ISTORE 17
+     501  L0
+     502  LINENUMBER 2102 L0
+     503  ICONST_0
+---- site @insn 20255
+   20241  AASTORE
+   20242  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.cct (Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+   20243  ASTORE 83
+   20244  L0
+   20245  LINENUMBER 4051 L0
+   20246  NEW java/lang/StringBuilder
+   20247  DUP
+   20248  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+   20249  ALOAD 37
+   20250  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   20251  LDC ": "
+   20252  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   20253  GETSTATIC JinRyuu/JRMCore/JRMCoreH.cldgy : Ljava/lang/String;
+   20254  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+>> 20255  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+   20256  I2L
+   20257  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.numSep (J)Ljava/lang/String;
+   20258  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   20259  INVOKEVIRTUAL java/lang/StringBuilder.toString ()Ljava/lang/String;
+   20260  NEW java/lang/StringBuilder
+   20261  DUP
+   20262  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+   20263  ALOAD 38
+---- site @insn 20727
+   20713  IFNE L0
+   20714  BIPUSH 11
+   20715  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.StusEfctsMe (I)Z
+   20716  IFNE L0
+   20717  ICONST_1
+   20718  GOTO L0
+   20719  L0
+   20720  FRAME SAME
+   20721  ICONST_0
+   20722  L0
+   20723  FRAME SAME1 I
+   20724  ISTORE 88
+   20725  L0
+   20726  LINENUMBER 4099 L0
+>> 20727  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+   20728  GETSTATIC JinRyuu/JRMCore/JRMCoreGuiScreen.cost : I
+   20729  IF_ICMPLT L0
+   20730  ICONST_1
+   20731  GOTO L0
+   20732  L0
+   20733  FRAME APPEND [I]
+   20734  ICONST_0
+   20735  L0
+---- site @insn 24771
+   24757  INVOKEVIRTUAL net/minecraft/client/gui/FontRenderer.func_78276_b (Ljava/lang/String;III)I
+   24758  POP
+   24759  L0
+   24760  LINENUMBER 4522 L0
+   24761  FRAME FULL [JinRyuu/JRMCore/JRMCoreGuiScreen I I F I net/minecraft/client/gui/ScaledResolution I I net/minecraft/client/gui/FontRenderer I I [Ljava/lang/String; I I I I net/minecraft/util/ResourceLocation [Ljava/lang/String; [[I [Ljava/lang/String; [[I [Ljava/lang/String; [[I [Ljava/lang/String; [[I [Ljava/lang/String; [I [[I [Ljava/lang/String; [[I java/lang/String I I I I I I F I I] []
+   24762  IINC 39 1
+   24763  GOTO L0
+   24764  L0
+   24765  LINENUMBER 4581 L0
+   24766  FRAME FULL [JinRyuu/JRMCore/JRMCoreGuiScreen I I F I net/minecraft/client/gui/ScaledResolution I I net/minecraft/client/gui/FontRenderer I I [Ljava/lang/String; I I I I net/minecraft/util/ResourceLocation [Ljava/lang/String; [[I [Ljava/lang/String; [[I [Ljava/lang/String; [[I [Ljava/lang/String; [[I [Ljava/lang/String; [I [[I [Ljava/lang/String; [[I java/lang/String I I I I I] []
+   24767  ALOAD 8
+   24768  NEW java/lang/StringBuilder
+   24769  DUP
+   24770  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+>> 24771  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+   24772  I2L
+   24773  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.numSep (J)Ljava/lang/String;
+   24774  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   24775  LDC " "
+   24776  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   24777  LDC "Training Points"
+   24778  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   24779  LDC " (TP)"
+---- site @insn 31044
+   31030  ALOAD 41
+   31031  ICONST_0
+   31032  INVOKESPECIAL JinRyuu/JRMCore/JRMCoreGuiButtons00.<init> (IIIIILjava/lang/String;I)V
+   31033  INVOKEINTERFACE java/util/List.add (Ljava/lang/Object;)Z (itf)
+   31034  POP
+   31035  L0
+   31036  LINENUMBER 5187 L0
+   31037  FRAME SAME
+   31038  ALOAD 8
+   31039  NEW java/lang/StringBuilder
+   31040  DUP
+   31041  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+   31042  LDC "TP Current/Cost: \u00a78"
+   31043  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+>> 31044  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+   31045  I2L
+   31046  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.numSep (J)Ljava/lang/String;
+   31047  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   31048  LDC "/"
+   31049  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   31050  ILOAD 35
+   31051  I2L
+   31052  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.numSep (J)Ljava/lang/String;
+---- site @insn 31091
+   31077  BIPUSH 65
+   31078  IADD
+   31079  BIPUSH 40
+   31080  BIPUSH 20
+   31081  LDC "jrmc"
+   31082  LDC "Back"
+   31083  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.trl (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+   31084  ICONST_0
+   31085  INVOKESPECIAL JinRyuu/JRMCore/JRMCoreGuiButtons00.<init> (IIIIILjava/lang/String;I)V
+   31086  INVOKEINTERFACE java/util/List.add (Ljava/lang/Object;)Z (itf)
+   31087  POP
+   31088  L0
+   31089  LINENUMBER 5190 L0
+   31090  ILOAD 35
+>> 31091  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+   31092  IF_ICMPGT L0
+   31093  L0
+   31094  LINENUMBER 5191 L0
+   31095  ALOAD 0
+   31096  GETFIELD JinRyuu/JRMCore/JRMCoreGuiScreen.field_146292_n : Ljava/util/List;
+   31097  NEW JinRyuu/JRMCore/JRMCoreGuiButtons00
+   31098  DUP
+   31099  SIPUSH 210
+---- site @insn 32374
+   32360  FRAME SAME
+   32361  ALOAD 0
+   32362  GETFIELD JinRyuu/JRMCore/JRMCoreGuiScreen.attCrtPg : I
+   32363  ICONST_1
+   32364  IF_ICMPNE L0
+   32365  L0
+   32366  LINENUMBER 5289 L0
+   32367  FRAME SAME
+   32368  ALOAD 8
+   32369  NEW java/lang/StringBuilder
+   32370  DUP
+   32371  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+   32372  LDC "TP Current/Cost: \u00a78"
+   32373  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+>> 32374  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+   32375  I2L
+   32376  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.numSep (J)Ljava/lang/String;
+   32377  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   32378  LDC "/"
+   32379  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   32380  ILOAD 45
+   32381  I2L
+   32382  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.numSep (J)Ljava/lang/String;
+---- site @insn 32421
+   32407  BIPUSH 65
+   32408  IADD
+   32409  BIPUSH 40
+   32410  BIPUSH 20
+   32411  LDC "jrmc"
+   32412  LDC "Back"
+   32413  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.trl (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+   32414  ICONST_0
+   32415  INVOKESPECIAL JinRyuu/JRMCore/JRMCoreGuiButtons00.<init> (IIIIILjava/lang/String;I)V
+   32416  INVOKEINTERFACE java/util/List.add (Ljava/lang/Object;)Z (itf)
+   32417  POP
+   32418  L0
+   32419  LINENUMBER 5292 L0
+   32420  ILOAD 45
+>> 32421  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+   32422  IF_ICMPGT L0
+   32423  L0
+   32424  LINENUMBER 5293 L0
+   32425  ALOAD 0
+   32426  GETFIELD JinRyuu/JRMCore/JRMCoreGuiScreen.field_146292_n : Ljava/util/List;
+   32427  NEW JinRyuu/JRMCore/JRMCoreGuiButtons00
+   32428  DUP
+   32429  SIPUSH 210
+---- site @insn 32575
+   32561  FRAME FULL [JinRyuu/JRMCore/JRMCoreGuiScreen I I F I net/minecraft/client/gui/ScaledResolution I I net/minecraft/client/gui/FontRenderer I I [Ljava/lang/String; I I I I net/minecraft/util/ResourceLocation] []
+   32562  GETSTATIC JinRyuu/JRMCore/JRMCoreH.pmdbc : [[Ljava/lang/String;
+   32563  ASTORE 17
+   32564  L0
+   32565  LINENUMBER 5320 L0
+   32566  LDC "dbc"
+   32567  ASTORE 18
+   32568  L0
+   32569  LINENUMBER 5322 L0
+   32570  FRAME APPEND [[[Ljava/lang/String; java/lang/String]
+   32571  ALOAD 8
+   32572  NEW java/lang/StringBuilder
+   32573  DUP
+   32574  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+>> 32575  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+   32576  I2L
+   32577  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.numSep (J)Ljava/lang/String;
+   32578  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   32579  LDC " "
+   32580  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   32581  LDC "Training Points"
+   32582  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   32583  INVOKEVIRTUAL java/lang/StringBuilder.toString ()Ljava/lang/String;
+---- site @insn 32857
+   32843  INVOKEVIRTUAL java/lang/StringBuilder.append (I)Ljava/lang/StringBuilder;
+   32844  LDC " tp"
+   32845  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   32846  INVOKEVIRTUAL java/lang/StringBuilder.toString ()Ljava/lang/String;
+   32847  ASTORE 34
+   32848  L0
+   32849  LINENUMBER 5342 L0
+   32850  ALOAD 0
+   32851  GETFIELD JinRyuu/JRMCore/JRMCoreGuiScreen.field_146289_q : Lnet/minecraft/client/gui/FontRenderer;
+   32852  ALOAD 22
+   32853  INVOKEVIRTUAL net/minecraft/client/gui/FontRenderer.func_78256_a (Ljava/lang/String;)I
+   32854  ISTORE 35
+   32855  L0
+   32856  LINENUMBER 5343 L0
+>> 32857  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+   32858  ILOAD 33
+   32859  IF_ICMPLT L0
+   32860  L0
+   32861  LINENUMBER 5344 L0
+   32862  ALOAD 0
+   32863  GETFIELD JinRyuu/JRMCore/JRMCoreGuiScreen.field_146292_n : Ljava/util/List;
+   32864  L0
+   32865  NEW JinRyuu/JRMCore/JRMCoreGuiButtons01
+---- site @insn 33233
+   33219  LINENUMBER 5391 L0
+   33220  GETSTATIC JinRyuu/JRMCore/JRMCoreH.DBCSkillsIDs : [Ljava/lang/String;
+   33221  ASTORE 21
+   33222  L0
+   33223  LINENUMBER 5392 L0
+   33224  LDC "dbc"
+   33225  ASTORE 19
+   33226  L0
+   33227  LINENUMBER 5395 L0
+   33228  FRAME FULL [JinRyuu/JRMCore/JRMCoreGuiScreen I I F I net/minecraft/client/gui/ScaledResolution I I net/minecraft/client/gui/FontRenderer I I [Ljava/lang/String; I I I I net/minecraft/util/ResourceLocation [Ljava/lang/String; [[I java/lang/String [[I [Ljava/lang/String;] []
+   33229  ALOAD 8
+   33230  NEW java/lang/StringBuilder
+   33231  DUP
+   33232  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+>> 33233  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+   33234  I2L
+   33235  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.numSep (J)Ljava/lang/String;
+   33236  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   33237  LDC " "
+   33238  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   33239  LDC "Training Points"
+   33240  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+   33241  INVOKEVIRTUAL java/lang/StringBuilder.toString ()Ljava/lang/String;
+---- site @insn 33484
+   33470  ILOAD 31
+   33471  IADD
+   33472  ISTORE 34
+   33473  L0
+   33474  LINENUMBER 5415 L0
+   33475  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.statMindC ()I
+   33476  ILOAD 34
+   33477  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.canAffordSkill (II)Z
+   33478  ISTORE 35
+   33479  L0
+   33480  LINENUMBER 5416 L0
+   33481  ILOAD 29
+   33482  ICONST_M1
+   33483  IF_ICMPEQ L0
+>> 33484  GETSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+   33485  ILOAD 29
+   33486  IF_ICMPLT L0
+   33487  ILOAD 35
+   33488  IFEQ L0
+   33489  L0
+   33490  LINENUMBER 5417 L0
+   33491  ALOAD 0
+   33492  GETFIELD JinRyuu/JRMCore/JRMCoreGuiScreen.field_146292_n : Ljava/util/List;
+
+==== JinRyuu/JRMCore/JRMCoreH :: expPls(Lnet/minecraft/entity/player/EntityPlayer;I)V
+---- site @insn 55
+      41  FALOAD
+      42  FMUL
+      43  F2I
+      44  ISTORE 3
+      45  L0
+      46  LINENUMBER 7206 L0
+      47  FRAME APPEND [I I]
+      48  ALOAD 0
+      49  LDC "jrmcExp"
+      50  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getByte (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+      51  ISTORE 4
+      52  L0
+      53  LINENUMBER 7207 L0
+      54  ALOAD 0
+>>    55  LDC "jrmcTpint"
+      56  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+      57  ISTORE 5
+      58  L0
+      59  LINENUMBER 7208 L0
+      60  ILOAD 1
+      61  ISTORE 6
+      62  L0
+      63  LINENUMBER 7209 L0
+---- site @insn 108
+      94  IDIV
+      95  ICONST_1
+      96  ISUB
+      97  IF_ICMPNE L0
+      98  L0
+      99  LINENUMBER 7214 L0
+     100  ILOAD 5
+     101  ILOAD 7
+     102  ICONST_1
+     103  IADD
+     104  ILOAD 3
+     105  IMUL
+     106  IADD
+     107  ALOAD 0
+>>   108  LDC "jrmcTpint"
+     109  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setInt (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     110  L0
+     111  LINENUMBER 7211 L0
+     112  FRAME SAME
+     113  IINC 7 1
+     114  GOTO L0
+     115  L0
+     116  LINENUMBER 7218 L0
+
+==== JinRyuu/JRMCore/JRMCoreH :: resetChar()V
+---- site @insn 113
+      99  LINENUMBER 7498 L0
+     100  ICONST_0
+     101  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.maxBody : I
+     102  L0
+     103  LINENUMBER 7499 L0
+     104  ICONST_0
+     105  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.maxEnergy : I
+     106  L0
+     107  LINENUMBER 7500 L0
+     108  ICONST_0
+     109  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.curRelease : B
+     110  L0
+     111  LINENUMBER 7501 L0
+     112  ICONST_0
+>>   113  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+     114  L0
+     115  LINENUMBER 7502 L0
+     116  ICONST_0
+     117  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.curExp : I
+     118  L0
+     119  LINENUMBER 7503 L0
+     120  ICONST_0
+     121  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.State2 : B
+
+==== JinRyuu/JRMCore/JRMCoreH :: jrmcExp(Lnet/minecraft/entity/Entity;II)V
+---- site @insn 205
+     191  LINENUMBER 7922 L0
+     192  ALOAD 13
+     193  LDC "jrmcRace"
+     194  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getByte (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+     195  ISTORE 17
+     196  L0
+     197  LINENUMBER 7923 L0
+     198  ALOAD 13
+     199  LDC "jrmcState"
+     200  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getByte (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+     201  ISTORE 18
+     202  L0
+     203  LINENUMBER 7924 L0
+     204  ALOAD 13
+>>   205  LDC "jrmcTpint"
+     206  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     207  ISTORE 19
+     208  L0
+     209  LINENUMBER 7925 L0
+     210  ALOAD 13
+     211  LDC "jrmcDiff"
+     212  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getByte (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+     213  ISTORE 20
+---- site @insn 264
+     250  IADD
+     251  ISTORE 23
+     252  L0
+     253  LINENUMBER 7932 L0
+     254  ILOAD 23
+     255  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+     256  IF_ICMPLE L0
+     257  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+     258  ISTORE 23
+     259  L0
+     260  LINENUMBER 7933 L0
+     261  FRAME FULL [net/minecraft/entity/Entity I I net/minecraft/entity/player/EntityPlayer java/util/Random net/minecraft/server/MinecraftServer I I JinRyuu/JRMCore/server/JGPlayerMP I I I I net/minecraft/entity/player/EntityPlayerMP I java/lang/String I I I I I I I I] []
+     262  ILOAD 23
+     263  ALOAD 13
+>>   264  LDC "jrmcTpint"
+     265  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setInt (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     266  L0
+     267  LINENUMBER 7935 L0
+     268  FRAME CHOP 1
+     269  ALOAD 15
+     270  ALOAD 13
+     271  INVOKEVIRTUAL net/minecraft/entity/player/EntityPlayerMP.func_70005_c_ ()Ljava/lang/String;
+     272  INVOKEVIRTUAL java/lang/String.equalsIgnoreCase (Ljava/lang/String;)Z
+---- site @insn 310
+     296  LINENUMBER 7946 L0
+     297  ALOAD 3
+     298  LDC "jrmcRace"
+     299  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getByte (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+     300  ISTORE 12
+     301  L0
+     302  LINENUMBER 7947 L0
+     303  ALOAD 3
+     304  LDC "jrmcState"
+     305  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getByte (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+     306  ISTORE 13
+     307  L0
+     308  LINENUMBER 7948 L0
+     309  ALOAD 3
+>>   310  LDC "jrmcTpint"
+     311  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     312  ISTORE 14
+     313  L0
+     314  LINENUMBER 7949 L0
+     315  ALOAD 3
+     316  LDC "jrmcDiff"
+     317  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getByte (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+     318  ISTORE 15
+---- site @insn 358
+     344  IADD
+     345  ISTORE 18
+     346  L0
+     347  LINENUMBER 7955 L0
+     348  ILOAD 18
+     349  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+     350  IF_ICMPLE L0
+     351  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+     352  ISTORE 18
+     353  L0
+     354  LINENUMBER 7956 L0
+     355  FRAME FULL [net/minecraft/entity/Entity I I net/minecraft/entity/player/EntityPlayer java/util/Random net/minecraft/server/MinecraftServer I I JinRyuu/JRMCore/server/JGPlayerMP I I I I I I I I I I] []
+     356  ILOAD 18
+     357  ALOAD 3
+>>   358  LDC "jrmcTpint"
+     359  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setInt (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     360  L0
+     361  LINENUMBER 7962 L0
+     362  FRAME FULL [net/minecraft/entity/Entity I I] []
+     363  RETURN
+     364  L0
+
+==== JinRyuu/JRMCore/JRMCoreH :: tpalgn(Lnet/minecraft/entity/player/EntityPlayer;II)V
+---- site @insn 30
+      16  ISTORE 5
+      17  L0
+      18  LINENUMBER 8224 L0
+      19  ILOAD 4
+      20  IFNE L0
+      21  L0
+      22  LINENUMBER 8225 L0
+      23  ILOAD 2
+      24  ALOAD 0
+      25  LDC "jrmcAlign"
+      26  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setByte (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+      27  L0
+      28  LINENUMBER 8226 L0
+      29  ALOAD 0
+>>    30  LDC "jrmcTpint"
+      31  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+      32  ILOAD 1
+      33  IADD
+      34  ISTORE 6
+      35  L0
+      36  LINENUMBER 8227 L0
+      37  ILOAD 6
+      38  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+---- site @insn 48
+      34  ISTORE 6
+      35  L0
+      36  LINENUMBER 8227 L0
+      37  ILOAD 6
+      38  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+      39  IF_ICMPLE L0
+      40  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+      41  GOTO L0
+      42  L0
+      43  FRAME FULL [net/minecraft/entity/player/EntityPlayer I I net/minecraft/server/MinecraftServer I I I] []
+      44  ILOAD 6
+      45  L0
+      46  FRAME SAME1 I
+      47  ALOAD 0
+>>    48  LDC "jrmcTpint"
+      49  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setInt (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+      50  L0
+      51  GOTO L0
+      52  L0
+      53  LINENUMBER 8228 L0
+      54  FRAME CHOP 1
+      55  ALOAD 3
+      56  INVOKEVIRTUAL net/minecraft/server/MinecraftServer.func_71213_z ()[Ljava/lang/String;
+---- site @insn 234
+     220  LDC "DBCSagaSys"
+     221  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     222  ISTORE 10
+     223  L0
+     224  LINENUMBER 8247 L0
+     225  ILOAD 9
+     226  ILOAD 4
+     227  IF_ICMPNE L0
+     228  ILOAD 5
+     229  ILOAD 10
+     230  IF_ICMPNE L0
+     231  L0
+     232  LINENUMBER 8248 L0
+     233  ALOAD 8
+>>   234  LDC "jrmcTpint"
+     235  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     236  ILOAD 1
+     237  IADD
+     238  ISTORE 11
+     239  L0
+     240  LINENUMBER 8249 L0
+     241  ILOAD 11
+     242  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+---- site @insn 252
+     238  ISTORE 11
+     239  L0
+     240  LINENUMBER 8249 L0
+     241  ILOAD 11
+     242  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+     243  IF_ICMPLE L0
+     244  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+     245  GOTO L0
+     246  L0
+     247  FRAME FULL [net/minecraft/entity/player/EntityPlayer I I net/minecraft/server/MinecraftServer I I I I net/minecraft/entity/player/EntityPlayerMP I I I] []
+     248  ILOAD 11
+     249  L0
+     250  FRAME SAME1 I
+     251  ALOAD 8
+>>   252  LDC "jrmcTpint"
+     253  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setInt (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     254  L0
+     255  LINENUMBER 8243 L0
+     256  FRAME FULL [net/minecraft/entity/player/EntityPlayer I I net/minecraft/server/MinecraftServer I I I I] []
+     257  IINC 7 1
+     258  GOTO L0
+     259  L0
+     260  LINENUMBER 8253 L0
+
+==== JinRyuu/JRMCore/JRMCoreH :: <clinit>()V
+---- site @insn 2638
+    2624  LINENUMBER 1114 L0
+    2625  ICONST_0
+    2626  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.maxEnergy : I
+    2627  L0
+    2628  LINENUMBER 1115 L0
+    2629  ICONST_0
+    2630  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.maxStamina : I
+    2631  L0
+    2632  LINENUMBER 1117 L0
+    2633  ICONST_0
+    2634  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.curRelease : B
+    2635  L0
+    2636  LINENUMBER 1118 L0
+    2637  ICONST_0
+>>  2638  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+    2639  L0
+    2640  LINENUMBER 1119 L0
+    2641  ICONST_0
+    2642  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.curExp : I
+    2643  L0
+    2644  LINENUMBER 1121 L0
+    2645  ICONST_0
+    2646  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.curn : I
+
+==== JinRyuu/JRMCore/JRMCorePacHanC :: handleData(ILjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V
+---- site @insn 1011
+     997  INVOKESTATIC java/lang/Integer.parseInt (Ljava/lang/String;)I
+     998  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.sao_ap : I
+     999  GOTO L0
+    1000  L0
+    1001  LINENUMBER 330 L0
+    1002  FRAME APPEND [[Ljava/lang/String; I I]
+    1003  GETSTATIC JinRyuu/JRMCore/JRMCoreH.dat11 : [Ljava/lang/String;
+    1004  ILOAD 4
+    1005  AALOAD
+    1006  ASTORE 8
+    1007  L0
+    1008  LINENUMBER 331 L0
+    1009  ALOAD 8
+    1010  INVOKESTATIC java/lang/Integer.parseInt (Ljava/lang/String;)I
+>>  1011  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+    1012  L0
+    1013  LINENUMBER 333 L0
+    1014  GOTO L0
+    1015  L0
+    1016  LINENUMBER 320 L0
+    1017  FRAME CHOP 3
+    1018  IINC 4 1
+    1019  GOTO L0
+
+==== JinRyuu/JRMCore/JRMCorePacHanC :: handleStats2(IIB[ILnet/minecraft/entity/player/EntityPlayer;)V
+---- site @insn 3
+       0  L0
+       1  LINENUMBER 1389 L0
+       2  ILOAD 1
+>>     3  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+       4  L0
+       5  LINENUMBER 1390 L0
+       6  ILOAD 2
+       7  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.curExp : I
+       8  L0
+       9  LINENUMBER 1391 L0
+      10  ILOAD 3
+      11  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.align : B
+
+==== JinRyuu/JRMCore/JRMCorePacHanS :: handleData(ILjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V
+---- site @insn 595
+     581  L0
+     582  LINENUMBER 241 L0
+     583  ALOAD 15
+     584  ILOAD 11
+     585  AALOAD
+     586  ICONST_0
+     587  ICONST_2
+     588  INVOKEVIRTUAL java/lang/String.substring (II)Ljava/lang/String;
+     589  LDC "TP"
+     590  INVOKEVIRTUAL java/lang/String.contains (Ljava/lang/CharSequence;)Z
+     591  IFEQ L0
+     592  L0
+     593  LINENUMBER 242 L0
+     594  ALOAD 6
+>>   595  LDC "jrmcTpint"
+     596  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+     597  ISTORE 20
+     598  L0
+     599  LINENUMBER 243 L0
+     600  ALOAD 15
+     601  ILOAD 11
+     602  AALOAD
+     603  ICONST_2
+---- site @insn 636
+     622  L0
+     623  LINENUMBER 248 L0
+     624  ILOAD 22
+     625  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+     626  ISUB
+     627  ISTORE 23
+     628  L0
+     629  LINENUMBER 249 L0
+     630  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+     631  ISTORE 22
+     632  L0
+     633  LINENUMBER 251 L0
+     634  FRAME FULL [JinRyuu/JRMCore/JRMCorePacHanS I java/lang/String net/minecraft/entity/player/EntityPlayer net/minecraft/server/MinecraftServer java/lang/String net/minecraft/nbt/NBTTagCompound [Ljava/lang/String; java/lang/String java/lang/String I I java/lang/String [Ljava/lang/String; java/lang/String [Ljava/lang/String; [Ljava/lang/String; I I java/lang/String I I I I] []
+     635  ALOAD 6
+>>   636  LDC "jrmcTpint"
+     637  ILOAD 22
+     638  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+     639  L0
+     640  LINENUMBER 252 L0
+     641  ILOAD 1
+     642  NEW java/lang/StringBuilder
+     643  DUP
+     644  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+
+==== JinRyuu/JRMCore/JRMCorePacHanS :: handleQuad(IIIILnet/minecraft/entity/player/EntityPlayer;)V
+---- site @insn 790
+     776  FRAME SAME
+     777  ILOAD 1
+     778  BIPUSH 10
+     779  IF_ICMPNE L0
+     780  L0
+     781  LINENUMBER 1181 L0
+     782  ALOAD 0
+     783  ALOAD 5
+     784  LDC "pres"
+     785  INVOKEVIRTUAL JinRyuu/JRMCore/JRMCorePacHanS.nbt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)Lnet/minecraft/nbt/NBTTagCompound;
+     786  ASTORE 7
+     787  L0
+     788  LINENUMBER 1182 L0
+     789  ALOAD 7
+>>   790  LDC "jrmcTpint"
+     791  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+     792  ISTORE 8
+     793  L0
+     794  LINENUMBER 1184 L0
+     795  ILOAD 2
+     796  IFNE L0
+     797  L0
+     798  LINENUMBER 1186 L0
+---- site @insn 809
+     795  ILOAD 2
+     796  IFNE L0
+     797  L0
+     798  LINENUMBER 1186 L0
+     799  ALOAD 5
+     800  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.isFusionSpectator (Lnet/minecraft/entity/Entity;)Z
+     801  IFNE L0
+     802  L0
+     803  LINENUMBER 1188 L0
+     804  ILOAD 8
+     805  IFLE L0
+     806  L0
+     807  LINENUMBER 1190 L0
+     808  ALOAD 7
+>>   809  LDC "jrmcTpint"
+     810  ILOAD 8
+     811  ICONST_1
+     812  ISUB
+     813  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+     814  L0
+     815  LINENUMBER 1191 L0
+     816  ALOAD 7
+     817  GETSTATIC JinRyuu/JRMCore/JRMCorePacHanS.Acc : Ljava/lang/String;
+---- site @insn 974
+     960  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+     961  INVOKESPECIAL JinRyuu/JRMCore/p/JRMCorePQuad.<init> (IIII)V
+     962  ALOAD 5
+     963  CHECKCAST net/minecraft/entity/player/EntityPlayerMP
+     964  INVOKESTATIC JinRyuu/JRMCore/p/PD.sendTo (Lcpw/mods/fml/common/network/simpleimpl/IMessage;Lnet/minecraft/entity/player/EntityPlayerMP;)V
+     965  GOTO L0
+     966  L0
+     967  LINENUMBER 1219 L0
+     968  FRAME SAME
+     969  ILOAD 3
+     970  IFNE L0
+     971  L0
+     972  LINENUMBER 1221 L0
+     973  ALOAD 7
+>>   974  LDC "jrmcTpint"
+     975  ILOAD 8
+     976  ICONST_1
+     977  ISUB
+     978  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+     979  GOTO L0
+     980  L0
+     981  LINENUMBER 1223 L0
+     982  FRAME SAME
+---- site @insn 1078
+    1064  ILOAD 14
+    1065  IADD
+    1066  ISTORE 15
+    1067  L0
+    1068  LINENUMBER 1240 L0
+    1069  ILOAD 15
+    1070  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+    1071  IF_ICMPLE L0
+    1072  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+    1073  ISTORE 15
+    1074  L0
+    1075  LINENUMBER 1241 L0
+    1076  FRAME APPEND [I]
+    1077  ALOAD 7
+>>  1078  LDC "jrmcTpint"
+    1079  ILOAD 15
+    1080  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+    1081  L0
+    1082  LINENUMBER 1243 L0
+    1083  ALOAD 7
+    1084  LDC "jrmcTPlimit"
+    1085  ILOAD 13
+    1086  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+---- site @insn 1188
+    1174  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+    1175  INVOKESPECIAL JinRyuu/JRMCore/p/JRMCorePQuad.<init> (IIII)V
+    1176  ALOAD 5
+    1177  CHECKCAST net/minecraft/entity/player/EntityPlayerMP
+    1178  INVOKESTATIC JinRyuu/JRMCore/p/PD.sendTo (Lcpw/mods/fml/common/network/simpleimpl/IMessage;Lnet/minecraft/entity/player/EntityPlayerMP;)V
+    1179  GOTO L0
+    1180  L0
+    1181  LINENUMBER 1264 L0
+    1182  FRAME SAME
+    1183  ILOAD 3
+    1184  IFNE L0
+    1185  L0
+    1186  LINENUMBER 1266 L0
+    1187  ALOAD 7
+>>  1188  LDC "jrmcTpint"
+    1189  ILOAD 8
+    1190  ICONST_1
+    1191  ISUB
+    1192  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+    1193  GOTO L0
+    1194  L0
+    1195  LINENUMBER 1268 L0
+    1196  FRAME SAME
+---- site @insn 1292
+    1278  ILOAD 14
+    1279  IADD
+    1280  ISTORE 15
+    1281  L0
+    1282  LINENUMBER 1285 L0
+    1283  ILOAD 15
+    1284  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+    1285  IF_ICMPLE L0
+    1286  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+    1287  ISTORE 15
+    1288  L0
+    1289  LINENUMBER 1286 L0
+    1290  FRAME APPEND [I]
+    1291  ALOAD 7
+>>  1292  LDC "jrmcTpint"
+    1293  ILOAD 15
+    1294  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+    1295  L0
+    1296  LINENUMBER 1287 L0
+    1297  ALOAD 7
+    1298  LDC "jrmcTPlimit2"
+    1299  ILOAD 13
+    1300  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+
+==== JinRyuu/JRMCore/JRMCorePacHanS :: handleTech(BLjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V
+---- site @insn 430
+     416  ILOAD 10
+     417  AALOAD
+     418  ICONST_0
+     419  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.techDBCtpc ([Ljava/lang/String;Z)I
+     420  I2F
+     421  LDC 0.9F
+     422  FMUL
+     423  F2I
+     424  ICONST_2
+     425  IDIV
+     426  ISTORE 12
+     427  L0
+     428  LINENUMBER 1362 L0
+     429  ALOAD 3
+>>   430  LDC "jrmcTpint"
+     431  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     432  ISTORE 13
+     433  L0
+     434  LINENUMBER 1363 L0
+     435  ILOAD 13
+     436  ILOAD 12
+     437  IADD
+     438  ALOAD 3
+---- site @insn 439
+     425  IDIV
+     426  ISTORE 12
+     427  L0
+     428  LINENUMBER 1362 L0
+     429  ALOAD 3
+     430  LDC "jrmcTpint"
+     431  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     432  ISTORE 13
+     433  L0
+     434  LINENUMBER 1363 L0
+     435  ILOAD 13
+     436  ILOAD 12
+     437  IADD
+     438  ALOAD 3
+>>   439  LDC "jrmcTpint"
+     440  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setInt (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     441  L0
+     442  LINENUMBER 1364 L0
+     443  GOTO L0
+     444  L0
+     445  FRAME APPEND [java/lang/String]
+     446  ALOAD 9
+     447  LDC ";"
+---- site @insn 468
+     454  LDC ";"
+     455  INVOKEVIRTUAL java/lang/String.split (Ljava/lang/String;)[Ljava/lang/String;
+     456  ASTORE 10
+     457  L0
+     458  LINENUMBER 1366 L0
+     459  ALOAD 10
+     460  ICONST_0
+     461  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.techDBCtpc ([Ljava/lang/String;Z)I
+     462  ICONST_2
+     463  IDIV
+     464  ISTORE 11
+     465  L0
+     466  LINENUMBER 1367 L0
+     467  ALOAD 3
+>>   468  LDC "jrmcTpint"
+     469  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     470  ISTORE 12
+     471  L0
+     472  LINENUMBER 1368 L0
+     473  ILOAD 12
+     474  ILOAD 11
+     475  IADD
+     476  ALOAD 3
+---- site @insn 477
+     463  IDIV
+     464  ISTORE 11
+     465  L0
+     466  LINENUMBER 1367 L0
+     467  ALOAD 3
+     468  LDC "jrmcTpint"
+     469  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     470  ISTORE 12
+     471  L0
+     472  LINENUMBER 1368 L0
+     473  ILOAD 12
+     474  ILOAD 11
+     475  IADD
+     476  ALOAD 3
+>>   477  LDC "jrmcTpint"
+     478  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setInt (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     479  L0
+     480  LINENUMBER 1372 L0
+     481  FRAME SAME
+     482  LDC " "
+     483  ALOAD 3
+     484  GETSTATIC JinRyuu/JRMCore/JRMCoreH.techNbt : [Ljava/lang/String;
+     485  ILOAD 1
+---- site @insn 593
+     579  FADD
+     580  F2I
+     581  ISTORE 16
+     582  L0
+     583  LINENUMBER 1384 L0
+     584  ILOAD 16
+     585  I2F
+     586  LDC 1.5F
+     587  FMUL
+     588  F2I
+     589  ISTORE 17
+     590  L0
+     591  LINENUMBER 1385 L0
+     592  ALOAD 3
+>>   593  LDC "jrmcTpint"
+     594  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     595  ISTORE 18
+     596  L0
+     597  LINENUMBER 1386 L0
+     598  ILOAD 18
+     599  ILOAD 17
+     600  ISUB
+     601  IFLT L0
+---- site @insn 608
+     594  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     595  ISTORE 18
+     596  L0
+     597  LINENUMBER 1386 L0
+     598  ILOAD 18
+     599  ILOAD 17
+     600  ISUB
+     601  IFLT L0
+     602  L0
+     603  LINENUMBER 1387 L0
+     604  ILOAD 18
+     605  ILOAD 17
+     606  ISUB
+     607  ALOAD 3
+>>   608  LDC "jrmcTpint"
+     609  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setInt (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     610  L0
+     611  LINENUMBER 1388 L0
+     612  NEW java/lang/StringBuilder
+     613  DUP
+     614  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+     615  LDC ""
+     616  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+---- site @insn 727
+     713  ICONST_0
+     714  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.techDBCtpc ([Ljava/lang/String;Z)I
+     715  I2F
+     716  LDC 0.9F
+     717  FMUL
+     718  F2I
+     719  ISTORE 12
+     720  L0
+     721  LINENUMBER 1412 L0
+     722  ILOAD 12
+     723  ISTORE 13
+     724  L0
+     725  LINENUMBER 1413 L0
+     726  ALOAD 3
+>>   727  LDC "jrmcTpint"
+     728  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     729  ISTORE 14
+     730  L0
+     731  LINENUMBER 1414 L0
+     732  ILOAD 14
+     733  ILOAD 13
+     734  ISUB
+     735  IFLT L0
+---- site @insn 744
+     730  L0
+     731  LINENUMBER 1414 L0
+     732  ILOAD 14
+     733  ILOAD 13
+     734  ISUB
+     735  IFLT L0
+     736  ILOAD 11
+     737  IFEQ L0
+     738  L0
+     739  LINENUMBER 1415 L0
+     740  ILOAD 14
+     741  ILOAD 13
+     742  ISUB
+     743  ALOAD 3
+>>   744  LDC "jrmcTpint"
+     745  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setInt (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     746  L0
+     747  LINENUMBER 1416 L0
+     748  NEW java/lang/StringBuilder
+     749  DUP
+     750  INVOKESPECIAL java/lang/StringBuilder.<init> ()V
+     751  LDC ""
+     752  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+---- site @insn 822
+     808  ILOAD 1
+     809  AALOAD
+     810  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setString (Ljava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     811  GOTO L0
+     812  L0
+     813  LINENUMBER 1429 L0
+     814  FRAME APPEND [[Ljava/lang/String;]
+     815  ALOAD 9
+     816  ICONST_0
+     817  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.techDBCtpc ([Ljava/lang/String;Z)I
+     818  ISTORE 10
+     819  L0
+     820  LINENUMBER 1432 L0
+     821  ALOAD 3
+>>   822  LDC "jrmcTpint"
+     823  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     824  ISTORE 11
+     825  L0
+     826  LINENUMBER 1433 L0
+     827  ILOAD 11
+     828  ILOAD 10
+     829  ISUB
+     830  IFLT L0
+---- site @insn 837
+     823  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     824  ISTORE 11
+     825  L0
+     826  LINENUMBER 1433 L0
+     827  ILOAD 11
+     828  ILOAD 10
+     829  ISUB
+     830  IFLT L0
+     831  L0
+     832  LINENUMBER 1434 L0
+     833  ILOAD 11
+     834  ILOAD 10
+     835  ISUB
+     836  ALOAD 3
+>>   837  LDC "jrmcTpint"
+     838  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setInt (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     839  L0
+     840  LINENUMBER 1435 L0
+     841  ALOAD 2
+     842  ALOAD 3
+     843  GETSTATIC JinRyuu/JRMCore/JRMCoreH.techNbt : [Ljava/lang/String;
+     844  ILOAD 1
+     845  AALOAD
+
+==== JinRyuu/JRMCore/JRMCorePacHanS :: handleStats3(BBBLnet/minecraft/entity/player/EntityPlayer;)V
+---- site @insn 324
+     310  BIPUSH 16
+     311  IF_ICMPNE L0
+     312  GETSTATIC JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_LEVELS : B
+     313  IFNE L0
+     314  ICONST_0
+     315  ISTORE 30
+     316  L0
+     317  LINENUMBER 1802 L0
+     318  FRAME APPEND [I I I]
+     319  ILOAD 30
+     320  IFEQ L0
+     321  L0
+     322  LINENUMBER 1804 L0
+     323  ALOAD 5
+>>   324  LDC "jrmcTpint"
+     325  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+     326  ISTORE 31
+     327  L0
+     328  LINENUMBER 1805 L0
+     329  ILOAD 2
+     330  ICONST_0
+     331  ILOAD 7
+     332  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.isPowerTypeKi (I)Z
+---- site @insn 651
+     637  LDC "0"
+     638  INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
+     639  INVOKEVIRTUAL java/lang/StringBuilder.toString ()Ljava/lang/String;
+     640  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.cleanUpCommas (Ljava/lang/String;)Ljava/lang/String;
+     641  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74778_a (Ljava/lang/String;Ljava/lang/String;)V
+     642  L0
+     643  LINENUMBER 1882 L0
+     644  ILOAD 31
+     645  ILOAD 32
+     646  ISUB
+     647  ISTORE 42
+     648  L0
+     649  LINENUMBER 1883 L0
+     650  ALOAD 5
+>>   651  LDC "jrmcTpint"
+     652  ILOAD 42
+     653  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+     654  L0
+     655  LINENUMBER 1887 L0
+     656  FRAME FULL [JinRyuu/JRMCore/JRMCorePacHanS I I I net/minecraft/entity/player/EntityPlayer net/minecraft/nbt/NBTTagCompound JinRyuu/JRMCore/server/JGPlayerMP I [I [Ljava/lang/String; I I java/lang/String java/lang/String [Ljava/lang/String; [[I [Ljava/lang/String; [[I [Ljava/lang/String; [[I [Ljava/lang/String; [[I [Ljava/lang/String; [I [[I [Ljava/lang/String; [[I java/lang/String I I] []
+     657  GOTO L0
+     658  L0
+     659  LINENUMBER 1889 L0
+---- site @insn 1022
+    1008  ISTORE 37
+    1009  GOTO L0
+    1010  L0
+    1011  LINENUMBER 1958 L0
+    1012  FRAME SAME
+    1013  ALOAD 34
+    1014  ALOAD 22
+    1015  ALOAD 24
+    1016  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.skillTPCost (Ljava/lang/String;[Ljava/lang/String;[[I)I
+    1017  ISTORE 37
+    1018  L0
+    1019  LINENUMBER 1992 L0
+    1020  FRAME SAME
+    1021  ALOAD 5
+>>  1022  LDC "jrmcTpint"
+    1023  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+    1024  ISTORE 38
+    1025  L0
+    1026  LINENUMBER 1994 L0
+    1027  ILOAD 10
+    1028  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.rSai (I)Z
+    1029  IFEQ L0
+    1030  ILOAD 2
+---- site @insn 1198
+    1184  ALOAD 5
+    1185  ALOAD 33
+    1186  ALOAD 39
+    1187  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74778_a (Ljava/lang/String;Ljava/lang/String;)V
+    1188  L0
+    1189  LINENUMBER 2011 L0
+    1190  FRAME SAME
+    1191  ALOAD 34
+    1192  ALOAD 39
+    1193  INVOKEVIRTUAL java/lang/String.equalsIgnoreCase (Ljava/lang/String;)Z
+    1194  IFNE L0
+    1195  L0
+    1196  LINENUMBER 2013 L0
+    1197  ALOAD 5
+>>  1198  LDC "jrmcTpint"
+    1199  ILOAD 38
+    1200  ILOAD 37
+    1201  ISUB
+    1202  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+    1203  L0
+    1204  LINENUMBER 2016 L0
+    1205  FRAME CHOP 3
+    1206  GOTO L0
+
+==== JinRyuu/JRMCore/JRMCorePacHanS :: handleUpgrade(BLnet/minecraft/entity/player/EntityPlayer;)V
+---- site @insn 195
+     181  BIPUSH 6
+     182  IDIV
+     183  ISTORE 16
+     184  L0
+     185  LINENUMBER 2134 L0
+     186  ALOAD 6
+     187  ILOAD 16
+     188  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.attrCst ([II)I
+     189  ISTORE 17
+     190  L0
+     191  LINENUMBER 2136 L0
+     192  ILOAD 17
+     193  IFLE L0
+     194  ALOAD 3
+>>   195  LDC "jrmcTpint"
+     196  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+     197  ILOAD 17
+     198  IF_ICMPLT L0
+     199  ALOAD 3
+     200  GETSTATIC JinRyuu/JRMCore/JRMCoreH.AttrbtNbtI : [Ljava/lang/String;
+     201  ILOAD 1
+     202  BIPUSH 6
+     203  IREM
+---- site @insn 256
+     242  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.attributeMultiplier (I)I
+     243  IMUL
+     244  IADD
+     245  ISTORE 19
+     246  L0
+     247  LINENUMBER 2141 L0
+     248  ILOAD 19
+     249  GETSTATIC JinRyuu/JRMCore/JRMCoreConfig.tmx : I
+     250  IF_ICMPLE L0
+     251  RETURN
+     252  L0
+     253  LINENUMBER 2142 L0
+     254  FRAME APPEND [I]
+     255  ALOAD 3
+>>   256  LDC "jrmcTpint"
+     257  ALOAD 3
+     258  LDC "jrmcTpint"
+     259  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+     260  ILOAD 17
+     261  ISUB
+     262  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+     263  L0
+     264  LINENUMBER 2143 L0
+---- site @insn 258
+     244  IADD
+     245  ISTORE 19
+     246  L0
+     247  LINENUMBER 2141 L0
+     248  ILOAD 19
+     249  GETSTATIC JinRyuu/JRMCore/JRMCoreConfig.tmx : I
+     250  IF_ICMPLE L0
+     251  RETURN
+     252  L0
+     253  LINENUMBER 2142 L0
+     254  FRAME APPEND [I]
+     255  ALOAD 3
+     256  LDC "jrmcTpint"
+     257  ALOAD 3
+>>   258  LDC "jrmcTpint"
+     259  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+     260  ILOAD 17
+     261  ISUB
+     262  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+     263  L0
+     264  LINENUMBER 2143 L0
+     265  ALOAD 3
+     266  GETSTATIC JinRyuu/JRMCore/JRMCoreH.AttrbtNbtI : [Ljava/lang/String;
+---- site @insn 494
+     480  I2D
+     481  DLOAD 17
+     482  DADD
+     483  L0
+     484  FRAME SAME1 D
+     485  D2I
+     486  ALOAD 2
+     487  LDC "jrmcBdy"
+     488  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setInt (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     489  L0
+     490  LINENUMBER 2170 L0
+     491  FRAME CHOP 2
+     492  ALOAD 2
+     493  ALOAD 3
+>>   494  LDC "jrmcTpint"
+     495  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+     496  ALOAD 3
+     497  LDC "jrmcExp"
+     498  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74771_c (Ljava/lang/String;)B
+     499  ALOAD 3
+     500  LDC "jrmcAlign"
+     501  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74771_c (Ljava/lang/String;)B
+     502  ALOAD 6
+
+==== JinRyuu/JRMCore/JRMCorePacHanS :: handleChar(BILnet/minecraft/entity/player/EntityPlayer;)V
+---- site @insn 416
+     402  FCONST_0
+     403  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.stat (Lnet/minecraft/entity/Entity;IIIIIIF)I
+     404  ISTORE 13
+     405  L0
+     406  LINENUMBER 2239 L0
+     407  ILOAD 13
+     408  ALOAD 3
+     409  LDC "jrmcBdy"
+     410  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setInt (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     411  L0
+     412  LINENUMBER 2242 L0
+     413  FRAME APPEND [[I I]
+     414  ALOAD 3
+     415  ALOAD 4
+>>   416  LDC "jrmcTpint"
+     417  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+     418  ALOAD 4
+     419  LDC "jrmcExp"
+     420  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74771_c (Ljava/lang/String;)B
+     421  ALOAD 4
+     422  LDC "jrmcAlign"
+     423  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74771_c (Ljava/lang/String;)B
+     424  ALOAD 12
+---- site @insn 663
+     649  FRAME APPEND [I]
+     650  ICONST_0
+     651  ALOAD 3
+     652  LDC "jrmcState"
+     653  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setByte (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     654  L0
+     655  LINENUMBER 2278 L0
+     656  FRAME CHOP 1
+     657  ILOAD 1
+     658  BIPUSH 105
+     659  IF_ICMPNE L0
+     660  L0
+     661  LINENUMBER 2279 L0
+     662  ALOAD 4
+>>   663  LDC "jrmcTpint"
+     664  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+     665  ISTORE 11
+     666  L0
+     667  LINENUMBER 2280 L0
+     668  ALOAD 3
+     669  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts (Lnet/minecraft/entity/player/EntityPlayer;)[I
+     670  ASTORE 12
+     671  L0
+---- site @insn 705
+     691  IF_ICMPEQ L0
+     692  ALOAD 4
+     693  LDC "jrmcTlmd"
+     694  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74771_c (Ljava/lang/String;)B
+     695  ICONST_4
+     696  IF_ICMPNE L0
+     697  L0
+     698  FRAME APPEND [I [I I]
+     699  ILOAD 11
+     700  BIPUSH 20
+     701  IF_ICMPLT L0
+     702  L0
+     703  LINENUMBER 2283 L0
+     704  ALOAD 4
+>>   705  LDC "jrmcTpint"
+     706  ILOAD 11
+     707  BIPUSH 20
+     708  ISUB
+     709  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74768_a (Ljava/lang/String;I)V
+     710  L0
+     711  LINENUMBER 2284 L0
+     712  ALOAD 3
+     713  ILOAD 13
+
+==== JinRyuu/JRMCore/JRMCorePacHanS :: handleTick(ILjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V
+---- site @insn 102
+      88  AALOAD
+      89  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+      90  IASTORE
+      91  ILOAD 7
+      92  ICONST_1
+      93  IADD
+      94  I2B
+      95  ISTORE 7
+      96  GOTO L0
+      97  L0
+      98  LINENUMBER 2307 L0
+      99  FRAME CHOP 1
+     100  ALOAD 3
+     101  ALOAD 4
+>>   102  LDC "jrmcTpint"
+     103  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74762_e (Ljava/lang/String;)I
+     104  ALOAD 4
+     105  LDC "jrmcExp"
+     106  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74771_c (Ljava/lang/String;)B
+     107  ALOAD 4
+     108  LDC "jrmcAlign"
+     109  INVOKEVIRTUAL net/minecraft/nbt/NBTTagCompound.func_74771_c (Ljava/lang/String;)B
+     110  ALOAD 5
+

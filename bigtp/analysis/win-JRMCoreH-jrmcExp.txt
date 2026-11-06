@@ -1,0 +1,98 @@
+﻿==== JinRyuu/JRMCore/JRMCoreH :: jrmcExp(Lnet/minecraft/entity/Entity;I)V
+
+==== JinRyuu/JRMCore/JRMCoreH :: jrmcExp(Lnet/minecraft/entity/Entity;II)V
+---- site @insn 205
+     191  LINENUMBER 7922 L0
+     192  ALOAD 13
+     193  LDC "jrmcRace"
+     194  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getByte (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+     195  ISTORE 17
+     196  L0
+     197  LINENUMBER 7923 L0
+     198  ALOAD 13
+     199  LDC "jrmcState"
+     200  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getByte (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+     201  ISTORE 18
+     202  L0
+     203  LINENUMBER 7924 L0
+     204  ALOAD 13
+>>   205  LDC "jrmcTpint"
+     206  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     207  ISTORE 19
+     208  L0
+     209  LINENUMBER 7925 L0
+     210  ALOAD 13
+     211  LDC "jrmcDiff"
+     212  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getByte (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+     213  ISTORE 20
+---- site @insn 264
+     250  IADD
+     251  ISTORE 23
+     252  L0
+     253  LINENUMBER 7932 L0
+     254  ILOAD 23
+     255  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+     256  IF_ICMPLE L0
+     257  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+     258  ISTORE 23
+     259  L0
+     260  LINENUMBER 7933 L0
+     261  FRAME FULL [net/minecraft/entity/Entity I I net/minecraft/entity/player/EntityPlayer java/util/Random net/minecraft/server/MinecraftServer I I JinRyuu/JRMCore/server/JGPlayerMP I I I I net/minecraft/entity/player/EntityPlayerMP I java/lang/String I I I I I I I I] []
+     262  ILOAD 23
+     263  ALOAD 13
+>>   264  LDC "jrmcTpint"
+     265  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setInt (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     266  L0
+     267  LINENUMBER 7935 L0
+     268  FRAME CHOP 1
+     269  ALOAD 15
+     270  ALOAD 13
+     271  INVOKEVIRTUAL net/minecraft/entity/player/EntityPlayerMP.func_70005_c_ ()Ljava/lang/String;
+     272  INVOKEVIRTUAL java/lang/String.equalsIgnoreCase (Ljava/lang/String;)Z
+---- site @insn 310
+     296  LINENUMBER 7946 L0
+     297  ALOAD 3
+     298  LDC "jrmcRace"
+     299  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getByte (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+     300  ISTORE 12
+     301  L0
+     302  LINENUMBER 7947 L0
+     303  ALOAD 3
+     304  LDC "jrmcState"
+     305  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getByte (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+     306  ISTORE 13
+     307  L0
+     308  LINENUMBER 7948 L0
+     309  ALOAD 3
+>>   310  LDC "jrmcTpint"
+     311  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getInt (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     312  ISTORE 14
+     313  L0
+     314  LINENUMBER 7949 L0
+     315  ALOAD 3
+     316  LDC "jrmcDiff"
+     317  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getByte (Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+     318  ISTORE 15
+---- site @insn 358
+     344  IADD
+     345  ISTORE 18
+     346  L0
+     347  LINENUMBER 7955 L0
+     348  ILOAD 18
+     349  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+     350  IF_ICMPLE L0
+     351  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.getMaxTP ()I
+     352  ISTORE 18
+     353  L0
+     354  LINENUMBER 7956 L0
+     355  FRAME FULL [net/minecraft/entity/Entity I I net/minecraft/entity/player/EntityPlayer java/util/Random net/minecraft/server/MinecraftServer I I JinRyuu/JRMCore/server/JGPlayerMP I I I I I I I I I I] []
+     356  ILOAD 18
+     357  ALOAD 3
+>>   358  LDC "jrmcTpint"
+     359  INVOKESTATIC JinRyuu/JRMCore/JRMCoreH.setInt (ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     360  L0
+     361  LINENUMBER 7962 L0
+     362  FRAME FULL [net/minecraft/entity/Entity I I] []
+     363  RETURN
+     364  L0
+

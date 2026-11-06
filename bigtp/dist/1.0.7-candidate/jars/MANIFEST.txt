@@ -1,0 +1,63 @@
+﻿Big TP 1.0.7 Candidate Build Manifest
+========================================
+Build Date: 2026-11-06 01:57:14
+Git Commit: 11403dff7f3d1cb9313069e5e6e66c21a9ce5e17
+Java Version: openjdk version "17.0.20.1" 2026-08-18
+ASM Version: 9.7.1
+Target Java Version: 8 (major 52)
+Compiler: javac --release 8
+
+Source JARs (preserved as historical evidence):
+- JRMCore-v1.3.51-original.jar
+- DragonBlockC-v1.4.85.jar
+- npcdbc-1.2.1-hotfix1.jar
+
+Patched JARs (this build):
+- JRMCore-v1.3.51-patched.jar
+- DragonBlockC-v1.4.85-patched.jar
+- npcdbc-1.2.1-hotfix1-patched.jar
+
+Patch Statistics:
+- JRMCore: 55 sites patched (77 classified, 1 SKIP false positive)
+- DBC: 38 sites patched (38 classified)
+- NPCDBC: 4 sites patched (4 classified)
+
+Injected Classes (all compiled to Java 8 bytecode):
+- JinRyuu.JRMCore.TpUtil
+- JinRyuu.JRMCore.TpNbt
+- JinRyuu.JRMCore.TpNbtCore
+- JinRyuu.JRMCore.TpLogic
+- JinRyuu.JRMCore.TpClientState
+- JinRyuu.JRMCore.TpNetwork
+- JinRyuu.JRMCore.TpTagView
+- Inner classes: ReadResult, WriteResult, GainResult, SpendResult, DeltaResult, MigrationResult, TpStatus
+
+Verification Status:
+- Runtime tests: 121/121 PASS
+- VerifyJar on original JARs: PASS (with proper classpath)
+- VerifyJar on patched JARs: Known classpath limitations (missing MCP-mapped Minecraft/Forge classes)
+
+Classpath for Hierarchy Resolution:
+- bigtp/build/classpath.txt (includes original JARs + MCP libs)
+- bigtp/analysis/optional-deps.txt
+
+Frame Computation Strategy:
+- COMPUTE_FRAMES for major version >= 51
+- COMPUTE_MAXS fallback for major version 50 classes
+- HierarchyClassWriter MissingClassException -> java.lang.Object fallback
+
+Legacy jrmcTpint Handling:
+- Authority: jrmcTplong (NBT LONG, tag ID 4)
+- Mirror: jrmcTpint (NBT INT, tag ID 3) - saturated at INT_MAX
+- Per-site classification with explicit adapters
+- No generic jrmcTpint -> getTPInt rewrites; per-site corrections v2
+
+Key Architectural Decisions:
+- Fail-fast: abort on missing pattern/class
+- Transactional JAR output (atomic write)
+- TpUtil + dependencies only in JRMCore; DBC/NPCDBC reference it
+- getMaxTP() stays fixed 2000000000 (INT); long paths ignore cap
+- curTP INT mirror for legacy GUI; documented saturation
+- JRMCoreH.Stats2 preserved; Stats2Long added; 3 PacHanS callers redirected
+- JRMCorePStats2.curTPLong package-private/public for access
+- NPCDBC: DBCData.TP:I legacy mirror, TPLong:J authority

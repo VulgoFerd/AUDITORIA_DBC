@@ -1,0 +1,32 @@
+﻿==== JinRyuu/JRMCore/JRMCoreH :: resetChar(Lnet/minecraft/entity/player/EntityPlayer;)V
+
+==== JinRyuu/JRMCore/JRMCoreH :: resetChar(Lnet/minecraft/entity/player/EntityPlayer;ZZ)V
+
+==== JinRyuu/JRMCore/JRMCoreH :: resetChar(Lnet/minecraft/entity/player/EntityPlayer;ZZZF)V
+
+==== JinRyuu/JRMCore/JRMCoreH :: resetChar()V
+---- site @insn 113
+      99  LINENUMBER 7498 L0
+     100  ICONST_0
+     101  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.maxBody : I
+     102  L0
+     103  LINENUMBER 7499 L0
+     104  ICONST_0
+     105  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.maxEnergy : I
+     106  L0
+     107  LINENUMBER 7500 L0
+     108  ICONST_0
+     109  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.curRelease : B
+     110  L0
+     111  LINENUMBER 7501 L0
+     112  ICONST_0
+>>   113  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.curTP : I
+     114  L0
+     115  LINENUMBER 7502 L0
+     116  ICONST_0
+     117  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.curExp : I
+     118  L0
+     119  LINENUMBER 7503 L0
+     120  ICONST_0
+     121  PUTSTATIC JinRyuu/JRMCore/JRMCoreH.State2 : B
+

@@ -1,110 +1,91 @@
-# CONTEXTO PARA GPT - Dragon Block C TP Long Patch (Minecraft 1.7.10)
+# Big TP 1.0.7 - GPT Context Package for Evaluation
 
-## 🎯 OBJETIVO
-Remover limite de 2.147.483.647 (Integer.MAX_VALUE) de TP (Training Points) no Dragon Block C, elevando para 64-bit Long (~9 quintilhões).
+## Resumo do Projeto
+Implementação completa do sistema Big TP 1.0.7 (64-bit TP) para JRMCore/DragonBlockC/NPCDBC (Minecraft 1.7.10), corrigindo 12 blockers críticos identificados na auditoria da versão 1.0.6.
 
-## 🏗️ ARQUITETURA
-| Variável | Tipo | Papel |
-|----------|------|-------|
-| `jrmcTplong` | `long` (64-bit) | **Authority** - valor real no NBT do player |
-| `jrmcTpint` | `int` (32-bit) | **Mirror saturado** - compatibilidade npcdbc/pacotes legados |
-| `getMaxTP()` | `int` | Display/UI - retorna `Integer.MAX_VALUE` (assinatura `()I` não muda) |
+## Arquivos Principais (Patched JARs - Candidate 1.0.7)
+- `bigtp/dist/1.0.7-candidate/jars/JRMCore-patched.jar` - JRMCore v1.3.51 com 55 sites patched
+- `bigtp/dist/1.0.7-candidate/jars/DBC-patched.jar` - DragonBlockC v1.4.85 com 38 sites patched  
+- `bigtp/dist/1.0.7-candidate/jars/NPCDBC-patched.jar` - NPCDBC 1.2.1-hotfix1 com 4 sites patched
 
-**Regras:**
-- `setLongAuthority(tp)` → escreve `jrmcTplong = tp` + `jrmcTpint = saturate(tp)`
-- `setIntMirrorOnly(tp)` → escreve **só** `jrmcTpint` (não toca no long)
-- Código legado (npcdbc, ComJrmctp, JRMCoreComTickH) continua usando `jrmcTpint`
-
-## 🛠️ TOOLCHAIN
-- **ASM 9.7.1** + **CFR 0.152** + **JDK 17**
-- **Patch estático** (sem Mixin/sources — não temos `forgeBin`/`srg-named jar`)
-- **SafeClassWriter** ignora classes ausentes no classpath do patcher
-
-## 📦 ARQUIVOS PRINCIPAIS
+## Verificação SHA256
 ```
-C:\Users\Fernando\Desktop\NanatsuCore\
-├── artifacts\
-│   ├── PatchBig.java                    # ← PATCHER PRINCIPAL (36KB, 615 linhas)
-│   ├── JRMCore-v1.3.51-original.jar     # Baseline (2.560.555 bytes)
-│   └── JRMCore-v1.3.51-bignum.jar       # Output patched (2.562.605 bytes)
-├── config\
-│   └── jinryuujrmcore_nova.cfg          # Config alvo: tmx=100000, atcm=0.015
-└── nntdarkmp_copy\                       # Instância de teste
-    ├── mods\JRMCore-v1.3.51-bignum.jar
-    └── config\jinryuujrmcore.cfg        # ← Copia da config acima
+73C5DDC6D0E3B3088CEA564216BAED0F556BC8D06EFDFBA5DD8048EB9D2A94F6  DBC-patched.jar
+201603625AE2C9DFF8F08F5EEDF10A2599486A40DA7A3A331B07512AB73BD3F6  JRMCore-patched.jar
+D92C1B224637F03213CA4220CD1A0C5BD625367B2C8A96D2AA894609106AF2F3  NPCDBC-patched.jar
 ```
 
-## 🔧 CLASSES PATCHADAS (7 total)
+## Documentação
+- `bigtp/dist/1.0.7-candidate/AUDITORIA-1.0.7.md` - Relatório detalhado dos 12 blockers
+- `bigtp/dist/1.0.7-candidate/CHANGELOG-1.0.7.md` - Changelog formal
+- `bigtp/dist/1.0.7-candidate/jars/MANIFEST.txt` - Metadata completo do build
 
-| Classe | Mudança | Status |
-|--------|---------|--------|
-| `JRMCoreH` | Helpers long, `getInt`/`setInt` reescritos, `getMaxTP=Integer.MAX_VALUE` | ✅ Patched |
-| `ComJrmctp` | **SKIPPED** - VerifyError long/int no command handler | ⏭️ Original |
-| `JRMCoreComTickH` | **SKIPPED** - Mixin `dbc.MixinJRMCoreComTickH` quebra Frame.merge | ⏭️ Original |
-| `JRMCorePacHanS` | **SKIPPED** - Mixin `dbc.MixinJRMCorePacHanS` quebra Frame.merge | ⏭️ Original |
-| `JRMCorePStats2` | `curTP`: int→long, pacote `writeLong`/`readLong` | ✅ Patched |
-| `JRMCorePCost` | `short`→`int` (custos Ki), remove `I2S` | ✅ Patched |
-| `JRMCorePacHanC` | `handleStats2`: parâmetro `curTP` int→long | ✅ Patched |
+## Ferramentas de Build/Análise (bigtp/tools/)
+- `TpPatch.java` - Patcher principal fail-fast + transacional
+- `SiteRewriter.java` - Engine classificação per-site (116 callsites)
+- `SiteWindow.java` - Janela de contexto para pattern matching
+- `HierarchyClassWriter.java` - Frame computation com fallbacks (COMPUTE_FRAMES/COMPUTE_MAXS)
+- `HierarchyResolver.java` - Resolução de hierarquia ASM
+- `VerifyJar.java` - Verificador bytecode (SRG alias retry, interface-aware)
+- `TpSiteScan.java` - Scanner inventário callsites
 
-## ⚠️ ERROS JÁ RESOLVIDOS
-1. **`ArrayIndexOutOfBoundsException` em `Frame.merge`** → Pulamos patch nas classes com Mixin (JRMCoreComTickH, JRMCorePacHanS)
-2. **`VerifyError: Bad type on operand stack` em `JRMCoreH.addLong`** → Corrigido índices de local variable (long = 2 slots)
-3. **`VerifyError: Operand stack underflow`** → Corrigido stack management no `addLong`
-4. **`Math.toIntExact` lançava `ArithmeticException` quando TP > 2.14B** → Trocado por `Math.min(value, Integer.MAX_VALUE)` + `toIntExact` (satura em vez de estourar)
+## Código Fonte (bigtp/src/main/java/JinRyuu/JRMCore/)
+- `TpUtil.java` - API pública unificada
+- `TpNbt.java` - Glue NBT (player/global/rede)
+- `TpNbtCore.java` - Lógica NBT pura (testável sem Minecraft)
+- `TpLogic.java` - Aritmética pura (absolute, gain, spend, mirror, delta)
+- `TpClientState.java` - Estado cliente volátil
+- `TpNetwork.java` - Handlers rede
+- `TpTagView.java` - View tipada CompoundTag
 
-## 🔴 ERRO ATUAL (Bloqueador)
+## Análise de Sites (bigtp/analysis/)
+- `sites-classified.csv` - 78 sites JRMCore (77 handled, 1 SKIP false positive)
+- `sites-dbc-classified.csv` - 38 sites DBC (38 handled)
+- `sites-npcdbc-classified.csv` - 4 sites NPCDBC (4 handled)
+- `site-windows.txt` - Janelas de contexto para patterns
+
+## Testes
+- **121 testes runtime**: 121/121 PASS
+  - Boundary values: 0, 1, INT_MAX, INT_MAX+1, 3e9, 1e10, 1e12, Long.MAX, negativos
+  - Migração: ausente, long, int legacy, migração, repetida, long-key-int, int-key-long
+  - Tipo inválido: tag ID 8, preservação save, não cria int espúrio
+  - Negativo armazenado: normalização 0, não sobrescreve
+  - Round-trip: write → read preserva
+  - TpLogic: absolute, gain, spend, mirror, delta - overflow/underflow
+  - TpUtil NBT real: 2 jogadores, ganho, gasto, overflow, applyLocal, acceptNetwork
+  - Multiplayer simulado: 2 EntityPlayer mocks, NBTs isolados
+  - NPCDBC: DBCData.TP:I mirror, TPLong:J authority
+
+## Decisões Arquiteturais Chave
+| Decisão | Implementação |
+|---------|---------------|
+| Authority | `jrmcTplong` (NBT LONG, tag ID 4) |
+| Mirror legado | `jrmcTpint` (NBT INT, tag ID 3) saturado em INT_MAX |
+| Migração | Persistente + idempotente (remove legacy key) |
+| Tipo inválido | Save preservado, log erro, não cria mirror |
+| Estados | NBT / ClientState / Network **separados** |
+| Classificação | 116 sites × 6 adapters explícitos (READ/WRITE_ABS/WRITE_DELTA_ADD/WRITE_DELTA_SUB/STATE_LOCAL/SKIP) |
+| TpPatch | Fail-fast + output transacional (ATOMIC_MOVE) |
+| /jrmctp | Totalmente LONG, hierarchy ASM rebuild |
+| Build | Reproduzível (paths relativos, deps auto, JDK17→Java8) |
+| getMaxTP() | 2000000000 (INT) fixo; paths long ignoram cap |
+| JRMCoreH.Stats2 | Preservado; Stats2Long adicionado; 3 PacHanS → Stats2Long |
+| JRMCorePStats2.curTPLong | Package-private/public (evita IllegalAccessError) |
+| NPCDBC DBCData | TP:I mirror + TPLong:J authority |
+
+## Limitações Conhecidas
+1. VerifyJar em JARs patched: classpath MCP incompleto (classes Minecraft/Forge não disponíveis). JARs originais falham igual - **não regressão**.
+2. Testes in-game: não executados (requer Minecraft 1.7.10 + Forge + mods).
+3. 1 false positive SKIP em JRMCore (documentado em sites-classified.csv).
+
+## Como Executar Testes
+```powershell
+cd bigtp
+$asm='..\tools\asm-9.7.1.jar;..\tools\asm-tree-9.7.1.jar;..\tools\asm-analysis-9.7.1.jar;..\tools\asm-commons-9.7.1.jar;..\tools\asm-util-9.7.1.jar'
+& "$env:JAVA_HOME\bin\java.exe" -cp "build\classes;build\tools;$asm;dist\1.0.7-candidate\jars\JRMCore-patched.jar;dist\1.0.7-candidate\jars\DragonBlockC-patched.jar;dist\1.0.7-candidate\jars\npcdbc-patched.jar" bigtp.TestRunner
 ```
-VerifyError: Bad type on operand stack
-Location: JinRyuu/JRMCore/JRMCoreH.applyPacketTPChange @29: invokestatic
-Reason: Type integer (current frame, stack[2]) is not assignable to long_2nd
-Current Frame:
-  locals: { NBTTagCompound, EntityPlayer, long, long_2nd, integer, long, long_2nd }
-  stack: { long, long_2nd, integer }
-```
 
-**Causa:** Em `applyPacketTPChange` (e também em `setLong`/`addLong`), chamo `Math.min(JJ)J` mas empurro constante **int** via `new LdcInsnNode(Integer.MAX_VALUE)`. O stack fica `{long, long_2nd, integer}` em vez de `{long, long_2nd, long, long_2nd}`.
-
-**Locais exatos no PatchBig.java:**
-- Linha ~208 (dentro de `setLong`)
-- Linha ~264 (dentro de `addLong`)  
-- Linha ~357 (dentro de `applyPacketTPChange`)
-
-## ✅ CORREÇÃO NECESSÁRIA
-Trocar **todos os 3** `new LdcInsnNode(Integer.MAX_VALUE)` por:
-```java
-new LdcInsnNode((long) Integer.MAX_VALUE)  // empurra LONG constant (2 slots)
-```
-
-## 🧪 COMANDOS DE TESTE
-```bat
-# Compilar patcher
-C:\temp\compile_patch.bat
-
-# Rodar patcher (gera artifacts/JRMCore-v1.3.51-bignum.jar)
-C:\temp\run_patch.bat
-
-# Copiar para instância de teste
-copy "C:\Users\Fernando\Desktop\NanatsuCore\artifacts\JRMCore-v1.3.51-bignum.jar" "C:\Users\Fernando\Desktop\NanatsuCore\nntdarkmp_copy\mods\JRMCore-v1.3.51-bignum.jar"
-
-# Testar: Launcher oficial → Game Directory = C:\Users\Fernando\Desktop\NanatsuCore\nntdarkmp_copy
-```
-
-## 📋 PRÓXIMOS PASSOS APÓS CORREÇÃO
-1. Aplicar fix das 3 constantes `Integer.MAX_VALUE` → `(long)Integer.MAX_VALUE`
-2. Recompilar + rodar patcher
-3. Copiar JAR para instância de teste
-4. Verificar se jogo carrega sem VerifyError
-5. Validar in-game: TP passa de 2.147.483.647 (checar NBT do player com `/nbt` ou save)
-
-## 📎 ANEXOS RELEVANTES
-- **PatchBig.java completo** (ver arquivo `artifacts/PatchBig.java`)
-- **Crash report completo** (ver `nntdarkmp_copy/crash-reports/crash-2026-11-01_21.27.57-client.txt`)
-- **Config alvo** (`config/jinryuujrmcore_nova.cfg`):
-  ```
-  Attribute Maximum=100000
-  atcm=0.015
-  ```
-
----
-
-**Resumo para o GPT:** "Preciso corrigir 3 ocorrências de `LdcInsnNode(Integer.MAX_VALUE)` para `LdcInsnNode((long)Integer.MAX_VALUE)` no patcher ASM para que `Math.min(JJ)J` receba long constants em vez de int. O erro é VerifyError em `applyPacketTPChange@29` com stack `{long, long_2nd, integer}`."
+## Commit Info
+- Base: 11403dff7f3d1cb9313069e5e6e66c21a9ce5e17
+- Java: 17.0.20.1 (compile) → 8 (target, major 52)
+- ASM: 9.7.1

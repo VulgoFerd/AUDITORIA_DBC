@@ -1,0 +1,4 @@
+classe,metodo,descritor,offset,chave,operacao,descritor_operacao,contexto
+kamkeel/npcdbc/client/gui/dbc/StatSheetGui,func_73876_c,()V,669,curTP,field-read(curTP:I),I,call:HashMap.get | 1 | dup | 0
+kamkeel/npcdbc/client/gui/dbc/StatSheetGui,func_73876_c,()V,920,curTP,field-read(curTP:I),I,var0 | getfield:StatSheetGui.upgradeCounter | call:JRMCoreH.attrCst | var20
+kamkeel/npcdbc/data/dbcdata/DBCData,loadFromNBT,(Lnet/minecraft/nbt/NBTTagCompound;)V,132,jrmcTpint,nbt-read-int(func_74762_e),(Ljava/lang/String;)I,"getfield:DBCData.ArcReserve | var0 | var1 | ldc""jrmcTpint"""

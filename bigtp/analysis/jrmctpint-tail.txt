@@ -1,0 +1,44 @@
+﻿
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleChar(byte, int, net.minecraft.entity.player.EntityPlayer);
+  @7864 585: ldc_w         #376                // String jrmcTpint
+        588: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        591: aload         4
+        593: ldc_w         #2020               // String jrmcExp
+        596: invokevirtual #618                // Method net/minecraft/nbt/NBTTagCompound.func_74771_c:(Ljava/lang/String;)B
+        599: aload         4
+        601: ldc_w         #761                // String jrmcAlign
+        604: invokevirtual #618                // Method net/minecraft/nbt/NBTTagCompound.func_74771_c:(Ljava/lang/String;)B
+        607: aload         12
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleChar(byte, int, net.minecraft.entity.player.EntityPlayer);
+  @8045 1007: ldc_w         #376                // String jrmcTpint
+        1010: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        1013: istore        11
+        1015: aload_3
+        1016: invokestatic  #854                // Method JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts:(Lnet/minecraft/entity/player/EntityPlayer;)[I
+        1019: astore        12
+        1021: aload_3
+        1022: iconst_2
+        1023: iload         7
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleChar(byte, int, net.minecraft.entity.player.EntityPlayer);
+  @8077 1073: ldc_w         #376                // String jrmcTpint
+        1076: iload         11
+        1078: bipush        20
+        1080: isub
+        1081: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        1084: aload_3
+        1085: iload         13
+        1087: i2f
+        1088: ldc_w         #1563               // float 0.1f
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleTick(int, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+  @8184 168: ldc_w         #376                // String jrmcTpint
+        171: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        174: aload         4
+        176: ldc_w         #2020               // String jrmcExp
+        179: invokevirtual #618                // Method net/minecraft/nbt/NBTTagCompound.func_74771_c:(Ljava/lang/String;)B
+        182: aload         4
+        184: ldc_w         #761                // String jrmcAlign
+        187: invokevirtual #618                // Method net/minecraft/nbt/NBTTagCompound.func_74771_c:(Ljava/lang/String;)B
+        190: aload         5

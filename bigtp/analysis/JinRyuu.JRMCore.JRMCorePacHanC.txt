@@ -1,0 +1,4031 @@
+﻿Compiled from "JRMCorePacHanC.java"
+public class JinRyuu.JRMCore.JRMCorePacHanC {
+  public double explosionX;
+
+  public double explosionY;
+
+  public double explosionZ;
+
+  public float explosionSize;
+
+  public java.util.List chunkPositionRecords;
+
+  public float playerVelocityX;
+
+  public float playerVelocityY;
+
+  public float playerVelocityZ;
+
+  public boolean expGriOff;
+
+  public double expDam;
+
+  public net.minecraft.entity.Entity origin;
+
+  public byte type;
+
+  public JinRyuu.JRMCore.JRMCorePacHanC();
+    Code:
+       0: aload_0
+       1: invokespecial #27                 // Method java/lang/Object."<init>":()V
+       4: return
+
+  public void handleExpl(double, double, double, float, boolean, double, net.minecraft.entity.Entity, java.util.List, float, float, float, net.minecraft.entity.player.EntityPlayer, byte);
+    Code:
+       0: aload_0
+       1: dload_1
+       2: putfield      #33                 // Field explosionX:D
+       5: aload_0
+       6: dload_3
+       7: putfield      #35                 // Field explosionY:D
+      10: aload_0
+      11: dload         5
+      13: putfield      #37                 // Field explosionZ:D
+      16: aload_0
+      17: fload         7
+      19: putfield      #39                 // Field explosionSize:F
+      22: aload_0
+      23: iload         8
+      25: putfield      #41                 // Field expGriOff:Z
+      28: aload_0
+      29: dload         9
+      31: putfield      #43                 // Field expDam:D
+      34: aload_0
+      35: aload         12
+      37: putfield      #45                 // Field chunkPositionRecords:Ljava/util/List;
+      40: aload_0
+      41: getfield      #33                 // Field explosionX:D
+      44: d2i
+      45: istore        18
+      47: aload_0
+      48: getfield      #35                 // Field explosionY:D
+      51: d2i
+      52: istore        19
+      54: aload_0
+      55: getfield      #37                 // Field explosionZ:D
+      58: d2i
+      59: istore        20
+      61: aload_0
+      62: fload         13
+      64: putfield      #47                 // Field playerVelocityX:F
+      67: aload_0
+      68: fload         14
+      70: putfield      #49                 // Field playerVelocityY:F
+      73: aload_0
+      74: fload         15
+      76: putfield      #51                 // Field playerVelocityZ:F
+      79: aload_0
+      80: iload         17
+      82: putfield      #53                 // Field type:B
+      85: aload_0
+      86: aload         11
+      88: putfield      #55                 // Field origin:Lnet/minecraft/entity/Entity;
+      91: aload         16
+      93: ifnull        122
+      96: aload_0
+      97: getfield      #55                 // Field origin:Lnet/minecraft/entity/Entity;
+     100: ifnull        122
+     103: aload         16
+     105: getfield      #61                 // Field net/minecraft/entity/player/EntityPlayer.field_71093_bK:I
+     108: aload_0
+     109: getfield      #55                 // Field origin:Lnet/minecraft/entity/Entity;
+     112: getfield      #64                 // Field net/minecraft/entity/Entity.field_71093_bK:I
+     115: if_icmpne     122
+     118: aload_0
+     119: invokevirtual #67                 // Method handleExplosion:()V
+     122: return
+
+  public void handleExplosion();
+    Code:
+       0: new           #74                 // class JinRyuu/JRMCore/entity/ExplosionJRMC
+       3: dup
+       4: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+       7: getfield      #86                 // Field net/minecraft/client/Minecraft.field_71441_e:Lnet/minecraft/client/multiplayer/WorldClient;
+      10: aconst_null
+      11: checkcast     #63                 // class net/minecraft/entity/Entity
+      14: aload_0
+      15: getfield      #33                 // Field explosionX:D
+      18: aload_0
+      19: getfield      #35                 // Field explosionY:D
+      22: aload_0
+      23: getfield      #37                 // Field explosionZ:D
+      26: aload_0
+      27: getfield      #39                 // Field explosionSize:F
+      30: aload_0
+      31: getfield      #41                 // Field expGriOff:Z
+      34: aload_0
+      35: getfield      #43                 // Field expDam:D
+      38: aload_0
+      39: getfield      #55                 // Field origin:Lnet/minecraft/entity/Entity;
+      42: aload_0
+      43: getfield      #53                 // Field type:B
+      46: invokespecial #89                 // Method JinRyuu/JRMCore/entity/ExplosionJRMC."<init>":(Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;DDDFZDLnet/minecraft/entity/Entity;B)V
+      49: astore_1
+      50: aload_1
+      51: aload_0
+      52: getfield      #45                 // Field chunkPositionRecords:Ljava/util/List;
+      55: putfield      #92                 // Field JinRyuu/JRMCore/entity/ExplosionJRMC.field_77281_g:Ljava/util/List;
+      58: aload_1
+      59: iconst_0
+      60: invokevirtual #96                 // Method JinRyuu/JRMCore/entity/ExplosionJRMC.func_77279_a:(Z)V
+      63: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+      66: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+      69: dup
+      70: getfield      #105                // Field net/minecraft/client/entity/EntityClientPlayerMP.field_70159_w:D
+      73: aload_0
+      74: getfield      #47                 // Field playerVelocityX:F
+      77: f2d
+      78: dadd
+      79: putfield      #105                // Field net/minecraft/client/entity/EntityClientPlayerMP.field_70159_w:D
+      82: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+      85: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+      88: dup
+      89: getfield      #108                // Field net/minecraft/client/entity/EntityClientPlayerMP.field_70181_x:D
+      92: aload_0
+      93: getfield      #49                 // Field playerVelocityY:F
+      96: f2d
+      97: dadd
+      98: putfield      #108                // Field net/minecraft/client/entity/EntityClientPlayerMP.field_70181_x:D
+     101: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+     104: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+     107: dup
+     108: getfield      #111                // Field net/minecraft/client/entity/EntityClientPlayerMP.field_70179_y:D
+     111: aload_0
+     112: getfield      #51                 // Field playerVelocityZ:F
+     115: f2d
+     116: dadd
+     117: putfield      #111                // Field net/minecraft/client/entity/EntityClientPlayerMP.field_70179_y:D
+     120: new           #113                // class JinRyuu/JRMCore/entity/EntityJRMCexpl
+     123: dup
+     124: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+     127: getfield      #86                 // Field net/minecraft/client/Minecraft.field_71441_e:Lnet/minecraft/client/multiplayer/WorldClient;
+     130: aload_0
+     131: getfield      #53                 // Field type:B
+     134: invokespecial #116                // Method JinRyuu/JRMCore/entity/EntityJRMCexpl."<init>":(Lnet/minecraft/world/World;B)V
+     137: astore_2
+     138: aload_2
+     139: ifnull        179
+     142: aload_2
+     143: aload_0
+     144: getfield      #33                 // Field explosionX:D
+     147: aload_0
+     148: getfield      #35                 // Field explosionY:D
+     151: aload_0
+     152: getfield      #37                 // Field explosionZ:D
+     155: fconst_0
+     156: fconst_0
+     157: invokevirtual #120                // Method JinRyuu/JRMCore/entity/EntityJRMCexpl.func_70012_b:(DDDFF)V
+     160: aload_2
+     161: aload_0
+     162: getfield      #39                 // Field explosionSize:F
+     165: putfield      #123                // Field JinRyuu/JRMCore/entity/EntityJRMCexpl.explsiz:F
+     168: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+     171: getfield      #86                 // Field net/minecraft/client/Minecraft.field_71441_e:Lnet/minecraft/client/multiplayer/WorldClient;
+     174: aload_2
+     175: invokevirtual #129                // Method net/minecraft/client/multiplayer/WorldClient.func_72838_d:(Lnet/minecraft/entity/Entity;)Z
+     178: pop
+     179: return
+
+  public void handleQuadI(byte, int, int, int);
+    Code:
+       0: return
+
+  public void handleQuad(int, int, int, int, net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: iload_1
+       1: bipush        10
+       3: if_icmpne     38
+       6: iload_2
+       7: iconst_1
+       8: if_icmpne     23
+      11: iload_3
+      12: ifne          23
+      15: iload         4
+      17: putstatic     #146                // Field JinRyuu/JRMCore/JRMCoreH.trngTPlmt:I
+      20: goto          38
+      23: iload_2
+      24: iconst_2
+      25: if_icmpne     38
+      28: iload_3
+      29: iconst_1
+      30: if_icmpne     38
+      33: iload         4
+      35: putstatic     #149                // Field JinRyuu/JRMCore/JRMCoreH.trngTPlmt2:I
+      38: return
+
+  public void handleData(int, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: iload_1
+       1: bipush        80
+       3: if_icmpne     42
+       6: aload_2
+       7: invokevirtual #157                // Method java/lang/String.isEmpty:()Z
+      10: ifne          22
+      13: aload_2
+      14: ldc           #159                // String error
+      16: invokevirtual #163                // Method java/lang/String.equalsIgnoreCase:(Ljava/lang/String;)Z
+      19: ifeq          27
+      22: ldc           #165                // String 0
+      24: goto          28
+      27: aload_2
+      28: astore        4
+      30: aload         4
+      32: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+      35: istore        5
+      37: iload         5
+      39: putstatic     #174                // Field JinRyuu/JRMCore/JRMCoreH.ServerPoints:I
+      42: iload_1
+      43: iconst_1
+      44: if_icmpne     79
+      47: aload_2
+      48: ldc           #176                // String ::
+      50: if_acmpne     60
+      53: aconst_null
+      54: putstatic     #180                // Field JinRyuu/JRMCore/JRMCoreH.plyrsArnd:[Ljava/lang/String;
+      57: goto          79
+      60: aload_2
+      61: invokevirtual #184                // Method java/lang/String.toString:()Ljava/lang/String;
+      64: ldc           #176                // String ::
+      66: ldc           #186                // String
+      68: invokevirtual #190                // Method java/lang/String.replaceAll:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      71: ldc           #192                // String :
+      73: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+      76: putstatic     #180                // Field JinRyuu/JRMCore/JRMCoreH.plyrsArnd:[Ljava/lang/String;
+      79: iload_1
+      80: iconst_m1
+      81: if_icmplt     294
+      84: iload_1
+      85: bipush        40
+      87: if_icmpgt     294
+      90: iload_1
+      91: bipush        32
+      93: if_icmpeq     119
+      96: aload_2
+      97: invokevirtual #184                // Method java/lang/String.toString:()Ljava/lang/String;
+     100: ldc           #176                // String ::
+     102: ldc           #186                // String
+     104: invokevirtual #190                // Method java/lang/String.replaceAll:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     107: ldc           #192                // String :
+     109: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     112: iload_1
+     113: invokestatic  #200                // Method JinRyuu/JRMCore/JRMCoreH.rdc:([Ljava/lang/String;I)V
+     116: goto          294
+     119: aload_2
+     120: ldc           #176                // String ::
+     122: invokevirtual #203                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     125: ifeq          274
+     128: aconst_null
+     129: putstatic     #206                // Field JinRyuu/JRMCore/JRMCoreH.dat32:[Ljava/lang/String;
+     132: aload_2
+     133: invokevirtual #184                // Method java/lang/String.toString:()Ljava/lang/String;
+     136: iconst_2
+     137: invokevirtual #210                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     140: ldc           #176                // String ::
+     142: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     145: astore        4
+     147: aload         4
+     149: iconst_0
+     150: aaload
+     151: ldc           #212                // String /
+     153: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     156: astore        5
+     158: aload         5
+     160: iconst_0
+     161: aaload
+     162: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+     165: istore        6
+     167: aload         5
+     169: iconst_1
+     170: aaload
+     171: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+     174: istore        7
+     176: aload         5
+     178: iconst_2
+     179: aaload
+     180: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+     183: istore        8
+     185: aload         5
+     187: iconst_3
+     188: aaload
+     189: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+     192: istore        9
+     194: iload         6
+     196: ifne          207
+     199: iload         8
+     201: anewarray     #153                // class java/lang/String
+     204: putstatic     #215                // Field JinRyuu/JRMCore/JRMCoreH.dat32Segmented:[Ljava/lang/String;
+     207: aload         4
+     209: iconst_1
+     210: aaload
+     211: ldc           #176                // String ::
+     213: ldc           #186                // String
+     215: invokevirtual #190                // Method java/lang/String.replaceAll:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     218: ldc           #192                // String :
+     220: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     223: astore        10
+     225: iconst_0
+     226: istore        11
+     228: iload         11
+     230: aload         10
+     232: arraylength
+     233: if_icmpge     256
+     236: getstatic     #215                // Field JinRyuu/JRMCore/JRMCoreH.dat32Segmented:[Ljava/lang/String;
+     239: iload         9
+     241: iload         11
+     243: iadd
+     244: aload         10
+     246: iload         11
+     248: aaload
+     249: aastore
+     250: iinc          11, 1
+     253: goto          228
+     256: iload         6
+     258: iload         7
+     260: iconst_1
+     261: isub
+     262: if_icmpne     271
+     265: getstatic     #215                // Field JinRyuu/JRMCore/JRMCoreH.dat32Segmented:[Ljava/lang/String;
+     268: putstatic     #206                // Field JinRyuu/JRMCore/JRMCoreH.dat32:[Ljava/lang/String;
+     271: goto          294
+     274: aload_2
+     275: invokevirtual #184                // Method java/lang/String.toString:()Ljava/lang/String;
+     278: ldc           #176                // String ::
+     280: ldc           #186                // String
+     282: invokevirtual #190                // Method java/lang/String.replaceAll:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     285: ldc           #192                // String :
+     287: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     290: iload_1
+     291: invokestatic  #200                // Method JinRyuu/JRMCore/JRMCoreH.rdc:([Ljava/lang/String;I)V
+     294: iload_1
+     295: iconst_m1
+     296: if_icmpne     315
+     299: aload_2
+     300: ldc           #176                // String ::
+     302: ldc           #186                // String
+     304: invokevirtual #190                // Method java/lang/String.replaceAll:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     307: ldc           #192                // String :
+     309: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     312: putstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+     315: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+     318: ifnull        2619
+     321: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+     324: arraylength
+     325: ifle          2619
+     328: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+     331: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+     334: ifnull        2619
+     337: iload_1
+     338: iconst_1
+     339: if_icmpne     463
+     342: iconst_0
+     343: istore        4
+     345: iload         4
+     347: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+     350: arraylength
+     351: if_icmpge     463
+     354: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+     357: iload         4
+     359: aaload
+     360: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+     363: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+     366: invokevirtual #222                // Method net/minecraft/client/entity/EntityClientPlayerMP.func_70005_c_:()Ljava/lang/String;
+     369: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     372: ifeq          457
+     375: getstatic     #229                // Field JinRyuu/JRMCore/JRMCoreH.data1:[Ljava/lang/String;
+     378: iload         4
+     380: aaload
+     381: ldc           #231                // String ;
+     383: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     386: astore        5
+     388: aload         5
+     390: iconst_0
+     391: aaload
+     392: invokestatic  #237                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+     395: putstatic     #240                // Field JinRyuu/JRMCore/JRMCoreH.Race:B
+     398: aload         5
+     400: iconst_1
+     401: aaload
+     402: putstatic     #244                // Field JinRyuu/JRMCore/JRMCoreH.dns:Ljava/lang/String;
+     405: aload         5
+     407: iconst_2
+     408: aaload
+     409: invokestatic  #237                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+     412: putstatic     #247                // Field JinRyuu/JRMCore/JRMCoreH.Pwrtyp:B
+     415: aload         5
+     417: iconst_3
+     418: aaload
+     419: invokestatic  #237                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+     422: putstatic     #250                // Field JinRyuu/JRMCore/JRMCoreH.Class:B
+     425: aload         5
+     427: iconst_4
+     428: aaload
+     429: invokestatic  #237                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+     432: putstatic     #253                // Field JinRyuu/JRMCore/JRMCoreH.Accepted:B
+     435: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+     438: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+     441: invokestatic  #259                // Method JinRyuu/JRMCore/i/ExtendedPlayer.get:(Lnet/minecraft/entity/player/EntityPlayer;)LJinRyuu/JRMCore/i/ExtendedPlayer;
+     444: astore        6
+     446: aload         6
+     448: invokevirtual #262                // Method JinRyuu/JRMCore/i/ExtendedPlayer.getHairCode:()Ljava/lang/String;
+     451: putstatic     #265                // Field JinRyuu/JRMCore/JRMCoreH.dnsH:Ljava/lang/String;
+     454: goto          463
+     457: iinc          4, 1
+     460: goto          345
+     463: iload_1
+     464: iconst_2
+     465: if_icmpne     543
+     468: iconst_0
+     469: istore        4
+     471: iload         4
+     473: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+     476: arraylength
+     477: if_icmpge     543
+     480: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+     483: iload         4
+     485: aaload
+     486: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+     489: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+     492: invokevirtual #222                // Method net/minecraft/client/entity/EntityClientPlayerMP.func_70005_c_:()Ljava/lang/String;
+     495: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     498: ifeq          537
+     501: getstatic     #268                // Field JinRyuu/JRMCore/JRMCoreH.data2:[Ljava/lang/String;
+     504: iload         4
+     506: aaload
+     507: ldc           #231                // String ;
+     509: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     512: astore        5
+     514: aload         5
+     516: iconst_0
+     517: aaload
+     518: invokestatic  #237                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+     521: putstatic     #271                // Field JinRyuu/JRMCore/JRMCoreH.State:B
+     524: aload         5
+     526: iconst_1
+     527: aaload
+     528: invokestatic  #237                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+     531: putstatic     #274                // Field JinRyuu/JRMCore/JRMCoreH.State2:B
+     534: goto          543
+     537: iinc          4, 1
+     540: goto          471
+     543: iload_1
+     544: bipush        7
+     546: if_icmpne     745
+     549: getstatic     #277                // Field JinRyuu/JRMCore/JRMCoreH.data7:[Ljava/lang/String;
+     552: iconst_0
+     553: aaload
+     554: astore        4
+     556: getstatic     #247                // Field JinRyuu/JRMCore/JRMCoreH.Pwrtyp:B
+     559: iconst_3
+     560: if_icmpne     581
+     563: getstatic     #253                // Field JinRyuu/JRMCore/JRMCoreH.Accepted:B
+     566: iconst_1
+     567: if_icmpne     581
+     570: aload         4
+     572: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+     575: putstatic     #280                // Field JinRyuu/JRMCore/JRMCoreH.sao_col:I
+     578: goto          745
+     581: aload         4
+     583: ldc_w         #282                // String ;;
+     586: invokevirtual #286                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     589: ifeq          606
+     592: aload         4
+     594: invokevirtual #184                // Method java/lang/String.toString:()Ljava/lang/String;
+     597: ldc_w         #282                // String ;;
+     600: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     603: goto          607
+     606: aconst_null
+     607: astore        5
+     609: aload         5
+     611: ifnull        729
+     614: iconst_0
+     615: istore        6
+     617: iload         6
+     619: aload         5
+     621: arraylength
+     622: if_icmpge     726
+     625: aload         5
+     627: iload         6
+     629: aaload
+     630: ldc           #231                // String ;
+     632: invokevirtual #286                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     635: ifeq          654
+     638: aload         5
+     640: iload         6
+     642: aaload
+     643: invokevirtual #184                // Method java/lang/String.toString:()Ljava/lang/String;
+     646: ldc           #231                // String ;
+     648: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     651: goto          655
+     654: aconst_null
+     655: astore        7
+     657: iload         6
+     659: tableswitch   { // 0 to 3
+
+                     0: 688
+
+                     1: 696
+
+                     2: 704
+
+                     3: 712
+               default: 720
+          }
+     688: aload         7
+     690: putstatic     #289                // Field JinRyuu/JRMCore/JRMCoreH.tech1:[Ljava/lang/String;
+     693: goto          720
+     696: aload         7
+     698: putstatic     #292                // Field JinRyuu/JRMCore/JRMCoreH.tech2:[Ljava/lang/String;
+     701: goto          720
+     704: aload         7
+     706: putstatic     #295                // Field JinRyuu/JRMCore/JRMCoreH.tech3:[Ljava/lang/String;
+     709: goto          720
+     712: aload         7
+     714: putstatic     #298                // Field JinRyuu/JRMCore/JRMCoreH.tech4:[Ljava/lang/String;
+     717: goto          720
+     720: iinc          6, 1
+     723: goto          617
+     726: goto          745
+     729: aconst_null
+     730: dup
+     731: putstatic     #298                // Field JinRyuu/JRMCore/JRMCoreH.tech4:[Ljava/lang/String;
+     734: dup
+     735: putstatic     #295                // Field JinRyuu/JRMCore/JRMCoreH.tech3:[Ljava/lang/String;
+     738: dup
+     739: putstatic     #292                // Field JinRyuu/JRMCore/JRMCoreH.tech2:[Ljava/lang/String;
+     742: putstatic     #289                // Field JinRyuu/JRMCore/JRMCoreH.tech1:[Ljava/lang/String;
+     745: iload_1
+     746: bipush        15
+     748: if_icmpne     780
+     751: getstatic     #301                // Field JinRyuu/JRMCore/JRMCoreH.dat15:[Ljava/lang/String;
+     754: iconst_0
+     755: aaload
+     756: astore        4
+     758: getstatic     #247                // Field JinRyuu/JRMCore/JRMCoreH.Pwrtyp:B
+     761: iconst_3
+     762: if_icmpne     780
+     765: getstatic     #253                // Field JinRyuu/JRMCore/JRMCoreH.Accepted:B
+     768: iconst_1
+     769: if_icmpne     780
+     772: aload         4
+     774: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+     777: putstatic     #304                // Field JinRyuu/JRMCore/JRMCoreH.sao_exp:I
+     780: iload_1
+     781: bipush        6
+     783: if_icmpne     973
+     786: iconst_0
+     787: istore        4
+     789: iload         4
+     791: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+     794: arraylength
+     795: if_icmpge     973
+     798: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+     801: iload         4
+     803: aaload
+     804: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+     807: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+     810: invokevirtual #222                // Method net/minecraft/client/entity/EntityClientPlayerMP.func_70005_c_:()Ljava/lang/String;
+     813: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     816: ifeq          967
+     819: getstatic     #307                // Field JinRyuu/JRMCore/JRMCoreH.data6:[Ljava/lang/String;
+     822: arraylength
+     823: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+     826: arraylength
+     827: if_icmplt     967
+     830: getstatic     #307                // Field JinRyuu/JRMCore/JRMCoreH.data6:[Ljava/lang/String;
+     833: iload         4
+     835: aaload
+     836: ldc           #231                // String ;
+     838: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     841: astore        5
+     843: aload         5
+     845: iconst_1
+     846: aaload
+     847: putstatic     #310                // Field JinRyuu/JRMCore/JRMCoreH.PlyrSkillX:Ljava/lang/String;
+     850: aload         5
+     852: iconst_2
+     853: aaload
+     854: putstatic     #313                // Field JinRyuu/JRMCore/JRMCoreH.PlyrSkillY:Ljava/lang/String;
+     857: aload         5
+     859: iconst_3
+     860: aaload
+     861: putstatic     #316                // Field JinRyuu/JRMCore/JRMCoreH.PlyrSkillZ:Ljava/lang/String;
+     864: aload         5
+     866: iconst_0
+     867: aaload
+     868: ldc_w         #318                // String ,
+     871: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     874: astore        6
+     876: aload         6
+     878: putstatic     #321                // Field JinRyuu/JRMCore/JRMCoreH.PlyrSkills:[Ljava/lang/String;
+     881: aload         5
+     883: iconst_4
+     884: aaload
+     885: ldc_w         #318                // String ,
+     888: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     891: astore        7
+     893: aload         7
+     895: arraylength
+     896: newarray       int
+     898: astore        8
+     900: iconst_0
+     901: istore        9
+     903: iload         9
+     905: aload         7
+     907: arraylength
+     908: if_icmpge     959
+     911: aload         8
+     913: iload         9
+     915: aload         7
+     917: iload         9
+     919: aaload
+     920: invokevirtual #327                // Method java/lang/String.length:()I
+     923: ifle          951
+     926: aload         7
+     928: iload         9
+     930: aaload
+     931: ldc_w         #329                // String
+     934: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     937: ifne          951
+     940: aload         7
+     942: iload         9
+     944: aaload
+     945: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+     948: goto          952
+     951: iconst_m1
+     952: iastore
+     953: iinc          9, 1
+     956: goto          903
+     959: aload         8
+     961: putstatic     #332                // Field JinRyuu/JRMCore/JRMCoreH.techPM:[I
+     964: goto          973
+     967: iinc          4, 1
+     970: goto          789
+     973: iload_1
+     974: bipush        8
+     976: if_icmpne     1037
+     979: iconst_0
+     980: istore        4
+     982: iload         4
+     984: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+     987: arraylength
+     988: if_icmpge     1037
+     991: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+     994: iload         4
+     996: aaload
+     997: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+    1000: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+    1003: invokevirtual #222                // Method net/minecraft/client/entity/EntityClientPlayerMP.func_70005_c_:()Ljava/lang/String;
+    1006: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1009: ifeq          1031
+    1012: getstatic     #335                // Field JinRyuu/JRMCore/JRMCoreH.data8:[Ljava/lang/String;
+    1015: iload         4
+    1017: aaload
+    1018: astore        5
+    1020: aload         5
+    1022: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+    1025: putstatic     #338                // Field JinRyuu/JRMCore/JRMCoreH.curBody:I
+    1028: goto          1037
+    1031: iinc          4, 1
+    1034: goto          982
+    1037: iload_1
+    1038: bipush        9
+    1040: if_icmpne     1101
+    1043: iconst_0
+    1044: istore        4
+    1046: iload         4
+    1048: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1051: arraylength
+    1052: if_icmpge     1101
+    1055: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1058: iload         4
+    1060: aaload
+    1061: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+    1064: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+    1067: invokevirtual #222                // Method net/minecraft/client/entity/EntityClientPlayerMP.func_70005_c_:()Ljava/lang/String;
+    1070: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1073: ifeq          1095
+    1076: getstatic     #341                // Field JinRyuu/JRMCore/JRMCoreH.data9:[Ljava/lang/String;
+    1079: iload         4
+    1081: aaload
+    1082: astore        5
+    1084: aload         5
+    1086: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+    1089: putstatic     #344                // Field JinRyuu/JRMCore/JRMCoreH.curEnergy:I
+    1092: goto          1101
+    1095: iinc          4, 1
+    1098: goto          1046
+    1101: iload_1
+    1102: bipush        10
+    1104: if_icmpne     1182
+    1107: iconst_0
+    1108: istore        4
+    1110: iload         4
+    1112: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1115: arraylength
+    1116: if_icmpge     1182
+    1119: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1122: iload         4
+    1124: aaload
+    1125: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+    1128: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+    1131: invokevirtual #222                // Method net/minecraft/client/entity/EntityClientPlayerMP.func_70005_c_:()Ljava/lang/String;
+    1134: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1137: ifeq          1176
+    1140: getstatic     #347                // Field JinRyuu/JRMCore/JRMCoreH.dat10:[Ljava/lang/String;
+    1143: iload         4
+    1145: aaload
+    1146: ldc           #231                // String ;
+    1148: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    1151: astore        5
+    1153: aload         5
+    1155: iconst_0
+    1156: aaload
+    1157: invokestatic  #237                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+    1160: putstatic     #350                // Field JinRyuu/JRMCore/JRMCoreH.curRelease:B
+    1163: aload         5
+    1165: iconst_1
+    1166: aaload
+    1167: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+    1170: putstatic     #353                // Field JinRyuu/JRMCore/JRMCoreH.curStamina:I
+    1173: goto          1182
+    1176: iinc          4, 1
+    1179: goto          1110
+    1182: iload_1
+    1183: iconst_4
+    1184: if_icmpne     1262
+    1187: iconst_0
+    1188: istore        4
+    1190: iload         4
+    1192: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1195: arraylength
+    1196: if_icmpge     1262
+    1199: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1202: iload         4
+    1204: aaload
+    1205: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+    1208: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+    1211: invokevirtual #222                // Method net/minecraft/client/entity/EntityClientPlayerMP.func_70005_c_:()Ljava/lang/String;
+    1214: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1217: ifeq          1256
+    1220: getstatic     #356                // Field JinRyuu/JRMCore/JRMCoreH.data4:[Ljava/lang/String;
+    1223: iload         4
+    1225: aaload
+    1226: ldc           #231                // String ;
+    1228: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    1231: astore        5
+    1233: aload         5
+    1235: iconst_0
+    1236: aaload
+    1237: invokestatic  #237                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+    1240: putstatic     #359                // Field JinRyuu/JRMCore/JRMCoreH.TransSaiCurRg:B
+    1243: aload         5
+    1245: iconst_1
+    1246: aaload
+    1247: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+    1250: putstatic     #362                // Field JinRyuu/JRMCore/JRMCoreH.cura:I
+    1253: goto          1262
+    1256: iinc          4, 1
+    1259: goto          1190
+    1262: iload_1
+    1263: iconst_5
+    1264: if_icmpne     1332
+    1267: iconst_0
+    1268: istore        4
+    1270: iload         4
+    1272: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1275: arraylength
+    1276: if_icmpge     1332
+    1279: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1282: iload         4
+    1284: aaload
+    1285: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+    1288: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+    1291: invokevirtual #222                // Method net/minecraft/client/entity/EntityClientPlayerMP.func_70005_c_:()Ljava/lang/String;
+    1294: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1297: ifeq          1326
+    1300: getstatic     #365                // Field JinRyuu/JRMCore/JRMCoreH.data5:[Ljava/lang/String;
+    1303: iload         4
+    1305: aaload
+    1306: ldc           #231                // String ;
+    1308: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    1311: astore        5
+    1313: aload         5
+    1315: iconst_0
+    1316: aaload
+    1317: invokestatic  #237                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+    1320: putstatic     #368                // Field JinRyuu/JRMCore/JRMCoreH.align:B
+    1323: goto          1332
+    1326: iinc          4, 1
+    1329: goto          1270
+    1332: iload_1
+    1333: bipush        11
+    1335: if_icmpne     1475
+    1338: iconst_0
+    1339: istore        4
+    1341: iload         4
+    1343: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1346: arraylength
+    1347: if_icmpge     1475
+    1350: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1353: iload         4
+    1355: aaload
+    1356: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+    1359: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+    1362: invokevirtual #222                // Method net/minecraft/client/entity/EntityClientPlayerMP.func_70005_c_:()Ljava/lang/String;
+    1365: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1368: ifeq          1469
+    1371: getstatic     #229                // Field JinRyuu/JRMCore/JRMCoreH.data1:[Ljava/lang/String;
+    1374: iload         4
+    1376: aaload
+    1377: ldc           #231                // String ;
+    1379: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    1382: astore        5
+    1384: aload         5
+    1386: iconst_2
+    1387: aaload
+    1388: invokestatic  #237                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+    1391: istore        6
+    1393: aload         5
+    1395: iconst_4
+    1396: aaload
+    1397: invokestatic  #237                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+    1400: istore        7
+    1402: iload         6
+    1404: iconst_3
+    1405: if_icmpne     1450
+    1408: iload         7
+    1410: iconst_1
+    1411: if_icmpne     1450
+    1414: getstatic     #371                // Field JinRyuu/JRMCore/JRMCoreH.dat11:[Ljava/lang/String;
+    1417: iload         4
+    1419: aaload
+    1420: ldc           #231                // String ;
+    1422: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    1425: astore        5
+    1427: aload         5
+    1429: iconst_0
+    1430: aaload
+    1431: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+    1434: putstatic     #374                // Field JinRyuu/JRMCore/JRMCoreH.sao_level:I
+    1437: aload         5
+    1439: iconst_1
+    1440: aaload
+    1441: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+    1444: putstatic     #377                // Field JinRyuu/JRMCore/JRMCoreH.sao_ap:I
+    1447: goto          1475
+    1450: getstatic     #371                // Field JinRyuu/JRMCore/JRMCoreH.dat11:[Ljava/lang/String;
+    1453: iload         4
+    1455: aaload
+    1456: astore        8
+    1458: aload         8
+    1460: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+    1463: putstatic     #380                // Field JinRyuu/JRMCore/JRMCoreH.curTP:I
+    1466: goto          1475
+    1469: iinc          4, 1
+    1472: goto          1341
+    1475: iload_1
+    1476: bipush        12
+    1478: if_icmpne     1539
+    1481: iconst_0
+    1482: istore        4
+    1484: iload         4
+    1486: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1489: arraylength
+    1490: if_icmpge     1539
+    1493: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1496: iload         4
+    1498: aaload
+    1499: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+    1502: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+    1505: invokevirtual #222                // Method net/minecraft/client/entity/EntityClientPlayerMP.func_70005_c_:()Ljava/lang/String;
+    1508: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1511: ifeq          1533
+    1514: getstatic     #383                // Field JinRyuu/JRMCore/JRMCoreH.dat12:[Ljava/lang/String;
+    1517: iload         4
+    1519: aaload
+    1520: astore        5
+    1522: aload         5
+    1524: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+    1527: putstatic     #386                // Field JinRyuu/JRMCore/JRMCoreH.curExp:I
+    1530: goto          1539
+    1533: iinc          4, 1
+    1536: goto          1484
+    1539: iload_1
+    1540: bipush        14
+    1542: if_icmpne     1726
+    1545: iconst_0
+    1546: istore        4
+    1548: iload         4
+    1550: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1553: arraylength
+    1554: if_icmpge     1726
+    1557: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1560: iload         4
+    1562: aaload
+    1563: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+    1566: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+    1569: invokevirtual #222                // Method net/minecraft/client/entity/EntityClientPlayerMP.func_70005_c_:()Ljava/lang/String;
+    1572: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1575: ifeq          1720
+    1578: getstatic     #389                // Field JinRyuu/JRMCore/JRMCoreH.dat14:[Ljava/lang/String;
+    1581: iload         4
+    1583: aaload
+    1584: ldc_w         #318                // String ,
+    1587: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    1590: astore        5
+    1592: getstatic     #392                // Field JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts:[I
+    1595: arraylength
+    1596: newarray       int
+    1598: astore        6
+    1600: iconst_0
+    1601: istore        7
+    1603: iload         7
+    1605: aload         6
+    1607: arraylength
+    1608: if_icmpge     1630
+    1611: aload         6
+    1613: iload         7
+    1615: aload         5
+    1617: iload         7
+    1619: aaload
+    1620: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+    1623: iastore
+    1624: iinc          7, 1
+    1627: goto          1603
+    1630: aload         6
+    1632: putstatic     #392                // Field JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts:[I
+    1635: getstatic     #247                // Field JinRyuu/JRMCore/JRMCoreH.Pwrtyp:B
+    1638: istore        7
+    1640: getstatic     #240                // Field JinRyuu/JRMCore/JRMCoreH.Race:B
+    1643: istore        8
+    1645: getstatic     #250                // Field JinRyuu/JRMCore/JRMCoreH.Class:B
+    1648: istore        9
+    1650: aload_3
+    1651: iconst_2
+    1652: iload         7
+    1654: iconst_2
+    1655: getstatic     #392                // Field JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts:[I
+    1658: iconst_2
+    1659: iaload
+    1660: iload         8
+    1662: iload         9
+    1664: fconst_0
+    1665: invokestatic  #396                // Method JinRyuu/JRMCore/JRMCoreH.stat:(Lnet/minecraft/entity/Entity;IIIIIIF)I
+    1668: putstatic     #399                // Field JinRyuu/JRMCore/JRMCoreH.maxBody:I
+    1671: aload_3
+    1672: iconst_5
+    1673: iload         7
+    1675: iconst_5
+    1676: getstatic     #392                // Field JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts:[I
+    1679: iconst_5
+    1680: iaload
+    1681: iload         8
+    1683: iload         9
+    1685: iload         7
+    1687: invokestatic  #403                // Method JinRyuu/JRMCore/JRMCoreH.SklLvl_KiBs:(I)F
+    1690: invokestatic  #396                // Method JinRyuu/JRMCore/JRMCoreH.stat:(Lnet/minecraft/entity/Entity;IIIIIIF)I
+    1693: putstatic     #406                // Field JinRyuu/JRMCore/JRMCoreH.maxEnergy:I
+    1696: aload_3
+    1697: iconst_2
+    1698: iload         7
+    1700: iconst_3
+    1701: getstatic     #392                // Field JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts:[I
+    1704: iconst_2
+    1705: iaload
+    1706: iload         8
+    1708: iload         9
+    1710: fconst_0
+    1711: invokestatic  #396                // Method JinRyuu/JRMCore/JRMCoreH.stat:(Lnet/minecraft/entity/Entity;IIIIIIF)I
+    1714: putstatic     #409                // Field JinRyuu/JRMCore/JRMCoreH.maxStamina:I
+    1717: goto          1726
+    1720: iinc          4, 1
+    1723: goto          1548
+    1726: iload_1
+    1727: bipush        18
+    1729: if_icmpne     1818
+    1732: iconst_0
+    1733: istore        4
+    1735: iload         4
+    1737: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1740: arraylength
+    1741: if_icmpge     1818
+    1744: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1747: iload         4
+    1749: aaload
+    1750: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+    1753: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+    1756: invokevirtual #222                // Method net/minecraft/client/entity/EntityClientPlayerMP.func_70005_c_:()Ljava/lang/String;
+    1759: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1762: ifeq          1812
+    1765: getstatic     #412                // Field JinRyuu/JRMCore/JRMCoreH.dat18:[Ljava/lang/String;
+    1768: iload         4
+    1770: aaload
+    1771: astore        5
+    1773: aload         5
+    1775: ldc           #231                // String ;
+    1777: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    1780: astore        6
+    1782: aload         6
+    1784: iconst_0
+    1785: aaload
+    1786: invokestatic  #237                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+    1789: putstatic     #415                // Field JinRyuu/JRMCore/JRMCoreH.Dffclty:B
+    1792: aload         6
+    1794: iconst_1
+    1795: aaload
+    1796: invokestatic  #237                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+    1799: putstatic     #418                // Field JinRyuu/JRMCore/JRMCoreH.PtchVc:B
+    1802: aload         6
+    1804: iconst_2
+    1805: aaload
+    1806: putstatic     #421                // Field JinRyuu/JRMCore/JRMCoreH.FznDC:Ljava/lang/String;
+    1809: goto          1818
+    1812: iinc          4, 1
+    1815: goto          1735
+    1818: iload_1
+    1819: bipush        19
+    1821: if_icmpne     1889
+    1824: iconst_0
+    1825: istore        4
+    1827: iload         4
+    1829: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1832: arraylength
+    1833: if_icmpge     1889
+    1836: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    1839: iload         4
+    1841: aaload
+    1842: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+    1845: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+    1848: invokevirtual #222                // Method net/minecraft/client/entity/EntityClientPlayerMP.func_70005_c_:()Ljava/lang/String;
+    1851: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1854: ifeq          1883
+    1857: getstatic     #424                // Field JinRyuu/JRMCore/JRMCoreH.dat19:[Ljava/lang/String;
+    1860: iload         4
+    1862: aaload
+    1863: ldc           #231                // String ;
+    1865: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    1868: astore        5
+    1870: aload         5
+    1872: iconst_0
+    1873: aaload
+    1874: invokestatic  #237                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+    1877: putstatic     #427                // Field JinRyuu/JRMCore/JRMCoreH.TlMd:B
+    1880: goto          1889
+    1883: iinc          4, 1
+    1886: goto          1827
+    1889: iload_1
+    1890: bipush        20
+    1892: if_icmpne     2036
+    1895: getstatic     #430                // Field JinRyuu/JRMCore/JRMCoreH.dat20:[Ljava/lang/String;
+    1898: iconst_0
+    1899: aaload
+    1900: ldc           #231                // String ;
+    1902: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    1905: astore        4
+    1907: aload         4
+    1909: iconst_0
+    1910: aaload
+    1911: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+    1914: putstatic     #433                // Field JinRyuu/JRMCore/JRMCoreH.GTrnngCB:I
+    1917: aload         4
+    1919: arraylength
+    1920: iconst_1
+    1921: if_icmple     1931
+    1924: aload         4
+    1926: iconst_1
+    1927: aaload
+    1928: putstatic     #436                // Field JinRyuu/JRMCore/JRMCoreH.PlyrSettings:Ljava/lang/String;
+    1931: aload         4
+    1933: iconst_2
+    1934: aaload
+    1935: invokestatic  #442                // Method java/lang/Float.parseFloat:(Ljava/lang/String;)F
+    1938: putstatic     #445                // Field JinRyuu/JRMCore/JRMCoreH.GravZone:F
+    1941: aload         4
+    1943: iconst_3
+    1944: aaload
+    1945: invokestatic  #442                // Method java/lang/Float.parseFloat:(Ljava/lang/String;)F
+    1948: putstatic     #448                // Field JinRyuu/JRMCore/JRMCoreH.WeightOn:F
+    1951: aload         4
+    1953: arraylength
+    1954: bipush        7
+    1956: if_icmple     1970
+    1959: aload         4
+    1961: bipush        7
+    1963: aaload
+    1964: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+    1967: putstatic     #451                // Field JinRyuu/JRMCore/JRMCoreH.s4ft:I
+    1970: aload         4
+    1972: arraylength
+    1973: bipush        8
+    1975: if_icmple     1989
+    1978: aload         4
+    1980: bipush        8
+    1982: aaload
+    1983: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+    1986: putstatic     #454                // Field JinRyuu/JRMCore/JRMCoreH.pnp:I
+    1989: aload         4
+    1991: arraylength
+    1992: bipush        9
+    1994: if_icmple     2008
+    1997: aload         4
+    1999: bipush        9
+    2001: aaload
+    2002: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+    2005: putstatic     #457                // Field JinRyuu/JRMCore/JRMCoreH.ko:I
+    2008: getstatic     #457                // Field JinRyuu/JRMCore/JRMCoreH.ko:I
+    2011: ifle          2018
+    2014: iconst_1
+    2015: goto          2019
+    2018: iconst_0
+    2019: putstatic     #460                // Field JinRyuu/JRMCore/JRMCoreH.kob:Z
+    2022: getstatic     #454                // Field JinRyuu/JRMCore/JRMCoreH.pnp:I
+    2025: ifle          2032
+    2028: iconst_1
+    2029: goto          2033
+    2032: iconst_0
+    2033: putstatic     #463                // Field JinRyuu/JRMCore/JRMCoreH.pnh:Z
+    2036: iload_1
+    2037: bipush        21
+    2039: if_icmpne     2050
+    2042: getstatic     #466                // Field JinRyuu/JRMCore/JRMCoreH.dat21:[Ljava/lang/String;
+    2045: iconst_0
+    2046: aaload
+    2047: putstatic     #469                // Field JinRyuu/JRMCore/JRMCoreH.MSDV:Ljava/lang/String;
+    2050: iload_1
+    2051: bipush        22
+    2053: if_icmpne     2064
+    2056: getstatic     #472                // Field JinRyuu/JRMCore/JRMCoreH.dat22:[Ljava/lang/String;
+    2059: iconst_0
+    2060: aaload
+    2061: putstatic     #475                // Field JinRyuu/JRMCore/JRMCoreH.MSD:Ljava/lang/String;
+    2064: iload_1
+    2065: bipush        23
+    2067: if_icmpne     2221
+    2070: iconst_0
+    2071: istore        4
+    2073: iload         4
+    2075: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    2078: arraylength
+    2079: if_icmpge     2128
+    2082: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    2085: iload         4
+    2087: aaload
+    2088: getstatic     #80                 // Field JinRyuu/JRMCore/JRMCoreClient.mc:Lnet/minecraft/client/Minecraft;
+    2091: getfield      #100                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+    2094: invokevirtual #222                // Method net/minecraft/client/entity/EntityClientPlayerMP.func_70005_c_:()Ljava/lang/String;
+    2097: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    2100: ifeq          2122
+    2103: getstatic     #478                // Field JinRyuu/JRMCore/JRMCoreH.dat23:[Ljava/lang/String;
+    2106: iload         4
+    2108: aaload
+    2109: astore        5
+    2111: aload         5
+    2113: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+    2116: putstatic     #481                // Field JinRyuu/JRMCore/JRMCoreH.GID:I
+    2119: goto          2128
+    2122: iinc          4, 1
+    2125: goto          2073
+    2128: getstatic     #478                // Field JinRyuu/JRMCore/JRMCoreH.dat23:[Ljava/lang/String;
+    2131: arraylength
+    2132: newarray       int
+    2134: astore        4
+    2136: iconst_0
+    2137: istore        5
+    2139: iload         5
+    2141: getstatic     #478                // Field JinRyuu/JRMCore/JRMCoreH.dat23:[Ljava/lang/String;
+    2144: arraylength
+    2145: if_icmpge     2168
+    2148: aload         4
+    2150: iload         5
+    2152: getstatic     #478                // Field JinRyuu/JRMCore/JRMCoreH.dat23:[Ljava/lang/String;
+    2155: iload         5
+    2157: aaload
+    2158: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+    2161: iastore
+    2162: iinc          5, 1
+    2165: goto          2139
+    2168: aload         4
+    2170: putstatic     #484                // Field JinRyuu/JRMCore/JRMCoreH.GIDs:[I
+    2173: iconst_0
+    2174: putstatic     #487                // Field JinRyuu/JRMCore/JRMCoreH.GMN:I
+    2177: getstatic     #481                // Field JinRyuu/JRMCore/JRMCoreH.GID:I
+    2180: ifle          2221
+    2183: iconst_0
+    2184: istore        5
+    2186: iload         5
+    2188: getstatic     #219                // Field JinRyuu/JRMCore/JRMCoreH.plyrs:[Ljava/lang/String;
+    2191: arraylength
+    2192: if_icmpge     2221
+    2195: getstatic     #484                // Field JinRyuu/JRMCore/JRMCoreH.GIDs:[I
+    2198: iload         5
+    2200: iaload
+    2201: getstatic     #481                // Field JinRyuu/JRMCore/JRMCoreH.GID:I
+    2204: if_icmpne     2215
+    2207: getstatic     #487                // Field JinRyuu/JRMCore/JRMCoreH.GMN:I
+    2210: iconst_1
+    2211: iadd
+    2212: putstatic     #487                // Field JinRyuu/JRMCore/JRMCoreH.GMN:I
+    2215: iinc          5, 1
+    2218: goto          2186
+    2221: iload_1
+    2222: bipush        24
+    2224: if_icmpne     2253
+    2227: getstatic     #490                // Field JinRyuu/JRMCore/JRMCoreH.dat24:[Ljava/lang/String;
+    2230: iconst_0
+    2231: aaload
+    2232: ldc           #231                // String ;
+    2234: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    2237: astore        4
+    2239: aload         4
+    2241: iconst_0
+    2242: aaload
+    2243: putstatic     #493                // Field JinRyuu/JRMCore/JRMCoreH.GLID:Ljava/lang/String;
+    2246: aload         4
+    2248: iconst_1
+    2249: aaload
+    2250: putstatic     #496                // Field JinRyuu/JRMCore/JRMCoreH.GIDi:Ljava/lang/String;
+    2253: iload_1
+    2254: bipush        25
+    2256: if_icmpne     2271
+    2259: getstatic     #499                // Field JinRyuu/JRMCore/JRMCoreH.dat25:[Ljava/lang/String;
+    2262: iconst_0
+    2263: aaload
+    2264: astore        4
+    2266: aload         4
+    2268: putstatic     #496                // Field JinRyuu/JRMCore/JRMCoreH.GIDi:Ljava/lang/String;
+    2271: invokestatic  #502                // Method JinRyuu/JRMCore/JRMCoreH.JFC:()Z
+    2274: ifeq          2603
+    2277: iload_1
+    2278: bipush        26
+    2280: if_icmpne     2326
+    2283: getstatic     #505                // Field JinRyuu/JRMCore/JRMCoreH.dat26:[Ljava/lang/String;
+    2286: arraylength
+    2287: anewarray     #153                // class java/lang/String
+    2290: astore        4
+    2292: iconst_0
+    2293: istore        5
+    2295: iload         5
+    2297: getstatic     #505                // Field JinRyuu/JRMCore/JRMCoreH.dat26:[Ljava/lang/String;
+    2300: arraylength
+    2301: if_icmpge     2321
+    2304: aload         4
+    2306: iload         5
+    2308: getstatic     #505                // Field JinRyuu/JRMCore/JRMCoreH.dat26:[Ljava/lang/String;
+    2311: iload         5
+    2313: aaload
+    2314: aastore
+    2315: iinc          5, 1
+    2318: goto          2295
+    2321: aload         4
+    2323: putstatic     #510                // Field JinRyuu/JRMCore/FamilyCH.famNams:[Ljava/lang/String;
+    2326: iload_1
+    2327: bipush        27
+    2329: if_icmpne     2391
+    2332: getstatic     #513                // Field JinRyuu/JRMCore/JRMCoreH.dat27:[Ljava/lang/String;
+    2335: iconst_0
+    2336: aaload
+    2337: astore        4
+    2339: aload         4
+    2341: ldc_w         #515                // String \\+
+    2344: ldc           #192                // String :
+    2346: invokevirtual #190                // Method java/lang/String.replaceAll:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+    2349: astore        4
+    2351: iconst_1
+    2352: anewarray     #153                // class java/lang/String
+    2355: dup
+    2356: iconst_0
+    2357: aload         4
+    2359: aastore
+    2360: astore        5
+    2362: aload         4
+    2364: ldc           #231                // String ;
+    2366: invokevirtual #286                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+    2369: ifeq          2382
+    2372: aload         4
+    2374: ldc           #231                // String ;
+    2376: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    2379: goto          2384
+    2382: aload         5
+    2384: astore        6
+    2386: aload         6
+    2388: putstatic     #518                // Field JinRyuu/JRMCore/FamilyCH.famMem:[Ljava/lang/String;
+    2391: iload_1
+    2392: bipush        28
+    2394: if_icmpne     2536
+    2397: getstatic     #521                // Field JinRyuu/JRMCore/JRMCoreH.dat28:[Ljava/lang/String;
+    2400: iconst_0
+    2401: aaload
+    2402: astore        4
+    2404: aload         4
+    2406: ldc           #231                // String ;
+    2408: invokevirtual #286                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+    2411: ifeq          2427
+    2414: aload         4
+    2416: invokevirtual #184                // Method java/lang/String.toString:()Ljava/lang/String;
+    2419: ldc           #231                // String ;
+    2421: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    2424: goto          2428
+    2427: aconst_null
+    2428: astore        5
+    2430: aload         5
+    2432: ifnull        2536
+    2435: aload         5
+    2437: iconst_0
+    2438: aaload
+    2439: invokevirtual #327                // Method java/lang/String.length:()I
+    2442: iconst_2
+    2443: if_icmpge     2450
+    2446: aconst_null
+    2447: goto          2460
+    2450: aload         5
+    2452: iconst_0
+    2453: aaload
+    2454: ldc_w         #318                // String ,
+    2457: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    2460: astore        6
+    2462: aload         6
+    2464: ifnull        2474
+    2467: aload         6
+    2469: iconst_1
+    2470: aaload
+    2471: goto          2476
+    2474: ldc           #186                // String
+    2476: putstatic     #524                // Field JinRyuu/JRMCore/FamilyCH.FamP:Ljava/lang/String;
+    2479: aload         5
+    2481: iconst_0
+    2482: aaload
+    2483: invokevirtual #327                // Method java/lang/String.length:()I
+    2486: iconst_2
+    2487: if_icmpge     2494
+    2490: iconst_0
+    2491: goto          2495
+    2494: iconst_1
+    2495: putstatic     #527                // Field JinRyuu/JRMCore/FamilyCH.FamID:I
+    2498: aload         5
+    2500: arraylength
+    2501: iconst_2
+    2502: if_icmplt     2512
+    2505: aload         5
+    2507: iconst_1
+    2508: aaload
+    2509: goto          2514
+    2512: ldc           #186                // String
+    2514: putstatic     #530                // Field JinRyuu/JRMCore/FamilyCH.prop:Ljava/lang/String;
+    2517: aload         5
+    2519: arraylength
+    2520: iconst_3
+    2521: if_icmplt     2531
+    2524: aload         5
+    2526: iconst_2
+    2527: aaload
+    2528: goto          2533
+    2531: ldc           #186                // String
+    2533: putstatic     #533                // Field JinRyuu/JRMCore/FamilyCH.adop:Ljava/lang/String;
+    2536: iload_1
+    2537: bipush        29
+    2539: if_icmpne     2554
+    2542: getstatic     #536                // Field JinRyuu/JRMCore/JRMCoreH.dat29:[Ljava/lang/String;
+    2545: iconst_0
+    2546: aaload
+    2547: astore        4
+    2549: aload         4
+    2551: putstatic     #539                // Field JinRyuu/JRMCore/JRMCoreH.proc:Ljava/lang/String;
+    2554: iload_1
+    2555: bipush        30
+    2557: if_icmpne     2603
+    2560: getstatic     #542                // Field JinRyuu/JRMCore/JRMCoreH.dat30:[Ljava/lang/String;
+    2563: arraylength
+    2564: anewarray     #153                // class java/lang/String
+    2567: astore        4
+    2569: iconst_0
+    2570: istore        5
+    2572: iload         5
+    2574: getstatic     #542                // Field JinRyuu/JRMCore/JRMCoreH.dat30:[Ljava/lang/String;
+    2577: arraylength
+    2578: if_icmpge     2598
+    2581: aload         4
+    2583: iload         5
+    2585: getstatic     #542                // Field JinRyuu/JRMCore/JRMCoreH.dat30:[Ljava/lang/String;
+    2588: iload         5
+    2590: aaload
+    2591: aastore
+    2592: iinc          5, 1
+    2595: goto          2572
+    2598: aload         4
+    2600: putstatic     #545                // Field JinRyuu/JRMCore/JRMCoreH.preg:[Ljava/lang/String;
+    2603: iload_1
+    2604: bipush        31
+    2606: if_icmpne     2619
+    2609: getstatic     #550                // Field JinRyuu/JRMCore/JRMCoreConfig.JRMCABonusOn:Z
+    2612: ifeq          2619
+    2615: aload_2
+    2616: putstatic     #553                // Field JinRyuu/JRMCore/JRMCoreH.bonusAttributes:Ljava/lang/String;
+    2619: return
+
+  public void handleData2(java.lang.String, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: aload_1
+       1: ldc           #231                // String ;
+       3: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+       6: astore        4
+       8: invokestatic  #588                // Method com/google/common/collect/Lists.newArrayList:()Ljava/util/ArrayList;
+      11: astore        5
+      13: iconst_0
+      14: istore        6
+      16: iload         6
+      18: aload         4
+      20: arraylength
+      21: if_icmpge     41
+      24: aload         5
+      26: aload         4
+      28: iload         6
+      30: aaload
+      31: invokevirtual #593                // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      34: pop
+      35: iinc          6, 1
+      38: goto          16
+      41: getstatic     #599                // Field JinRyuu/JRMCore/JRMCoreM.missionsC:Ljava/util/HashMap;
+      44: aload         4
+      46: iconst_0
+      47: aaload
+      48: new           #601                // class com/google/gson/Gson
+      51: dup
+      52: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+      55: aload_2
+      56: getstatic     #606                // Field JinRyuu/JRMCore/JRMCoreM.JSN_TYPE_MSN:Ljava/lang/reflect/Type;
+      59: invokevirtual #610                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/reflect/Type;)Ljava/lang/Object;
+      62: checkcast     #612                // class JinRyuu/JRMCore/JRMCoreMsn
+      65: invokevirtual #618                // Method java/util/HashMap.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+      68: pop
+      69: getstatic     #621                // Field JinRyuu/JRMCore/JRMCoreM.missionsCD:Ljava/util/HashMap;
+      72: aload         4
+      74: iconst_0
+      75: aaload
+      76: aload         5
+      78: invokevirtual #618                // Method java/util/HashMap.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+      81: pop
+      82: return
+
+  public void handleTri(io.netty.buffer.ByteBuf);
+    Code:
+       0: iconst_0
+       1: istore_2
+       2: iconst_0
+       3: istore_3
+       4: iconst_0
+       5: istore        4
+       7: iconst_0
+       8: istore        5
+      10: iconst_0
+      11: istore        6
+      13: iconst_0
+      14: istore        7
+      16: iconst_0
+      17: istore        8
+      19: ldc           #186                // String
+      21: astore        9
+      23: iconst_0
+      24: istore        10
+      26: iconst_0
+      27: istore        11
+      29: iconst_0
+      30: istore        12
+      32: iconst_0
+      33: istore        13
+      35: iconst_0
+      36: istore        14
+      38: iconst_0
+      39: istore        15
+      41: iconst_0
+      42: istore        16
+      44: iconst_0
+      45: istore        17
+      47: fconst_0
+      48: fstore        18
+      50: iconst_0
+      51: istore        31
+      53: fconst_0
+      54: fstore        32
+      56: iconst_0
+      57: istore        33
+      59: iconst_0
+      60: istore        34
+      62: iconst_0
+      63: istore        35
+      65: iconst_0
+      66: istore        36
+      68: ldc           #186                // String
+      70: astore        38
+      72: ldc           #186                // String
+      74: astore        39
+      76: ldc           #186                // String
+      78: astore        40
+      80: iconst_1
+      81: istore        69
+      83: ldc_w         #628                // float 0.5f
+      86: fstore        70
+      88: ldc_w         #629                // float 0.01f
+      91: fstore        71
+      93: bipush        100
+      95: istore        72
+      97: ldc_w         #630                // float 3.0f
+     100: fstore        73
+     102: iconst_1
+     103: istore        74
+     105: iconst_1
+     106: istore        75
+     108: iconst_1
+     109: istore        76
+     111: ldc_w         #628                // float 0.5f
+     114: fstore        77
+     116: ldc_w         #629                // float 0.01f
+     119: fstore        78
+     121: bipush        100
+     123: istore        79
+     125: bipush        40
+     127: istore        80
+     129: iconst_4
+     130: newarray       float
+     132: astore        81
+     134: iconst_4
+     135: newarray       float
+     137: astore        82
+     139: iconst_4
+     140: newarray       int
+     142: astore        83
+     144: iconst_0
+     145: istore        84
+     147: iconst_4
+     148: anewarray     #323                // class "[I"
+     151: astore        85
+     153: bipush        20
+     155: istore        86
+     157: bipush        10
+     159: istore        87
+     161: bipush        10
+     163: istore        88
+     165: ldc           #186                // String
+     167: astore        89
+     169: ldc2_w        #631                // double 1.6d
+     172: dstore        90
+     174: sipush        140
+     177: istore        92
+     179: bipush        16
+     181: istore        93
+     183: bipush        6
+     185: newarray       float
+     187: dup
+     188: iconst_0
+     189: fconst_1
+     190: fastore
+     191: dup
+     192: iconst_1
+     193: fconst_1
+     194: fastore
+     195: dup
+     196: iconst_2
+     197: fconst_1
+     198: fastore
+     199: dup
+     200: iconst_3
+     201: fconst_1
+     202: fastore
+     203: dup
+     204: iconst_4
+     205: fconst_1
+     206: fastore
+     207: dup
+     208: iconst_5
+     209: fconst_1
+     210: fastore
+     211: astore        94
+     213: ldc           #186                // String
+     215: astore        98
+     217: ldc           #186                // String
+     219: astore        99
+     221: ldc           #186                // String
+     223: astore        100
+     225: iconst_0
+     226: istore        101
+     228: aload_1
+     229: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     232: astore        37
+     234: new           #614                // class java/util/HashMap
+     237: dup
+     238: invokespecial #639                // Method java/util/HashMap."<init>":()V
+     241: astore        102
+     243: new           #601                // class com/google/gson/Gson
+     246: dup
+     247: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+     250: aload         37
+     252: aload         102
+     254: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+     257: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+     260: checkcast     #614                // class java/util/HashMap
+     263: putstatic     #649                // Field JinRyuu/JRMCore/JRMCoreH.modsC:Ljava/util/HashMap;
+     266: aload_1
+     267: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     270: putstatic     #659                // Field JinRyuu/JRMCore/JRMCoreComTickH.tna3fu:Z
+     273: invokestatic  #662                // Method JinRyuu/JRMCore/JRMCoreH.DBC:()Z
+     276: ifeq          362
+     279: aload_1
+     280: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     283: istore_3
+     284: aload_1
+     285: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     288: istore        4
+     290: aload_1
+     291: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     294: istore        5
+     296: aload_1
+     297: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     300: istore        7
+     302: aload_1
+     303: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     306: istore        8
+     308: aload_1
+     309: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     312: astore        9
+     314: aload_1
+     315: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     318: istore        10
+     320: aload_1
+     321: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     324: istore        11
+     326: aload_1
+     327: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     330: istore        31
+     332: aload_1
+     333: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+     336: fstore        32
+     338: aload_1
+     339: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     342: istore        33
+     344: aload_1
+     345: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     348: istore        34
+     350: aload_1
+     351: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     354: istore        35
+     356: aload_1
+     357: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     360: istore        36
+     362: invokestatic  #676                // Method JinRyuu/JRMCore/JRMCoreH.JYC:()Z
+     365: ifeq          374
+     368: aload_1
+     369: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     372: istore        15
+     374: invokestatic  #502                // Method JinRyuu/JRMCore/JRMCoreH.JFC:()Z
+     377: ifeq          386
+     380: aload_1
+     381: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     384: istore        16
+     386: invokestatic  #679                // Method JinRyuu/JRMCore/JRMCoreH.NC:()Z
+     389: ifeq          410
+     392: aload_1
+     393: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     396: astore        38
+     398: aload_1
+     399: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     402: astore        39
+     404: aload_1
+     405: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     408: astore        40
+     410: aload_1
+     411: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     414: astore        41
+     416: aload_1
+     417: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     420: astore        42
+     422: aload_1
+     423: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     426: astore        43
+     428: aload_1
+     429: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     432: astore        44
+     434: aload_1
+     435: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     438: astore        45
+     440: aload_1
+     441: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     444: astore        46
+     446: aload_1
+     447: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     450: astore        47
+     452: aload_1
+     453: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     456: astore        48
+     458: aload_1
+     459: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     462: astore        49
+     464: aload_1
+     465: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     468: astore        50
+     470: aload_1
+     471: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     474: astore        51
+     476: aload_1
+     477: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     480: astore        52
+     482: aload_1
+     483: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     486: astore        53
+     488: aload_1
+     489: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     492: astore        54
+     494: aload_1
+     495: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     498: astore        55
+     500: aload_1
+     501: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     504: astore        56
+     506: aload_1
+     507: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     510: astore        57
+     512: aload_1
+     513: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     516: istore        58
+     518: aload_1
+     519: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     522: astore        59
+     524: aload_1
+     525: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     528: astore        60
+     530: aload_1
+     531: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     534: astore        61
+     536: aload_1
+     537: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     540: astore        62
+     542: aload_1
+     543: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     546: astore        63
+     548: aload_1
+     549: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     552: astore        64
+     554: aload_1
+     555: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     558: astore        65
+     560: aload_1
+     561: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     564: istore        66
+     566: aload_1
+     567: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     570: astore        67
+     572: aload_1
+     573: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     576: astore        68
+     578: aload_1
+     579: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     582: istore        6
+     584: aload_1
+     585: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     588: istore        17
+     590: aload_1
+     591: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+     594: fstore        18
+     596: aload_1
+     597: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     600: istore        19
+     602: aload_1
+     603: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     606: istore        20
+     608: aload_1
+     609: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     612: istore        21
+     614: aload_1
+     615: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     618: istore        22
+     620: aload_1
+     621: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     624: istore        23
+     626: aload_1
+     627: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     630: astore        24
+     632: aload_1
+     633: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     636: astore        25
+     638: aload_1
+     639: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     642: istore        26
+     644: aload_1
+     645: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     648: astore        27
+     650: aload_1
+     651: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     654: astore        28
+     656: aload_1
+     657: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     660: astore        29
+     662: aload_1
+     663: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     666: istore        30
+     668: aload_1
+     669: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     672: istore        12
+     674: aload_1
+     675: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     678: istore        13
+     680: aload_1
+     681: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     684: istore        14
+     686: aload_1
+     687: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     690: istore        69
+     692: aload_1
+     693: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+     696: fstore        70
+     698: aload_1
+     699: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+     702: fstore        71
+     704: aload_1
+     705: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     708: istore        72
+     710: aload_1
+     711: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+     714: fstore        73
+     716: aload_1
+     717: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     720: istore        74
+     722: aload_1
+     723: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     726: istore        75
+     728: aload_1
+     729: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     732: istore        76
+     734: aload_1
+     735: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+     738: fstore        77
+     740: aload_1
+     741: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+     744: fstore        78
+     746: aload_1
+     747: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     750: istore        79
+     752: aload_1
+     753: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     756: istore        80
+     758: iconst_0
+     759: istore        103
+     761: iload         103
+     763: iconst_4
+     764: if_icmpge     843
+     767: aload         81
+     769: iload         103
+     771: aload_1
+     772: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+     775: fastore
+     776: aload         82
+     778: iload         103
+     780: aload_1
+     781: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+     784: fastore
+     785: aload         83
+     787: iload         103
+     789: aload_1
+     790: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     793: iastore
+     794: aload_1
+     795: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     798: istore        84
+     800: aload         85
+     802: iload         103
+     804: iload         84
+     806: newarray       int
+     808: aastore
+     809: iconst_0
+     810: istore        104
+     812: iload         104
+     814: iload         84
+     816: if_icmpge     837
+     819: aload         85
+     821: iload         103
+     823: aaload
+     824: iload         104
+     826: aload_1
+     827: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     830: iastore
+     831: iinc          104, 1
+     834: goto          812
+     837: iinc          103, 1
+     840: goto          761
+     843: aload_1
+     844: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     847: istore        86
+     849: aload_1
+     850: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     853: istore        87
+     855: aload_1
+     856: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+     859: dstore        90
+     861: aload_1
+     862: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     865: istore        92
+     867: aload_1
+     868: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     871: istore        93
+     873: iconst_0
+     874: istore        103
+     876: iload         103
+     878: getstatic     #686                // Field JinRyuu/JRMCore/JRMCoreConfig.AttributeUpgradeCost_AttributeMulti:[F
+     881: arraylength
+     882: if_icmpge     901
+     885: aload         94
+     887: iload         103
+     889: aload_1
+     890: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+     893: d2f
+     894: fastore
+     895: iinc          103, 1
+     898: goto          876
+     901: aload_1
+     902: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+     905: istore        88
+     907: aload_1
+     908: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     911: astore        89
+     913: aload_1
+     914: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     917: istore        95
+     919: aload_1
+     920: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+     923: dstore        96
+     925: invokestatic  #662                // Method JinRyuu/JRMCore/JRMCoreH.DBC:()Z
+     928: ifeq          949
+     931: aload_1
+     932: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     935: astore        98
+     937: aload_1
+     938: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     941: astore        99
+     943: aload_1
+     944: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+     947: astore        100
+     949: invokestatic  #662                // Method JinRyuu/JRMCore/JRMCoreH.DBC:()Z
+     952: ifne          961
+     955: invokestatic  #679                // Method JinRyuu/JRMCore/JRMCoreH.NC:()Z
+     958: ifeq          967
+     961: aload_1
+     962: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+     965: istore        101
+     967: invokestatic  #662                // Method JinRyuu/JRMCore/JRMCoreH.DBC:()Z
+     970: ifeq          1042
+     973: iload_3
+     974: invokestatic  #692                // Method JinRyuu/JRMCore/JRMCoreHDBC.DBCsetConfigmaxTrnExp:(I)V
+     977: iload         4
+     979: invokestatic  #695                // Method JinRyuu/JRMCore/JRMCoreHDBC.DBCsetConfigplntVegeta:(Z)V
+     982: iload         5
+     984: invokestatic  #698                // Method JinRyuu/JRMCore/JRMCoreHDBC.DBCsetConfigflyAnyLvl:(Z)V
+     987: iload         7
+     989: invokestatic  #701                // Method JinRyuu/JRMCore/JRMCoreHDBC.DBCsetConfigDeathSystemOff:(Z)V
+     992: iload         8
+     994: invokestatic  #704                // Method JinRyuu/JRMCore/JRMCoreHDBC.DBCsetConfigDBSpawnEnabled:(Z)V
+     997: aload         9
+     999: invokestatic  #708                // Method JinRyuu/JRMCore/JRMCoreHDBC.DBCsetConfigDBSpawnTime:(Ljava/lang/String;)V
+    1002: iload         10
+    1004: invokestatic  #711                // Method JinRyuu/JRMCore/JRMCoreHDBC.DBCsetConfigDBSagaSystemOn:(Z)V
+    1007: iload         11
+    1009: invokestatic  #714                // Method JinRyuu/JRMCore/JRMCoreHDBC.DBCsetConfigDBSagaSysSpawnPods:(Z)V
+    1012: iload         31
+    1014: invokestatic  #717                // Method JinRyuu/JRMCore/JRMCoreHDBC.DBCsetConfigsenzuCool:(I)V
+    1017: fload         32
+    1019: invokestatic  #721                // Method JinRyuu/JRMCore/JRMCoreHDBC.DBCsetConfigReinc:(F)V
+    1022: iload         33
+    1024: invokestatic  #724                // Method JinRyuu/JRMCore/JRMCoreHDBC.DBCsetConfigGodform:(Z)V
+    1027: iload         34
+    1029: invokestatic  #727                // Method JinRyuu/JRMCore/JRMCoreHDBC.FreeRevSet:(Z)V
+    1032: iload         35
+    1034: invokestatic  #730                // Method JinRyuu/JRMCore/JRMCoreHDBC.DBCsetConfigTechExpNeed:(I)V
+    1037: iload         36
+    1039: invokestatic  #733                // Method JinRyuu/JRMCore/JRMCoreHDBC.DBCsetConfigTechCostMod:(I)V
+    1042: invokestatic  #676                // Method JinRyuu/JRMCore/JRMCoreH.JYC:()Z
+    1045: ifeq          1053
+    1048: iload         15
+    1050: invokestatic  #738                // Method JinRyuu/JRMCore/JRMCoreHJYC.JYCsetConfigpgut:(I)V
+    1053: invokestatic  #502                // Method JinRyuu/JRMCore/JRMCoreH.JFC:()Z
+    1056: ifeq          1064
+    1059: iload         16
+    1061: invokestatic  #743                // Method JinRyuu/JRMCore/JRMCoreHJFC.setConfigpt:(I)V
+    1064: bipush        20
+    1066: anewarray     #323                // class "[I"
+    1069: astore        103
+    1071: bipush        80
+    1073: newarray       float
+    1075: astore        104
+    1077: bipush        6
+    1079: bipush        17
+    1081: multianewarray #745,  2           // class "[[F"
+    1085: astore        105
+    1087: bipush        40
+    1089: newarray       int
+    1091: astore        106
+    1093: bipush        20
+    1095: anewarray     #153                // class java/lang/String
+    1098: astore        107
+    1100: bipush        20
+    1102: anewarray     #671                // class "[F"
+    1105: astore        108
+    1107: bipush        20
+    1109: anewarray     #747                // class "[D"
+    1112: astore        109
+    1114: invokestatic  #679                // Method JinRyuu/JRMCore/JRMCoreH.NC:()Z
+    1117: ifeq          1189
+    1120: new           #601                // class com/google/gson/Gson
+    1123: dup
+    1124: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1127: aload         38
+    1129: aload         103
+    1131: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1134: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1137: checkcast     #673                // class "[[I"
+    1140: putstatic     #750                // Field JinRyuu/JRMCore/JRMCoreH.NCRacialSkillTPCost:[[I
+    1143: new           #601                // class com/google/gson/Gson
+    1146: dup
+    1147: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1150: aload         39
+    1152: aload         103
+    1154: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1157: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1160: checkcast     #673                // class "[[I"
+    1163: putstatic     #753                // Field JinRyuu/JRMCore/JRMCoreH.NCSkillTPCost:[[I
+    1166: new           #601                // class com/google/gson/Gson
+    1169: dup
+    1170: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1173: aload         40
+    1175: aload         104
+    1177: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1180: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1183: checkcast     #671                // class "[F"
+    1186: putstatic     #756                // Field JinRyuu/JRMCore/JRMCoreH.TransGtsDmg:[F
+    1189: new           #601                // class com/google/gson/Gson
+    1192: dup
+    1193: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1196: aload         41
+    1198: aload         103
+    1200: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1203: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1206: checkcast     #673                // class "[[I"
+    1209: putstatic     #761                // Field JinRyuu/JRMCore/JRMCoreH.DBCRacialSkillTPCost:[[I
+    1212: new           #601                // class com/google/gson/Gson
+    1215: dup
+    1216: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1219: aload         42
+    1221: aload         103
+    1223: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1226: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1229: checkcast     #673                // class "[[I"
+    1232: putstatic     #764                // Field JinRyuu/JRMCore/JRMCoreH.DBCSkillTPCost:[[I
+    1235: new           #601                // class com/google/gson/Gson
+    1238: dup
+    1239: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1242: aload         46
+    1244: aload         104
+    1246: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1249: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1252: checkcast     #671                // class "[F"
+    1255: putstatic     #767                // Field JinRyuu/JRMCore/JRMCoreH.TransMngDmg:[F
+    1258: new           #601                // class com/google/gson/Gson
+    1261: dup
+    1262: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1265: aload         43
+    1267: aload         104
+    1269: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1272: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1275: checkcast     #671                // class "[F"
+    1278: putstatic     #770                // Field JinRyuu/JRMCore/JRMCoreH.TransKaiDmg:[F
+    1281: new           #601                // class com/google/gson/Gson
+    1284: dup
+    1285: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1288: aload         44
+    1290: aload         104
+    1292: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1295: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1298: checkcast     #671                // class "[F"
+    1301: putstatic     #773                // Field JinRyuu/JRMCore/JRMCoreH.TransKaiDrainLevel:[F
+    1304: new           #601                // class com/google/gson/Gson
+    1307: dup
+    1308: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1311: aload         45
+    1313: aload         104
+    1315: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1318: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1321: checkcast     #671                // class "[F"
+    1324: putstatic     #776                // Field JinRyuu/JRMCore/JRMCoreH.TransKaiDrainRace:[F
+    1327: new           #601                // class com/google/gson/Gson
+    1330: dup
+    1331: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1334: aload         47
+    1336: aload         107
+    1338: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1341: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1344: checkcast     #216                // class "[Ljava/lang/String;"
+    1347: putstatic     #779                // Field JinRyuu/JRMCore/JRMCoreH.TransKaiNms:[Ljava/lang/String;
+    1350: new           #601                // class com/google/gson/Gson
+    1353: dup
+    1354: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1357: aload         48
+    1359: aload         108
+    1361: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1364: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1367: checkcast     #745                // class "[[F"
+    1370: putstatic     #782                // Field JinRyuu/JRMCore/JRMCoreH.TransSaiStBnP:[[F
+    1373: new           #601                // class com/google/gson/Gson
+    1376: dup
+    1377: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1380: aload         49
+    1382: aload         108
+    1384: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1387: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1390: checkcast     #745                // class "[[F"
+    1393: putstatic     #785                // Field JinRyuu/JRMCore/JRMCoreH.TransHalfSaiStBnP:[[F
+    1396: new           #601                // class com/google/gson/Gson
+    1399: dup
+    1400: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1403: aload         50
+    1405: aload         108
+    1407: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1410: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1413: checkcast     #745                // class "[[F"
+    1416: putstatic     #788                // Field JinRyuu/JRMCore/JRMCoreH.TransFrStBnP:[[F
+    1419: new           #601                // class com/google/gson/Gson
+    1422: dup
+    1423: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1426: aload         51
+    1428: aload         108
+    1430: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1433: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1436: checkcast     #745                // class "[[F"
+    1439: putstatic     #791                // Field JinRyuu/JRMCore/JRMCoreH.TransHmStBnP:[[F
+    1442: new           #601                // class com/google/gson/Gson
+    1445: dup
+    1446: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1449: aload         52
+    1451: aload         108
+    1453: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1456: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1459: checkcast     #745                // class "[[F"
+    1462: putstatic     #794                // Field JinRyuu/JRMCore/JRMCoreH.TransNaStBnP:[[F
+    1465: new           #601                // class com/google/gson/Gson
+    1468: dup
+    1469: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1472: aload         53
+    1474: aload         108
+    1476: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1479: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1482: checkcast     #745                // class "[[F"
+    1485: putstatic     #797                // Field JinRyuu/JRMCore/JRMCoreH.TransMaStBnP:[[F
+    1488: new           #601                // class com/google/gson/Gson
+    1491: dup
+    1492: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1495: aload         54
+    1497: aload         103
+    1499: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1502: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1505: checkcast     #673                // class "[[I"
+    1508: putstatic     #800                // Field JinRyuu/JRMCore/JRMCoreH.DBCRacialSkillMindCost:[[I
+    1511: new           #601                // class com/google/gson/Gson
+    1514: dup
+    1515: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1518: aload         55
+    1520: aload         103
+    1522: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1525: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1528: checkcast     #673                // class "[[I"
+    1531: putstatic     #803                // Field JinRyuu/JRMCore/JRMCoreH.DBCSkillMindCost:[[I
+    1534: new           #601                // class com/google/gson/Gson
+    1537: dup
+    1538: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1541: aload         56
+    1543: aload         103
+    1545: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1548: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1551: checkcast     #673                // class "[[I"
+    1554: putstatic     #806                // Field JinRyuu/JRMCore/JRMCoreH.NCRacialSkillMindCost:[[I
+    1557: new           #601                // class com/google/gson/Gson
+    1560: dup
+    1561: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1564: aload         57
+    1566: aload         103
+    1568: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1571: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1574: checkcast     #673                // class "[[I"
+    1577: putstatic     #809                // Field JinRyuu/JRMCore/JRMCoreH.NCSkillMindCost:[[I
+    1580: iload         58
+    1582: putstatic     #812                // Field JinRyuu/JRMCore/JRMCoreConfig.OverAtrLimit:Z
+    1585: new           #601                // class com/google/gson/Gson
+    1588: dup
+    1589: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1592: aload         59
+    1594: aload         104
+    1596: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1599: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1602: checkcast     #671                // class "[F"
+    1605: putstatic     #815                // Field JinRyuu/JRMCore/JRMCoreConfig.MysticDamMulti:[F
+    1608: new           #601                // class com/google/gson/Gson
+    1611: dup
+    1612: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1615: aload         60
+    1617: aload         106
+    1619: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1622: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1625: checkcast     #323                // class "[I"
+    1628: putstatic     #818                // Field JinRyuu/JRMCore/JRMCoreConfig.ArcosianPPMax:[I
+    1631: new           #601                // class com/google/gson/Gson
+    1634: dup
+    1635: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1638: aload         61
+    1640: aload         106
+    1642: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1645: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1648: checkcast     #323                // class "[I"
+    1651: putstatic     #821                // Field JinRyuu/JRMCore/JRMCoreConfig.ArcosianPPGrowth:[I
+    1654: new           #601                // class com/google/gson/Gson
+    1657: dup
+    1658: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1661: aload         62
+    1663: aload         106
+    1665: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1668: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1671: checkcast     #323                // class "[I"
+    1674: putstatic     #824                // Field JinRyuu/JRMCore/JRMCoreConfig.ArcosianPPCost:[I
+    1677: new           #601                // class com/google/gson/Gson
+    1680: dup
+    1681: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1684: aload         63
+    1686: aload         104
+    1688: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1691: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1694: checkcast     #671                // class "[F"
+    1697: putstatic     #827                // Field JinRyuu/JRMCore/JRMCoreConfig.ArcosianPPDamMulti:[F
+    1700: new           #601                // class com/google/gson/Gson
+    1703: dup
+    1704: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1707: aload         64
+    1709: aload         104
+    1711: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1714: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1717: checkcast     #671                // class "[F"
+    1720: putstatic     #830                // Field JinRyuu/JRMCore/JRMCoreConfig.ArcosianPPDamMultiPoint:[F
+    1723: new           #601                // class com/google/gson/Gson
+    1726: dup
+    1727: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1730: aload         65
+    1732: aload         105
+    1734: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1737: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1740: checkcast     #745                // class "[[F"
+    1743: putstatic     #833                // Field JinRyuu/JRMCore/JRMCoreConfig.AttibuteBonusPerRacialSkill:[[F
+    1746: iload         66
+    1748: putstatic     #836                // Field JinRyuu/JRMCore/JRMCoreConfig.ArcosianPPDamMultiHighest:I
+    1751: new           #601                // class com/google/gson/Gson
+    1754: dup
+    1755: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1758: aload         67
+    1760: aload         104
+    1762: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1765: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1768: checkcast     #671                // class "[F"
+    1771: putstatic     #839                // Field JinRyuu/JRMCore/JRMCoreConfig.TPGainRateRace:[F
+    1774: new           #601                // class com/google/gson/Gson
+    1777: dup
+    1778: invokespecial #602                // Method com/google/gson/Gson."<init>":()V
+    1781: aload         68
+    1783: aload         104
+    1785: invokevirtual #643                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+    1788: invokevirtual #646                // Method com/google/gson/Gson.fromJson:(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+    1791: checkcast     #671                // class "[F"
+    1794: putstatic     #842                // Field JinRyuu/JRMCore/JRMCoreConfig.TPGainRace:[F
+    1797: iload         6
+    1799: putstatic     #843                // Field JinRyuu/JRMCore/JRMCoreConfig.expGriOff:Z
+    1802: iload         17
+    1804: putstatic     #846                // Field JinRyuu/JRMCore/JRMCoreConfig.SklMedCat:I
+    1807: fload         18
+    1809: putstatic     #849                // Field JinRyuu/JRMCore/JRMCoreConfig.SklMedRate:F
+    1812: iload         19
+    1814: putstatic     #852                // Field JinRyuu/JRMCore/JRMCoreConfig.releaseStop:Z
+    1817: iload         20
+    1819: putstatic     #855                // Field JinRyuu/JRMCore/JRMCoreConfig.regen:Z
+    1822: iload         21
+    1824: putstatic     #858                // Field JinRyuu/JRMCore/JRMCoreConfig.release:Z
+    1827: iload         22
+    1829: putstatic     #861                // Field JinRyuu/JRMCore/JRMCoreConfig.tpgn:I
+    1832: iload         23
+    1834: invokestatic  #865                // Method nQp65G:(I)I
+    1837: putstatic     #868                // Field JinRyuu/JRMCore/JRMCoreConfig.tmx:I
+    1840: aload         24
+    1842: putstatic     #871                // Field JinRyuu/JRMCore/JRMCoreConfig.regenRate:Ljava/lang/String;
+    1845: aload         25
+    1847: putstatic     #874                // Field JinRyuu/JRMCore/JRMCoreConfig.hRegenRate:Ljava/lang/String;
+    1850: iload         26
+    1852: putstatic     #877                // Field JinRyuu/JRMCore/JRMCoreConfig.sizes:Z
+    1855: aload         27
+    1857: putstatic     #880                // Field JinRyuu/JRMCore/JRMCoreConfig.ssurl:Ljava/lang/String;
+    1860: aload         28
+    1862: putstatic     #883                // Field JinRyuu/JRMCore/JRMCoreConfig.ssurl2:Ljava/lang/String;
+    1865: aload         29
+    1867: putstatic     #886                // Field JinRyuu/JRMCore/JRMCoreConfig.ssc:Ljava/lang/String;
+    1870: iload         30
+    1872: putstatic     #889                // Field JinRyuu/JRMCore/JRMCoreConfig.sfzns:Z
+    1875: iload         12
+    1877: putstatic     #892                // Field JinRyuu/JRMCore/JRMCoreConfig.NPCSpawnCheck:Z
+    1880: iload         13
+    1882: putstatic     #895                // Field JinRyuu/JRMCore/JRMCoreConfig.BuildingSpawnCheck:Z
+    1885: iload         14
+    1887: putstatic     #898                // Field JinRyuu/JRMCore/JRMCoreConfig.buildingSpawnAreaSize:I
+    1890: iload         69
+    1892: putstatic     #903                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameConcentration.TPGainOn:Z
+    1895: fload         70
+    1897: putstatic     #906                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameConcentration.TPlimitIncreasesWithPlayerLevel:F
+    1900: fload         71
+    1902: putstatic     #909                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameConcentration.TPMultiplier:F
+    1905: iload         72
+    1907: putstatic     #912                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameConcentration.TPDailyLimit:I
+    1910: fload         73
+    1912: putstatic     #915                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameConcentration.ComboTimer:F
+    1915: iload         74
+    1917: putstatic     #918                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameConcentration.ConstantClickOn:Z
+    1920: iload         75
+    1922: putstatic     #921                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameConcentration.RandomMovementSpeed:I
+    1925: iload         76
+    1927: putstatic     #924                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameAirBoxing.TPGainOn:Z
+    1930: fload         77
+    1932: putstatic     #925                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameAirBoxing.TPlimitIncreasesWithPlayerLevel:F
+    1935: fload         78
+    1937: putstatic     #926                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameAirBoxing.TPMultiplier:F
+    1940: iload         79
+    1942: putstatic     #927                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameAirBoxing.TPDailyLimit:I
+    1945: iload         80
+    1947: putstatic     #930                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameAirBoxing.StartLife:I
+    1950: aload         81
+    1952: putstatic     #933                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameAirBoxing.KeySpawnSpeed:[F
+    1955: aload         82
+    1957: putstatic     #936                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameAirBoxing.KeySpeed:[F
+    1960: aload         83
+    1962: putstatic     #939                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameAirBoxing.KeyLifeTaken:[I
+    1965: aload         85
+    1967: putstatic     #942                // Field JinRyuu/JRMCore/server/config/core/JGConfigMiniGameAirBoxing.KeyTypeIDs:[[I
+    1970: iload         86
+    1972: putstatic     #945                // Field JinRyuu/JRMCore/JRMCoreConfig.StatPasDef:I
+    1975: iload         87
+    1977: putstatic     #948                // Field JinRyuu/JRMCore/JRMCoreConfig.mjn:I
+    1980: dload         90
+    1982: putstatic     #951                // Field JinRyuu/JRMCore/JRMCoreConfig.atcm:D
+    1985: iload         92
+    1987: putstatic     #954                // Field JinRyuu/JRMCore/JRMCoreConfig.AttributeUpgradeCost_StartMinus:I
+    1990: iload         93
+    1992: putstatic     #957                // Field JinRyuu/JRMCore/JRMCoreConfig.AttributeUpgradeCost_Min:I
+    1995: aload         94
+    1997: putstatic     #686                // Field JinRyuu/JRMCore/JRMCoreConfig.AttributeUpgradeCost_AttributeMulti:[F
+    2000: iload         88
+    2002: putstatic     #960                // Field JinRyuu/JRMCore/JRMCoreConfig.lgnd:I
+    2005: aload         89
+    2007: putstatic     #963                // Field JinRyuu/JRMCore/JRMCoreConfig.lgndb:Ljava/lang/String;
+    2010: iload         95
+    2012: putstatic     #966                // Field JinRyuu/JRMCore/JRMCoreConfig.lockon:Z
+    2015: dload         96
+    2017: putstatic     #969                // Field JinRyuu/JRMCore/JRMCoreConfig.Flngspd:D
+    2020: invokestatic  #662                // Method JinRyuu/JRMCore/JRMCoreH.DBC:()Z
+    2023: ifeq          2188
+    2026: aload         98
+    2028: ldc_w         #329                // String
+    2031: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    2034: astore        110
+    2036: iconst_0
+    2037: istore        111
+    2039: iload         111
+    2041: getstatic     #973                // Field JinRyuu/JRMCore/JRMCoreConfig.dat5695:[Z
+    2044: arraylength
+    2045: if_icmpge     2068
+    2048: getstatic     #973                // Field JinRyuu/JRMCore/JRMCoreConfig.dat5695:[Z
+    2051: iload         111
+    2053: aload         110
+    2055: iload         111
+    2057: aaload
+    2058: invokestatic  #978                // Method java/lang/Boolean.parseBoolean:(Ljava/lang/String;)Z
+    2061: bastore
+    2062: iinc          111, 1
+    2065: goto          2039
+    2068: aload         99
+    2070: ldc           #231                // String ;
+    2072: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    2075: astore        111
+    2077: iconst_0
+    2078: istore        112
+    2080: iload         112
+    2082: getstatic     #981                // Field JinRyuu/JRMCore/JRMCoreConfig.dat5696:[[D
+    2085: arraylength
+    2086: if_icmpge     2146
+    2089: aload         111
+    2091: iload         112
+    2093: aaload
+    2094: ldc_w         #329                // String
+    2097: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    2100: astore        110
+    2102: iconst_0
+    2103: istore        113
+    2105: iload         113
+    2107: getstatic     #981                // Field JinRyuu/JRMCore/JRMCoreConfig.dat5696:[[D
+    2110: iload         113
+    2112: aaload
+    2113: arraylength
+    2114: if_icmpge     2140
+    2117: getstatic     #981                // Field JinRyuu/JRMCore/JRMCoreConfig.dat5696:[[D
+    2120: iload         112
+    2122: aaload
+    2123: iload         113
+    2125: aload         110
+    2127: iload         113
+    2129: aaload
+    2130: invokestatic  #987                // Method java/lang/Double.parseDouble:(Ljava/lang/String;)D
+    2133: dastore
+    2134: iinc          113, 1
+    2137: goto          2105
+    2140: iinc          112, 1
+    2143: goto          2080
+    2146: aload         100
+    2148: ldc_w         #329                // String
+    2151: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+    2154: astore        110
+    2156: iconst_0
+    2157: istore        112
+    2159: iload         112
+    2161: getstatic     #990                // Field JinRyuu/JRMCore/JRMCoreConfig.dat5709:[Z
+    2164: arraylength
+    2165: if_icmpge     2188
+    2168: getstatic     #990                // Field JinRyuu/JRMCore/JRMCoreConfig.dat5709:[Z
+    2171: iload         112
+    2173: aload         110
+    2175: iload         112
+    2177: aaload
+    2178: invokestatic  #978                // Method java/lang/Boolean.parseBoolean:(Ljava/lang/String;)Z
+    2181: bastore
+    2182: iinc          112, 1
+    2185: goto          2159
+    2188: invokestatic  #662                // Method JinRyuu/JRMCore/JRMCoreH.DBC:()Z
+    2191: ifne          2200
+    2194: invokestatic  #679                // Method JinRyuu/JRMCore/JRMCoreH.NC:()Z
+    2197: ifeq          2205
+    2200: iload         101
+    2202: putstatic     #993                // Field JinRyuu/JRMCore/JRMCoreConfig.dat5711:Z
+    2205: invokestatic  #662                // Method JinRyuu/JRMCore/JRMCoreH.DBC:()Z
+    2208: ifeq          2425
+    2211: aload_1
+    2212: invokevirtual #997                // Method io/netty/buffer/ByteBuf.readByte:()B
+    2215: istore        110
+    2217: iload         110
+    2219: putstatic     #1002               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_LEVELS:B
+    2222: getstatic     #1002               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_LEVELS:B
+    2225: newarray       int
+    2227: putstatic     #1005               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_HEAT_DURATION:[I
+    2230: getstatic     #1002               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_LEVELS:B
+    2233: newarray       boolean
+    2235: putstatic     #1008               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_HAIR_WHITE:[Z
+    2238: getstatic     #1002               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_LEVELS:B
+    2241: newarray       int
+    2243: putstatic     #1011               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_ATTRIBUTE_MULTI:[I
+    2246: getstatic     #1002               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_LEVELS:B
+    2249: getstatic     #1014               // Field JinRyuu/JRMCore/JRMCoreH.Races:[Ljava/lang/String;
+    2252: arraylength
+    2253: multianewarray #745,  2           // class "[[F"
+    2257: putstatic     #1017               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_ATTRIBUTE_MULTI_RACE:[[F
+    2260: getstatic     #1002               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_LEVELS:B
+    2263: iconst_2
+    2264: multianewarray #1019,  2          // class "[[B"
+    2268: putstatic     #1022               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_DODGE_RATE:[[B
+    2271: getstatic     #1002               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_LEVELS:B
+    2274: iconst_2
+    2275: multianewarray #1019,  2          // class "[[B"
+    2279: putstatic     #1025               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_ATTACK_RATE:[[B
+    2282: iconst_0
+    2283: istore        111
+    2285: iload         111
+    2287: getstatic     #1002               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_LEVELS:B
+    2290: if_icmpge     2425
+    2293: aload_1
+    2294: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+    2297: istore        112
+    2299: getstatic     #1005               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_HEAT_DURATION:[I
+    2302: iload         111
+    2304: iload         112
+    2306: iastore
+    2307: aload_1
+    2308: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2311: istore        113
+    2313: getstatic     #1008               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_HAIR_WHITE:[Z
+    2316: iload         111
+    2318: iload         113
+    2320: bastore
+    2321: aload_1
+    2322: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+    2325: istore        114
+    2327: getstatic     #1011               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_ATTRIBUTE_MULTI:[I
+    2330: iload         111
+    2332: iload         114
+    2334: iastore
+    2335: iconst_0
+    2336: istore        115
+    2338: iload         115
+    2340: getstatic     #1014               // Field JinRyuu/JRMCore/JRMCoreH.Races:[Ljava/lang/String;
+    2343: arraylength
+    2344: if_icmpge     2370
+    2347: aload_1
+    2348: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    2351: fstore        116
+    2353: getstatic     #1017               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_ATTRIBUTE_MULTI_RACE:[[F
+    2356: iload         111
+    2358: aaload
+    2359: iload         115
+    2361: fload         116
+    2363: fastore
+    2364: iinc          115, 1
+    2367: goto          2338
+    2370: iconst_0
+    2371: istore        115
+    2373: iload         115
+    2375: iconst_2
+    2376: if_icmpge     2419
+    2379: aload_1
+    2380: invokevirtual #997                // Method io/netty/buffer/ByteBuf.readByte:()B
+    2383: istore        116
+    2385: getstatic     #1022               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_DODGE_RATE:[[B
+    2388: iload         111
+    2390: aaload
+    2391: iload         115
+    2393: iload         116
+    2395: bastore
+    2396: aload_1
+    2397: invokevirtual #997                // Method io/netty/buffer/ByteBuf.readByte:()B
+    2400: istore        117
+    2402: getstatic     #1025               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_ATTACK_RATE:[[B
+    2405: iload         111
+    2407: aaload
+    2408: iload         115
+    2410: iload         117
+    2412: bastore
+    2413: iinc          115, 1
+    2416: goto          2373
+    2419: iinc          111, 1
+    2422: goto          2285
+    2425: aload_1
+    2426: invokevirtual #997                // Method io/netty/buffer/ByteBuf.readByte:()B
+    2429: istore        110
+    2431: aload_1
+    2432: invokevirtual #997                // Method io/netty/buffer/ByteBuf.readByte:()B
+    2435: istore        111
+    2437: aload_1
+    2438: invokevirtual #997                // Method io/netty/buffer/ByteBuf.readByte:()B
+    2441: istore        112
+    2443: iload         110
+    2445: putstatic     #1028               // Field JinRyuu/JRMCore/JRMCoreConfig.ExtendedPlayerBlockID:B
+    2448: iload         111
+    2450: putstatic     #1031               // Field JinRyuu/JRMCore/JRMCoreConfig.ExtendedPlayerOtherID:B
+    2453: iload         112
+    2455: putstatic     #1034               // Field JinRyuu/JRMCore/JRMCoreConfig.ExtendedPlayerHairID:B
+    2458: invokestatic  #662                // Method JinRyuu/JRMCore/JRMCoreH.DBC:()Z
+    2461: ifeq          2540
+    2464: aload_1
+    2465: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2468: istore        113
+    2470: iload         113
+    2472: putstatic     #1039               // Field JinRyuu/DragonBC/common/DBCConfig.CanWhisTeleport:Z
+    2475: aload_1
+    2476: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    2479: fstore        114
+    2481: fload         114
+    2483: putstatic     #1042               // Field JinRyuu/DragonBC/common/DBCConfig.EnmaScale:F
+    2486: aload_1
+    2487: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    2490: fstore        115
+    2492: fload         115
+    2494: putstatic     #1045               // Field JinRyuu/DragonBC/common/DBCConfig.GuruScale:F
+    2497: iconst_0
+    2498: istore        116
+    2500: iload         116
+    2502: getstatic     #1048               // Field JinRyuu/JRMCore/JRMCoreConfig.ContinuesKiAttacks:[Z
+    2505: arraylength
+    2506: if_icmpge     2529
+    2509: aload_1
+    2510: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2513: istore        117
+    2515: getstatic     #1048               // Field JinRyuu/JRMCore/JRMCoreConfig.ContinuesKiAttacks:[Z
+    2518: iload         116
+    2520: iload         117
+    2522: bastore
+    2523: iinc          116, 1
+    2526: goto          2500
+    2529: aload_1
+    2530: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2533: istore        116
+    2535: iload         116
+    2537: putstatic     #1051               // Field JinRyuu/JRMCore/JRMCoreConfig.KiAttackScalesWithUser:Z
+    2540: invokestatic  #679                // Method JinRyuu/JRMCore/JRMCoreH.NC:()Z
+    2543: ifeq          2589
+    2546: iconst_0
+    2547: istore        113
+    2549: iload         113
+    2551: getstatic     #1054               // Field JinRyuu/JRMCore/JRMCoreConfig.ContinuesJutsuAttacks:[Z
+    2554: arraylength
+    2555: if_icmpge     2578
+    2558: aload_1
+    2559: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2562: istore        114
+    2564: getstatic     #1054               // Field JinRyuu/JRMCore/JRMCoreConfig.ContinuesJutsuAttacks:[Z
+    2567: iload         113
+    2569: iload         114
+    2571: bastore
+    2572: iinc          113, 1
+    2575: goto          2549
+    2578: aload_1
+    2579: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2582: istore        113
+    2584: iload         113
+    2586: putstatic     #1057               // Field JinRyuu/JRMCore/JRMCoreConfig.JutsuScalesWithUser:Z
+    2589: invokestatic  #662                // Method JinRyuu/JRMCore/JRMCoreH.DBC:()Z
+    2592: ifne          2601
+    2595: invokestatic  #679                // Method JinRyuu/JRMCore/JRMCoreH.NC:()Z
+    2598: ifeq          2634
+    2601: aload_1
+    2602: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2605: istore        113
+    2607: iload         113
+    2609: putstatic     #1060               // Field JinRyuu/JRMCore/JRMCoreConfig.WavesShrinkOnceLetGo:Z
+    2612: aload_1
+    2613: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2616: istore        114
+    2618: iload         114
+    2620: putstatic     #1063               // Field JinRyuu/JRMCore/JRMCoreConfig.ContinuesEnergyAttackTargetSlowdown:Z
+    2623: aload_1
+    2624: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+    2627: istore        115
+    2629: iload         115
+    2631: putstatic     #1066               // Field JinRyuu/JRMCore/JRMCoreConfig.ContinuesEnergyAttackTimer:I
+    2634: aload_1
+    2635: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+    2638: istore        113
+    2640: aload_1
+    2641: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    2644: fstore        114
+    2646: iload         113
+    2648: putstatic     #1069               // Field JinRyuu/JRMCore/JRMCoreConfig.eaesl:I
+    2651: fload         114
+    2653: putstatic     #1072               // Field JinRyuu/JRMCore/JRMCoreConfig.ealbm:F
+    2656: invokestatic  #662                // Method JinRyuu/JRMCore/JRMCoreH.DBC:()Z
+    2659: ifeq          2727
+    2662: aload_1
+    2663: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+    2666: istore        115
+    2668: iload         115
+    2670: putstatic     #1075               // Field JinRyuu/DragonBC/common/DBCConfig.NullRealmMinimumHeight:I
+    2673: iconst_0
+    2674: istore        116
+    2676: iload         116
+    2678: bipush        9
+    2680: if_icmpge     2705
+    2683: aload_1
+    2684: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    2687: dstore        117
+    2689: getstatic     #981                // Field JinRyuu/JRMCore/JRMCoreConfig.dat5696:[[D
+    2692: iload         116
+    2694: aaload
+    2695: iconst_2
+    2696: dload         117
+    2698: dastore
+    2699: iinc          116, 1
+    2702: goto          2676
+    2705: aload_1
+    2706: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2709: istore        116
+    2711: iload         116
+    2713: putstatic     #1078               // Field JinRyuu/DragonBC/common/DBCConfig.NullRealmBGColorNodeGreen:Z
+    2716: aload_1
+    2717: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2720: istore        117
+    2722: iload         117
+    2724: putstatic     #1081               // Field JinRyuu/JRMCore/JRMCoreConfig.PlayerFlyingDragDownOn:Z
+    2727: invokestatic  #662                // Method JinRyuu/JRMCore/JRMCoreH.DBC:()Z
+    2730: ifeq          2983
+    2733: iconst_0
+    2734: istore        115
+    2736: iload         115
+    2738: getstatic     #1014               // Field JinRyuu/JRMCore/JRMCoreH.Races:[Ljava/lang/String;
+    2741: arraylength
+    2742: if_icmpge     2889
+    2745: iconst_0
+    2746: istore        116
+    2748: iload         116
+    2750: getstatic     #1084               // Field JinRyuu/JRMCore/JRMCoreH.ClassesDBC:[Ljava/lang/String;
+    2753: arraylength
+    2754: if_icmpge     2883
+    2757: iconst_0
+    2758: istore        117
+    2760: iload         117
+    2762: getstatic     #1088               // Field JinRyuu/JRMCore/JRMCoreH.attrInit:[[Ljava/lang/String;
+    2765: iconst_1
+    2766: aaload
+    2767: arraylength
+    2768: if_icmpge     2817
+    2771: aload_1
+    2772: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    2775: dstore        118
+    2777: getstatic     #1094               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigRaces.CONFIG_RACES_ATTRIBUTE_MULTI:[[[D
+    2780: iload         115
+    2782: aaload
+    2783: iload         116
+    2785: aaload
+    2786: iload         117
+    2788: dload         118
+    2790: dastore
+    2791: aload_1
+    2792: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+    2795: istore        120
+    2797: getstatic     #1098               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigRaces.CONFIG_RACES_ATTRIBUTE_START:[[[I
+    2800: iload         115
+    2802: aaload
+    2803: iload         116
+    2805: aaload
+    2806: iload         117
+    2808: iload         120
+    2810: iastore
+    2811: iinc          117, 1
+    2814: goto          2760
+    2817: iconst_0
+    2818: istore        117
+    2820: iload         117
+    2822: getstatic     #1101               // Field JinRyuu/JRMCore/JRMCoreH.statNames:[[Ljava/lang/String;
+    2825: iconst_1
+    2826: aaload
+    2827: arraylength
+    2828: if_icmpge     2877
+    2831: aload_1
+    2832: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    2835: fstore        118
+    2837: getstatic     #1105               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigRaces.CONFIG_RACES_STATS_MULTI:[[[F
+    2840: iload         115
+    2842: aaload
+    2843: iload         116
+    2845: aaload
+    2846: iload         117
+    2848: fload         118
+    2850: fastore
+    2851: aload_1
+    2852: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+    2855: istore        119
+    2857: getstatic     #1108               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigRaces.CONFIG_RACES_STAT_BONUS:[[[I
+    2860: iload         115
+    2862: aaload
+    2863: iload         116
+    2865: aaload
+    2866: iload         117
+    2868: iload         119
+    2870: iastore
+    2871: iinc          117, 1
+    2874: goto          2820
+    2877: iinc          116, 1
+    2880: goto          2748
+    2883: iinc          115, 1
+    2886: goto          2736
+    2889: aload_1
+    2890: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2893: istore        115
+    2895: iload         115
+    2897: putstatic     #1111               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigRaces.CONFIG_MAJIN_ENABLED:Z
+    2900: aload_1
+    2901: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2904: istore        116
+    2906: iload         116
+    2908: putstatic     #1114               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigRaces.CONFIG_MAJIN_ABSORPTION_ENABLED:Z
+    2911: aload_1
+    2912: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2915: istore        117
+    2917: iload         117
+    2919: putstatic     #1117               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigRaces.CONFIG_MAJIN_PURE_PINK_SKIN:Z
+    2922: aload_1
+    2923: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2926: istore        118
+    2928: iload         118
+    2930: putstatic     #1120               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MULTIPLIES_BONUS_ATTRIBUTE_MULTIPLIERS:Z
+    2933: iconst_0
+    2934: istore        119
+    2936: iload         119
+    2938: getstatic     #1123               // Field JinRyuu/JRMCore/JRMCoreH.TransNms:[[Ljava/lang/String;
+    2941: iconst_5
+    2942: aaload
+    2943: arraylength
+    2944: iconst_3
+    2945: iadd
+    2946: if_icmpge     2983
+    2949: aload_1
+    2950: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    2953: fstore        120
+    2955: getstatic     #1126               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigRaces.CONFIG_MAJIN_ABSORPTON_ATTRIBUTE_MULTI:[F
+    2958: iload         119
+    2960: fload         120
+    2962: fastore
+    2963: aload_1
+    2964: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    2967: fstore        121
+    2969: getstatic     #1129               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigRaces.CONFIG_MAJIN_ABSORPTON_SPEED_MULTI:[F
+    2972: iload         119
+    2974: fload         121
+    2976: fastore
+    2977: iinc          119, 1
+    2980: goto          2936
+    2983: aload_1
+    2984: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2987: istore        115
+    2989: iload         115
+    2991: putstatic     #550                // Field JinRyuu/JRMCore/JRMCoreConfig.JRMCABonusOn:Z
+    2994: aload_1
+    2995: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    2998: istore        115
+    3000: iload         115
+    3002: putstatic     #1132               // Field JinRyuu/JRMCore/JRMCoreConfig.ShadowDummyScaleToTarget:Z
+    3005: invokestatic  #662                // Method JinRyuu/JRMCore/JRMCoreH.DBC:()Z
+    3008: ifeq          3241
+    3011: aload_1
+    3012: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3015: istore        115
+    3017: iload         115
+    3019: putstatic     #1135               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct.CONFIG_UI_IGNORE_BASE_CONFIG:Z
+    3022: aload_1
+    3023: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3026: istore        116
+    3028: iload         116
+    3030: putstatic     #1140               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCGoD.CONFIG_GOD_IGNORE_BASE_CONFIG:Z
+    3033: aload_1
+    3034: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+    3037: istore        117
+    3039: iload         117
+    3041: anewarray     #153                // class java/lang/String
+    3044: putstatic     #1143               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCGoD.CONFIG_GOD_IGNORED_DAMAGE_SOURCES:[Ljava/lang/String;
+    3047: iconst_0
+    3048: istore        119
+    3050: iload         119
+    3052: iload         117
+    3054: if_icmpge     3077
+    3057: aload_1
+    3058: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+    3061: astore        118
+    3063: getstatic     #1143               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCGoD.CONFIG_GOD_IGNORED_DAMAGE_SOURCES:[Ljava/lang/String;
+    3066: iload         119
+    3068: aload         118
+    3070: aastore
+    3071: iinc          119, 1
+    3074: goto          3050
+    3077: aload_1
+    3078: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+    3081: istore        117
+    3083: iload         117
+    3085: anewarray     #153                // class java/lang/String
+    3088: putstatic     #1146               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCGoD.CONFIG_GOD_IGNORED_ENTITIES:[Ljava/lang/String;
+    3091: iconst_0
+    3092: istore        119
+    3094: iload         119
+    3096: iload         117
+    3098: if_icmpge     3121
+    3101: aload_1
+    3102: invokestatic  #638                // Method cpw/mods/fml/common/network/ByteBufUtils.readUTF8String:(Lio/netty/buffer/ByteBuf;)Ljava/lang/String;
+    3105: astore        118
+    3107: getstatic     #1146               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCGoD.CONFIG_GOD_IGNORED_ENTITIES:[Ljava/lang/String;
+    3110: iload         119
+    3112: aload         118
+    3114: aastore
+    3115: iinc          119, 1
+    3118: goto          3094
+    3121: aload_1
+    3122: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    3125: fstore        119
+    3127: fload         119
+    3129: putstatic     #1149               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCGoD.CONFIG_GOD_IGNORE_DAMAGE_MULTI:F
+    3132: aload_1
+    3133: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3136: istore        120
+    3138: iload         120
+    3140: putstatic     #1152               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCGoD.CONFIG_GOD_IGNORE_PROJECTILES_ENABLED:Z
+    3143: aload_1
+    3144: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3147: istore        120
+    3149: iload         120
+    3151: putstatic     #1155               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCGoD.CONFIG_GOD_ENABLED:Z
+    3154: aload_1
+    3155: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3158: istore        120
+    3160: iload         120
+    3162: putstatic     #1158               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCGoD.CONFIG_GOD_AURA_ENABLED:Z
+    3165: aload_1
+    3166: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3169: istore        120
+    3171: iload         120
+    3173: putstatic     #1161               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCGoD.CONFIG_GOD_AURA_ENABLED_WITH_AURA:Z
+    3176: aload_1
+    3177: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3180: istore        120
+    3182: iload         120
+    3184: putstatic     #1164               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCGoD.CONFIG_GOD_ENERGY_ENABLED:Z
+    3187: aload_1
+    3188: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    3191: fstore        119
+    3193: fload         119
+    3195: putstatic     #1167               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCGoD.CONFIG_GOD_ENERGY_DAMAGE_MULTI:F
+    3198: aload_1
+    3199: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    3202: fstore        119
+    3204: fload         119
+    3206: putstatic     #1170               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCGoD.CONFIG_GOD_ATTRIBUTE_MULTI:F
+    3209: iconst_0
+    3210: istore        121
+    3212: iload         121
+    3214: getstatic     #1014               // Field JinRyuu/JRMCore/JRMCoreH.Races:[Ljava/lang/String;
+    3217: arraylength
+    3218: if_icmpge     3241
+    3221: aload_1
+    3222: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    3225: fstore        119
+    3227: getstatic     #1173               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCGoD.CONFIG_GOD_ATTRIBUTE_MULTI_RACE:[F
+    3230: iload         121
+    3232: fload         119
+    3234: fastore
+    3235: iinc          121, 1
+    3238: goto          3212
+    3241: aload_1
+    3242: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3245: putstatic     #1176               // Field JinRyuu/JRMCore/JRMCoreConfig.BuildingBlocksRenderAsNormalBlock:Z
+    3248: aload_1
+    3249: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    3252: putstatic     #1181               // Field JinRyuu/JRMCore/server/config/core/JGConfigSkills.GlobalSkillTPMultiplier:F
+    3255: aload_1
+    3256: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    3259: putstatic     #1184               // Field JinRyuu/JRMCore/server/config/core/JGConfigSkills.GlobalSkillMindMultiplier:F
+    3262: aload_1
+    3263: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    3266: putstatic     #1187               // Field JinRyuu/JRMCore/server/config/core/JGConfigSkills.GlobalSkillTPMultiplierFirst:F
+    3269: aload_1
+    3270: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    3273: putstatic     #1190               // Field JinRyuu/JRMCore/server/config/core/JGConfigSkills.GlobalSkillMindMultiplierFirst:F
+    3276: aload_1
+    3277: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3280: putstatic     #1193               // Field JinRyuu/JRMCore/server/config/core/JGConfigSkills.GlobalSkillTPMultiplierWithLevel:Z
+    3283: aload_1
+    3284: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3287: putstatic     #1196               // Field JinRyuu/JRMCore/server/config/core/JGConfigSkills.GlobalSkillMindMultiplierWithLevel:Z
+    3290: invokestatic  #679                // Method JinRyuu/JRMCore/JRMCoreH.NC:()Z
+    3293: ifeq          3303
+    3296: aload_1
+    3297: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+    3300: putstatic     #1199               // Field JinRyuu/JRMCore/JRMCoreConfig.NCExplosionTagTickTimer:I
+    3303: invokestatic  #662                // Method JinRyuu/JRMCore/JRMCoreH.DBC:()Z
+    3306: ifeq          3786
+    3309: aload_1
+    3310: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+    3313: istore        115
+    3315: iload         115
+    3317: putstatic     #1202               // Field JinRyuu/DragonBC/common/DBCConfig.AaiForceDifficulty:I
+    3320: aload_1
+    3321: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3324: istore        116
+    3326: iload         116
+    3328: putstatic     #1205               // Field JinRyuu/DragonBC/common/DBCConfig.AaiDisabled:Z
+    3331: aload_1
+    3332: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+    3335: istore        117
+    3337: iload         117
+    3339: putstatic     #1208               // Field JinRyuu/DragonBC/common/DBCConfig.EnemyDefaultAttackTimer:I
+    3342: aload_1
+    3343: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+    3346: istore        118
+    3348: iload         118
+    3350: putstatic     #1211               // Field JinRyuu/DragonBC/common/DBCConfig.EnemyDefaultShortRangeAttackTimer:I
+    3353: aload_1
+    3354: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    3357: dstore        119
+    3359: dload         119
+    3361: putstatic     #1214               // Field JinRyuu/DragonBC/common/DBCConfig.EnemyDefaultMoveSpeed:D
+    3364: aload_1
+    3365: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3368: istore        121
+    3370: iload         121
+    3372: putstatic     #1217               // Field JinRyuu/DragonBC/common/DBCConfig.KiAttackGoThroughInvulnerableEnemies:Z
+    3375: aload_1
+    3376: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3379: istore        122
+    3381: iload         122
+    3383: putstatic     #1220               // Field JinRyuu/DragonBC/common/DBCConfig.InstantTransformOn:Z
+    3386: aload_1
+    3387: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3390: istore        123
+    3392: iload         123
+    3394: putstatic     #1223               // Field JinRyuu/DragonBC/common/DBCConfig.SingleFormDescendOn:Z
+    3397: iconst_0
+    3398: istore        124
+    3400: iload         124
+    3402: getstatic     #1226               // Field JinRyuu/DragonBC/common/DBCConfig.IsInstantTransformEnabled:[Z
+    3405: arraylength
+    3406: if_icmpge     3429
+    3409: aload_1
+    3410: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3413: istore        125
+    3415: getstatic     #1226               // Field JinRyuu/DragonBC/common/DBCConfig.IsInstantTransformEnabled:[Z
+    3418: iload         124
+    3420: iload         125
+    3422: bastore
+    3423: iinc          124, 1
+    3426: goto          3400
+    3429: aload_1
+    3430: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3433: istore        124
+    3435: iload         124
+    3437: putstatic     #1229               // Field JinRyuu/DragonBC/common/DBCConfig.KaiokenSingleFormDescendOn:Z
+    3440: aload_1
+    3441: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3444: istore        125
+    3446: iload         125
+    3448: putstatic     #1232               // Field JinRyuu/DragonBC/common/DBCConfig.MoveWhileTransforming:Z
+    3451: aload_1
+    3452: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3455: istore        126
+    3457: iload         126
+    3459: putstatic     #1235               // Field JinRyuu/DragonBC/common/DBCConfig.MoveWhileInstantTransforming:Z
+    3462: iconst_0
+    3463: istore        127
+    3465: iload         127
+    3467: getstatic     #1240               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.DIFFICULTIES:[Ljava/lang/String;
+    3470: arraylength
+    3471: if_icmpge     3690
+    3474: aload_1
+    3475: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    3478: dstore        128
+    3480: getstatic     #1243               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.GroundDashSpeedMulti:[D
+    3483: iload         127
+    3485: dload         128
+    3487: dastore
+    3488: aload_1
+    3489: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    3492: dstore        130
+    3494: getstatic     #1246               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.GroundDashSpeedMulti2:[D
+    3497: iload         127
+    3499: dload         130
+    3501: dastore
+    3502: aload_1
+    3503: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    3506: dstore        132
+    3508: getstatic     #1249               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.GroundDashLimit:[D
+    3511: iload         127
+    3513: dload         132
+    3515: dastore
+    3516: aload_1
+    3517: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    3520: dstore        134
+    3522: getstatic     #1252               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.JumpMulti:[D
+    3525: iload         127
+    3527: dload         134
+    3529: dastore
+    3530: aload_1
+    3531: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    3534: dstore        136
+    3536: getstatic     #1255               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.JumpMulti2:[D
+    3539: iload         127
+    3541: dload         136
+    3543: dastore
+    3544: aload_1
+    3545: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    3548: dstore        138
+    3550: getstatic     #1258               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.JumpLimit:[D
+    3553: iload         127
+    3555: dload         138
+    3557: dastore
+    3558: aload_1
+    3559: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    3562: dstore        140
+    3564: getstatic     #1261               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.JumpLimit2:[D
+    3567: iload         127
+    3569: dload         140
+    3571: dastore
+    3572: aload_1
+    3573: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    3576: dstore        142
+    3578: getstatic     #1264               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.JumpRate:[D
+    3581: iload         127
+    3583: dload         142
+    3585: dastore
+    3586: aload_1
+    3587: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    3590: dstore        144
+    3592: getstatic     #1267               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.FlyingDashMulti:[D
+    3595: iload         127
+    3597: dload         144
+    3599: dastore
+    3600: aload_1
+    3601: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    3604: dstore        146
+    3606: getstatic     #1270               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.FlyingDashLimit:[D
+    3609: iload         127
+    3611: dload         146
+    3613: dastore
+    3614: aload_1
+    3615: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    3618: dstore        148
+    3620: getstatic     #1273               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.KiAttackChargeMulti:[D
+    3623: iload         127
+    3625: dload         148
+    3627: dastore
+    3628: aload_1
+    3629: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    3632: dstore        150
+    3634: getstatic     #1276               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.KiAttackChargeLimit:[D
+    3637: iload         127
+    3639: dload         150
+    3641: dastore
+    3642: aload_1
+    3643: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+    3646: istore        152
+    3648: getstatic     #1279               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.TeleportRateMin:[I
+    3651: iload         127
+    3653: iload         152
+    3655: iastore
+    3656: aload_1
+    3657: invokevirtual #665                // Method io/netty/buffer/ByteBuf.readInt:()I
+    3660: istore        153
+    3662: getstatic     #1282               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.TeleportRateMax:[I
+    3665: iload         127
+    3667: iload         153
+    3669: iastore
+    3670: aload_1
+    3671: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    3674: dstore        154
+    3676: getstatic     #1285               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCAAiDifficulty.SpeedMulti:[D
+    3679: iload         127
+    3681: dload         154
+    3683: dastore
+    3684: iinc          127, 1
+    3687: goto          3465
+    3690: aload_1
+    3691: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3694: istore        127
+    3696: iload         127
+    3698: putstatic     #1288               // Field JinRyuu/DragonBC/common/DBCConfig.MysticKaiokenOn:Z
+    3701: iconst_0
+    3702: istore        128
+    3704: iload         128
+    3706: getstatic     #1014               // Field JinRyuu/JRMCore/JRMCoreH.Races:[Ljava/lang/String;
+    3709: arraylength
+    3710: if_icmpge     3757
+    3713: iconst_0
+    3714: istore        129
+    3716: iload         129
+    3718: getstatic     #1291               // Field JinRyuu/JRMCore/JRMCoreConfig.KaiokenFormHealthCost:[[F
+    3721: iload         128
+    3723: aaload
+    3724: arraylength
+    3725: if_icmpge     3751
+    3728: aload_1
+    3729: invokevirtual #669                // Method io/netty/buffer/ByteBuf.readFloat:()F
+    3732: fstore        130
+    3734: getstatic     #1291               // Field JinRyuu/JRMCore/JRMCoreConfig.KaiokenFormHealthCost:[[F
+    3737: iload         128
+    3739: aaload
+    3740: iload         129
+    3742: fload         130
+    3744: fastore
+    3745: iinc          129, 1
+    3748: goto          3716
+    3751: iinc          128, 1
+    3754: goto          3704
+    3757: iconst_0
+    3758: istore        128
+    3760: iload         128
+    3762: iconst_2
+    3763: if_icmpge     3786
+    3766: aload_1
+    3767: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3770: istore        129
+    3772: getstatic     #1296               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCInstantTransmission.CONFIG_INSTANT_TRANSMISSION_ENABLED:[Z
+    3775: iload         128
+    3777: iload         129
+    3779: bastore
+    3780: iinc          128, 1
+    3783: goto          3760
+    3786: aload_1
+    3787: invokevirtual #654                // Method io/netty/buffer/ByteBuf.readBoolean:()Z
+    3790: istore        115
+    3792: iload         115
+    3794: putstatic     #1301               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCFormMastery.FM_Enabled:Z
+    3797: iconst_0
+    3798: istore        116
+    3800: iload         116
+    3802: getstatic     #1014               // Field JinRyuu/JRMCore/JRMCoreH.Races:[Ljava/lang/String;
+    3805: arraylength
+    3806: if_icmpge     4002
+    3809: getstatic     #1304               // Field JinRyuu/JRMCore/JRMCoreH.trans:[[Ljava/lang/String;
+    3812: iload         116
+    3814: aaload
+    3815: arraylength
+    3816: istore        117
+    3818: iconst_0
+    3819: istore        118
+    3821: iload         118
+    3823: getstatic     #1308               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCFormMastery.FormMasteries:[[LJinRyuu/JRMCore/server/config/dbc/FormMastery;
+    3826: iload         116
+    3828: aaload
+    3829: arraylength
+    3830: if_icmpge     3996
+    3833: iload         118
+    3835: iload         117
+    3837: if_icmpge     3844
+    3840: iconst_1
+    3841: goto          3845
+    3844: iconst_0
+    3845: istore        119
+    3847: iload         119
+    3849: ifeq          3864
+    3852: getstatic     #1304               // Field JinRyuu/JRMCore/JRMCoreH.trans:[[Ljava/lang/String;
+    3855: iload         116
+    3857: aaload
+    3858: iload         118
+    3860: aaload
+    3861: goto          3873
+    3864: getstatic     #1311               // Field JinRyuu/JRMCore/JRMCoreH.transNonRacial:[Ljava/lang/String;
+    3867: iload         118
+    3869: iload         117
+    3871: isub
+    3872: aaload
+    3873: astore        120
+    3875: iload         119
+    3877: ifeq          3925
+    3880: iload         116
+    3882: invokestatic  #1315               // Method JinRyuu/JRMCore/JRMCoreH.isRaceSaiyan:(I)Z
+    3885: ifeq          3925
+    3888: aload         120
+    3890: getstatic     #1304               // Field JinRyuu/JRMCore/JRMCoreH.trans:[[Ljava/lang/String;
+    3893: iload         116
+    3895: aaload
+    3896: bipush        12
+    3898: aaload
+    3899: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    3902: ifne          3990
+    3905: aload         120
+    3907: getstatic     #1304               // Field JinRyuu/JRMCore/JRMCoreH.trans:[[Ljava/lang/String;
+    3910: iload         116
+    3912: aaload
+    3913: bipush        13
+    3915: aaload
+    3916: invokevirtual #226                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    3919: ifeq          3925
+    3922: goto          3990
+    3925: iconst_0
+    3926: istore        121
+    3928: iload         121
+    3930: iconst_3
+    3931: if_icmpge     3990
+    3934: aload_1
+    3935: invokevirtual #683                // Method io/netty/buffer/ByteBuf.readDouble:()D
+    3938: dstore        122
+    3940: getstatic     #1308               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCFormMastery.FormMasteries:[[LJinRyuu/JRMCore/server/config/dbc/FormMastery;
+    3943: iload         116
+    3945: aaload
+    3946: iload         118
+    3948: aaload
+    3949: getfield      #1319               // Field JinRyuu/JRMCore/server/config/dbc/FormMastery.data:Ljava/util/ArrayList;
+    3952: getstatic     #1322               // Field JinRyuu/JRMCore/server/config/dbc/JGConfigDBCFormMastery.DATA_ID_DAMAGE_MULTI:I
+    3955: invokevirtual #1325               // Method java/util/ArrayList.get:(I)Ljava/lang/Object;
+    3958: checkcast     #1327               // class "[Ljava/lang/Object;"
+    3961: iload         121
+    3963: new           #1329               // class java/lang/StringBuilder
+    3966: dup
+    3967: invokespecial #1330               // Method java/lang/StringBuilder."<init>":()V
+    3970: dload         122
+    3972: invokevirtual #1334               // Method java/lang/StringBuilder.append:(D)Ljava/lang/StringBuilder;
+    3975: ldc           #186                // String
+    3977: invokevirtual #1337               // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    3980: invokevirtual #1338               // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+    3983: aastore
+    3984: iinc          121, 1
+    3987: goto          3928
+    3990: iinc          118, 1
+    3993: goto          3821
+    3996: iinc          116, 1
+    3999: goto          3800
+    4002: return
+
+  public void handleFall(byte, net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: return
+
+  public void handleRls(byte, net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: return
+
+  public void handleTech(byte, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: iload_1
+       1: iflt          72
+       4: iload_1
+       5: iconst_3
+       6: if_icmpgt     72
+       9: aload_2
+      10: ldc           #231                // String ;
+      12: invokevirtual #286                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+      15: ifeq          30
+      18: aload_2
+      19: invokevirtual #184                // Method java/lang/String.toString:()Ljava/lang/String;
+      22: ldc           #231                // String ;
+      24: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+      27: goto          31
+      30: aconst_null
+      31: astore        4
+      33: iload_1
+      34: ifne          42
+      37: aload         4
+      39: putstatic     #289                // Field JinRyuu/JRMCore/JRMCoreH.tech1:[Ljava/lang/String;
+      42: iload_1
+      43: iconst_1
+      44: if_icmpne     52
+      47: aload         4
+      49: putstatic     #292                // Field JinRyuu/JRMCore/JRMCoreH.tech2:[Ljava/lang/String;
+      52: iload_1
+      53: iconst_2
+      54: if_icmpne     62
+      57: aload         4
+      59: putstatic     #295                // Field JinRyuu/JRMCore/JRMCoreH.tech3:[Ljava/lang/String;
+      62: iload_1
+      63: iconst_3
+      64: if_icmpne     72
+      67: aload         4
+      69: putstatic     #298                // Field JinRyuu/JRMCore/JRMCoreH.tech4:[Ljava/lang/String;
+      72: return
+
+  public void handleAttck(byte, net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: return
+
+  public void handleCost(short, net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: return
+
+  public void handleStats2(int, int, byte, int[], net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: iload_1
+       1: putstatic     #380                // Field JinRyuu/JRMCore/JRMCoreH.curTP:I
+       4: iload_2
+       5: putstatic     #386                // Field JinRyuu/JRMCore/JRMCoreH.curExp:I
+       8: iload_3
+       9: putstatic     #368                // Field JinRyuu/JRMCore/JRMCoreH.align:B
+      12: aload         4
+      14: putstatic     #392                // Field JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts:[I
+      17: getstatic     #247                // Field JinRyuu/JRMCore/JRMCoreH.Pwrtyp:B
+      20: istore        6
+      22: getstatic     #240                // Field JinRyuu/JRMCore/JRMCoreH.Race:B
+      25: istore        7
+      27: getstatic     #250                // Field JinRyuu/JRMCore/JRMCoreH.Class:B
+      30: istore        8
+      32: aload         5
+      34: iconst_2
+      35: iload         6
+      37: iconst_2
+      38: getstatic     #392                // Field JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts:[I
+      41: iconst_2
+      42: iaload
+      43: iload         7
+      45: iload         8
+      47: fconst_0
+      48: invokestatic  #396                // Method JinRyuu/JRMCore/JRMCoreH.stat:(Lnet/minecraft/entity/Entity;IIIIIIF)I
+      51: putstatic     #399                // Field JinRyuu/JRMCore/JRMCoreH.maxBody:I
+      54: aload         5
+      56: iconst_5
+      57: iload         6
+      59: iconst_5
+      60: getstatic     #392                // Field JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts:[I
+      63: iconst_5
+      64: iaload
+      65: iload         7
+      67: iload         8
+      69: iload         6
+      71: invokestatic  #403                // Method JinRyuu/JRMCore/JRMCoreH.SklLvl_KiBs:(I)F
+      74: invokestatic  #396                // Method JinRyuu/JRMCore/JRMCoreH.stat:(Lnet/minecraft/entity/Entity;IIIIIIF)I
+      77: putstatic     #406                // Field JinRyuu/JRMCore/JRMCoreH.maxEnergy:I
+      80: aload         5
+      82: iconst_2
+      83: iload         6
+      85: iconst_3
+      86: getstatic     #392                // Field JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts:[I
+      89: iconst_2
+      90: iaload
+      91: iload         7
+      93: iload         8
+      95: fconst_0
+      96: invokestatic  #396                // Method JinRyuu/JRMCore/JRMCoreH.stat:(Lnet/minecraft/entity/Entity;IIIIIIF)I
+      99: putstatic     #409                // Field JinRyuu/JRMCore/JRMCoreH.maxStamina:I
+     102: return
+
+  public static int aqMWr(java.lang.String);
+    Code:
+       0: ldc_w         #1482               // String 0123456789ABCDEF
+       3: astore_1
+       4: aload_0
+       5: invokevirtual #1485               // Method java/lang/String.toUpperCase:()Ljava/lang/String;
+       8: astore_0
+       9: iconst_0
+      10: istore_2
+      11: iconst_0
+      12: istore_3
+      13: iload_3
+      14: aload_0
+      15: invokevirtual #327                // Method java/lang/String.length:()I
+      18: if_icmpge     50
+      21: aload_0
+      22: iload_3
+      23: invokevirtual #1489               // Method java/lang/String.charAt:(I)C
+      26: istore        4
+      28: aload_1
+      29: iload         4
+      31: invokevirtual #1492               // Method java/lang/String.indexOf:(I)I
+      34: istore        5
+      36: bipush        16
+      38: iload_2
+      39: imul
+      40: iload         5
+      42: iadd
+      43: istore_2
+      44: iinc          3, 1
+      47: goto          13
+      50: iload_2
+      51: ireturn
+
+  public static int nQp65G(int);
+    Code:
+       0: ldc_w         #1497               // String 64
+       3: astore_1
+       4: ldc_w         #1499               // String 3B9ACA00
+       7: astore_2
+       8: iload_0
+       9: aload_2
+      10: invokestatic  #1501               // Method aqMWr:(Ljava/lang/String;)I
+      13: if_icmple     23
+      16: aload_2
+      17: invokestatic  #1501               // Method aqMWr:(Ljava/lang/String;)I
+      20: goto          36
+      23: iload_0
+      24: aload_1
+      25: invokestatic  #1501               // Method aqMWr:(Ljava/lang/String;)I
+      28: if_icmpge     35
+      31: iconst_0
+      32: goto          36
+      35: iload_0
+      36: ireturn
+
+  public void handleStats3(java.lang.String, java.lang.String, java.lang.String, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: aload_2
+       1: putstatic     #310                // Field JinRyuu/JRMCore/JRMCoreH.PlyrSkillX:Ljava/lang/String;
+       4: aload_3
+       5: putstatic     #313                // Field JinRyuu/JRMCore/JRMCoreH.PlyrSkillY:Ljava/lang/String;
+       8: aload         4
+      10: putstatic     #316                // Field JinRyuu/JRMCore/JRMCoreH.PlyrSkillZ:Ljava/lang/String;
+      13: aload_1
+      14: ldc_w         #318                // String ,
+      17: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+      20: putstatic     #321                // Field JinRyuu/JRMCore/JRMCoreH.PlyrSkills:[Ljava/lang/String;
+      23: return
+
+  public void handleStats(int, int, int, byte, byte);
+    Code:
+       0: iload_1
+       1: putstatic     #338                // Field JinRyuu/JRMCore/JRMCoreH.curBody:I
+       4: iload_2
+       5: putstatic     #344                // Field JinRyuu/JRMCore/JRMCoreH.curEnergy:I
+       8: iload_3
+       9: putstatic     #353                // Field JinRyuu/JRMCore/JRMCoreH.curStamina:I
+      12: iload         4
+      14: putstatic     #350                // Field JinRyuu/JRMCore/JRMCoreH.curRelease:B
+      17: iload         5
+      19: putstatic     #359                // Field JinRyuu/JRMCore/JRMCoreH.TransSaiCurRg:B
+      22: return
+
+  public void handleUpgrade(byte, net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: return
+
+  public void handleCol(int, byte, net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: return
+
+  public void handleChar(byte, int, net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: return
+
+  public void handleTick(int, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: iload_1
+       1: iconst_4
+       2: if_icmpne     545
+       5: aload_2
+       6: ldc           #231                // String ;
+       8: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+      11: astore        4
+      13: aload         4
+      15: arraylength
+      16: iconst_2
+      17: if_icmple     542
+      20: aload_3
+      21: getfield      #1518               // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+      24: aload         4
+      26: iconst_0
+      27: aaload
+      28: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+      31: invokevirtual #1524               // Method net/minecraft/world/World.func_73045_a:(I)Lnet/minecraft/entity/Entity;
+      34: astore        5
+      36: aload         5
+      38: ifnull        542
+      41: getstatic     #1529               // Field JinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings.CLIENT_DA15:Z
+      44: ifeq          461
+      47: fconst_1
+      48: fstore        6
+      50: fconst_1
+      51: fstore        7
+      53: aload         5
+      55: getfield      #1532               // Field net/minecraft/entity/Entity.field_70173_aa:I
+      58: i2f
+      59: aload         5
+      61: getfield      #1535               // Field net/minecraft/entity/Entity.field_70131_O:F
+      64: ldc_w         #1536               // float 100.0f
+      67: fdiv
+      68: fmul
+      69: fstore        8
+      71: aload         5
+      73: astore        9
+      75: dconst_0
+      76: dstore        10
+      78: aload         9
+      80: getfield      #1535               // Field net/minecraft/entity/Entity.field_70131_O:F
+      83: ldc_w         #1537               // float 0.6f
+      86: fmul
+      87: f2d
+      88: dstore        12
+      90: dconst_0
+      91: dstore        14
+      93: new           #1539               // class JinRyuu/JRMCore/entity/EntityCusPar
+      96: dup
+      97: ldc_w         #1541               // String jinryuumodscore:bens_particles.png
+     100: aload         5
+     102: getfield      #1542               // Field net/minecraft/entity/Entity.field_70170_p:Lnet/minecraft/world/World;
+     105: ldc_w         #1543               // float 0.4f
+     108: ldc_w         #1543               // float 0.4f
+     111: aload         9
+     113: getfield      #1546               // Field net/minecraft/entity/Entity.field_70165_t:D
+     116: aload         9
+     118: getfield      #1549               // Field net/minecraft/entity/Entity.field_70163_u:D
+     121: aload         9
+     123: getfield      #1552               // Field net/minecraft/entity/Entity.field_70161_v:D
+     126: dload         10
+     128: dload         12
+     130: dload         14
+     132: dconst_0
+     133: dconst_0
+     134: dconst_0
+     135: fconst_0
+     136: invokestatic  #1557               // Method java/lang/Math.random:()D
+     139: ldc2_w        #1558               // double 4.0d
+     142: dmul
+     143: d2i
+     144: bipush        12
+     146: iadd
+     147: bipush        12
+     149: iconst_4
+     150: bipush        32
+     152: iconst_1
+     153: invokestatic  #1557               // Method java/lang/Math.random:()D
+     156: ldc2_w        #1560               // double 0.30000001192092896d
+     159: dmul
+     160: d2f
+     161: ldc_w         #1562               // float 0.3f
+     164: fadd
+     165: iconst_0
+     166: fconst_0
+     167: iconst_1
+     168: ldc           #186                // String
+     170: bipush        35
+     172: iconst_1
+     173: invokestatic  #1557               // Method java/lang/Math.random:()D
+     176: ldc2_w        #1563               // double 0.019999999552965164d
+     179: dmul
+     180: d2f
+     181: ldc_w         #1565               // float 0.04f
+     184: fadd
+     185: invokestatic  #1557               // Method java/lang/Math.random:()D
+     188: ldc2_w        #1566               // double 0.029999999329447746d
+     191: dmul
+     192: d2f
+     193: ldc_w         #1568               // float 0.06f
+     196: fadd
+     197: invokestatic  #1557               // Method java/lang/Math.random:()D
+     200: ldc2_w        #1569               // double 0.003000000026077032d
+     203: dmul
+     204: d2f
+     205: ldc_w         #1571               // float 0.001f
+     208: fadd
+     209: iconst_0
+     210: fconst_1
+     211: fconst_1
+     212: fconst_1
+     213: fconst_0
+     214: fconst_0
+     215: fconst_0
+     216: fconst_0
+     217: fconst_0
+     218: fconst_0
+     219: iconst_3
+     220: fconst_1
+     221: fconst_0
+     222: fconst_0
+     223: fconst_0
+     224: ldc_w         #1572               // float -0.05f
+     227: iconst_0
+     228: iconst_m1
+     229: iconst_0
+     230: aconst_null
+     231: invokespecial #1575               // Method JinRyuu/JRMCore/entity/EntityCusPar."<init>":(Ljava/lang/String;Lnet/minecraft/world/World;FFDDDDDDDDDFIIIIZFZFILjava/lang/String;IIFFFIFFFFFFFFFIFFFFFZIZLnet/minecraft/entity/Entity;)V
+     234: astore        16
+     236: aload         16
+     238: checkcast     #1539               // class JinRyuu/JRMCore/entity/EntityCusPar
+     241: invokestatic  #1557               // Method java/lang/Math.random:()D
+     244: ldc2_w        #1576               // double 360.0d
+     247: dmul
+     248: d2i
+     249: i2f
+     250: invokevirtual #1580               // Method JinRyuu/JRMCore/entity/EntityCusPar.setdata39:(F)V
+     253: aload         5
+     255: getfield      #1542               // Field net/minecraft/entity/Entity.field_70170_p:Lnet/minecraft/world/World;
+     258: aload         16
+     260: invokevirtual #1581               // Method net/minecraft/world/World.func_72838_d:(Lnet/minecraft/entity/Entity;)Z
+     263: pop
+     264: invokestatic  #1557               // Method java/lang/Math.random:()D
+     267: ldc2_w        #1558               // double 4.0d
+     270: dmul
+     271: d2i
+     272: iconst_1
+     273: iadd
+     274: istore        16
+     276: iconst_0
+     277: istore        17
+     279: iload         17
+     281: iload         16
+     283: if_icmpge     461
+     286: new           #1539               // class JinRyuu/JRMCore/entity/EntityCusPar
+     289: dup
+     290: ldc_w         #1541               // String jinryuumodscore:bens_particles.png
+     293: aload         5
+     295: getfield      #1542               // Field net/minecraft/entity/Entity.field_70170_p:Lnet/minecraft/world/World;
+     298: ldc_w         #1543               // float 0.4f
+     301: ldc_w         #1543               // float 0.4f
+     304: aload         9
+     306: getfield      #1546               // Field net/minecraft/entity/Entity.field_70165_t:D
+     309: aload         9
+     311: getfield      #1549               // Field net/minecraft/entity/Entity.field_70163_u:D
+     314: aload         9
+     316: getfield      #1552               // Field net/minecraft/entity/Entity.field_70161_v:D
+     319: dload         10
+     321: dload         12
+     323: dload         14
+     325: dconst_0
+     326: dconst_0
+     327: dconst_0
+     328: fconst_0
+     329: invokestatic  #1557               // Method java/lang/Math.random:()D
+     332: ldc2_w        #1558               // double 4.0d
+     335: dmul
+     336: d2i
+     337: iconst_4
+     338: iadd
+     339: iconst_4
+     340: iconst_4
+     341: bipush        64
+     343: iconst_1
+     344: invokestatic  #1557               // Method java/lang/Math.random:()D
+     347: ldc2_w        #1582               // double 0.4000000059604645d
+     350: dmul
+     351: d2f
+     352: ldc_w         #1543               // float 0.4f
+     355: fadd
+     356: iconst_0
+     357: fconst_0
+     358: iconst_1
+     359: ldc           #186                // String
+     361: bipush        22
+     363: iconst_1
+     364: invokestatic  #1557               // Method java/lang/Math.random:()D
+     367: ldc2_w        #1563               // double 0.019999999552965164d
+     370: dmul
+     371: d2f
+     372: ldc_w         #1584               // float 0.03f
+     375: fadd
+     376: invokestatic  #1557               // Method java/lang/Math.random:()D
+     379: ldc2_w        #1566               // double 0.029999999329447746d
+     382: dmul
+     383: d2f
+     384: ldc_w         #1585               // float 0.05f
+     387: fadd
+     388: invokestatic  #1557               // Method java/lang/Math.random:()D
+     391: ldc2_w        #1586               // double 0.0020000000949949026d
+     394: dmul
+     395: d2f
+     396: ldc_w         #1571               // float 0.001f
+     399: fadd
+     400: iconst_0
+     401: fconst_1
+     402: fconst_1
+     403: fconst_1
+     404: fconst_0
+     405: fconst_0
+     406: fconst_0
+     407: fconst_0
+     408: fconst_0
+     409: fconst_0
+     410: iconst_3
+     411: fconst_1
+     412: fconst_0
+     413: fconst_0
+     414: fconst_0
+     415: ldc_w         #1572               // float -0.05f
+     418: iconst_0
+     419: iconst_m1
+     420: iconst_0
+     421: aconst_null
+     422: invokespecial #1575               // Method JinRyuu/JRMCore/entity/EntityCusPar."<init>":(Ljava/lang/String;Lnet/minecraft/world/World;FFDDDDDDDDDFIIIIZFZFILjava/lang/String;IIFFFIFFFFFFFFFIFFFFFZIZLnet/minecraft/entity/Entity;)V
+     425: astore        18
+     427: aload         18
+     429: checkcast     #1539               // class JinRyuu/JRMCore/entity/EntityCusPar
+     432: invokestatic  #1557               // Method java/lang/Math.random:()D
+     435: ldc2_w        #1576               // double 360.0d
+     438: dmul
+     439: d2i
+     440: i2f
+     441: invokevirtual #1580               // Method JinRyuu/JRMCore/entity/EntityCusPar.setdata39:(F)V
+     444: aload         5
+     446: getfield      #1542               // Field net/minecraft/entity/Entity.field_70170_p:Lnet/minecraft/world/World;
+     449: aload         18
+     451: invokevirtual #1581               // Method net/minecraft/world/World.func_72838_d:(Lnet/minecraft/entity/Entity;)Z
+     454: pop
+     455: iinc          17, 1
+     458: goto          279
+     461: getstatic     #1590               // Field JinRyuu/JRMCore/JRMCoreH.damInd:Ljava/util/HashMap;
+     464: new           #1329               // class java/lang/StringBuilder
+     467: dup
+     468: invokespecial #1330               // Method java/lang/StringBuilder."<init>":()V
+     471: aload         5
+     473: getfield      #1546               // Field net/minecraft/entity/Entity.field_70165_t:D
+     476: invokevirtual #1334               // Method java/lang/StringBuilder.append:(D)Ljava/lang/StringBuilder;
+     479: ldc           #192                // String :
+     481: invokevirtual #1337               // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     484: aload         5
+     486: getfield      #1549               // Field net/minecraft/entity/Entity.field_70163_u:D
+     489: aload         5
+     491: getfield      #1535               // Field net/minecraft/entity/Entity.field_70131_O:F
+     494: f2d
+     495: dadd
+     496: invokevirtual #1334               // Method java/lang/StringBuilder.append:(D)Ljava/lang/StringBuilder;
+     499: ldc           #192                // String :
+     501: invokevirtual #1337               // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     504: aload         5
+     506: getfield      #1552               // Field net/minecraft/entity/Entity.field_70161_v:D
+     509: invokevirtual #1334               // Method java/lang/StringBuilder.append:(D)Ljava/lang/StringBuilder;
+     512: invokevirtual #1338               // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     515: new           #1329               // class java/lang/StringBuilder
+     518: dup
+     519: invokespecial #1330               // Method java/lang/StringBuilder."<init>":()V
+     522: aload         4
+     524: iconst_2
+     525: aaload
+     526: invokevirtual #1337               // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     529: ldc_w         #1592               // String :100
+     532: invokevirtual #1337               // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     535: invokevirtual #1338               // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     538: invokevirtual #618                // Method java/util/HashMap.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     541: pop
+     542: goto          899
+     545: iload_1
+     546: bipush        50
+     548: if_icmpne     774
+     551: getstatic     #1595               // Field JinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings.instantTransmissionParticles:Z
+     554: ifeq          899
+     557: aload_2
+     558: ldc           #231                // String ;
+     560: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     563: astore        4
+     565: aload         4
+     567: arraylength
+     568: iconst_3
+     569: if_icmple     771
+     572: aload_3
+     573: getfield      #1518               // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+     576: aload         4
+     578: iconst_0
+     579: aaload
+     580: invokestatic  #171                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+     583: invokevirtual #1524               // Method net/minecraft/world/World.func_73045_a:(I)Lnet/minecraft/entity/Entity;
+     586: astore        5
+     588: aload         5
+     590: ifnull        771
+     593: ldc_w         #1596               // float 0.025f
+     596: aload         5
+     598: getfield      #1535               // Field net/minecraft/entity/Entity.field_70131_O:F
+     601: fmul
+     602: fstore        6
+     604: ldc_w         #1597               // float 0.25f
+     607: fstore        7
+     609: aload         5
+     611: astore        8
+     613: dconst_0
+     614: dstore        9
+     616: aload         8
+     618: getfield      #1535               // Field net/minecraft/entity/Entity.field_70131_O:F
+     621: ldc_w         #628                // float 0.5f
+     624: fmul
+     625: f2d
+     626: dstore        11
+     628: dconst_0
+     629: dstore        13
+     631: aload         4
+     633: iconst_1
+     634: aaload
+     635: invokestatic  #987                // Method java/lang/Double.parseDouble:(Ljava/lang/String;)D
+     638: dstore        15
+     640: aload         4
+     642: iconst_2
+     643: aaload
+     644: invokestatic  #987                // Method java/lang/Double.parseDouble:(Ljava/lang/String;)D
+     647: dstore        17
+     649: aload         4
+     651: iconst_3
+     652: aaload
+     653: invokestatic  #987                // Method java/lang/Double.parseDouble:(Ljava/lang/String;)D
+     656: dstore        19
+     658: new           #1539               // class JinRyuu/JRMCore/entity/EntityCusPar
+     661: dup
+     662: ldc_w         #1599               // String jinryuudragonbc:bens_particles2.png
+     665: aload         5
+     667: getfield      #1542               // Field net/minecraft/entity/Entity.field_70170_p:Lnet/minecraft/world/World;
+     670: ldc_w         #1543               // float 0.4f
+     673: ldc_w         #1543               // float 0.4f
+     676: dload         15
+     678: dload         17
+     680: dload         19
+     682: dload         9
+     684: dload         11
+     686: dload         13
+     688: dconst_0
+     689: dconst_0
+     690: dconst_0
+     691: fconst_0
+     692: invokestatic  #1557               // Method java/lang/Math.random:()D
+     695: ldc2_w        #1600               // double 3.0d
+     698: dmul
+     699: d2i
+     700: iconst_0
+     701: iconst_0
+     702: bipush        64
+     704: iconst_0
+     705: fconst_0
+     706: iconst_0
+     707: fconst_0
+     708: iconst_1
+     709: ldc           #186                // String
+     711: bipush        10
+     713: iconst_1
+     714: fload         6
+     716: fload         6
+     718: ldc_w         #1602               // float 50.0f
+     721: fdiv
+     722: fload         6
+     724: fneg
+     725: ldc_w         #1603               // float 20.0f
+     728: fdiv
+     729: iconst_0
+     730: fconst_1
+     731: fconst_1
+     732: fconst_1
+     733: fconst_0
+     734: fconst_0
+     735: fconst_0
+     736: fconst_0
+     737: fconst_0
+     738: fconst_0
+     739: iconst_2
+     740: fload         7
+     742: fconst_0
+     743: fconst_0
+     744: fconst_0
+     745: fload         7
+     747: ldc_w         #1604               // float 5.0f
+     750: fdiv
+     751: iconst_0
+     752: iconst_m1
+     753: iconst_0
+     754: aconst_null
+     755: invokespecial #1575               // Method JinRyuu/JRMCore/entity/EntityCusPar."<init>":(Ljava/lang/String;Lnet/minecraft/world/World;FFDDDDDDDDDFIIIIZFZFILjava/lang/String;IIFFFIFFFFFFFFFIFFFFFZIZLnet/minecraft/entity/Entity;)V
+     758: astore        21
+     760: aload         5
+     762: getfield      #1542               // Field net/minecraft/entity/Entity.field_70170_p:Lnet/minecraft/world/World;
+     765: aload         21
+     767: invokevirtual #1581               // Method net/minecraft/world/World.func_72838_d:(Lnet/minecraft/entity/Entity;)Z
+     770: pop
+     771: goto          899
+     774: iload_1
+     775: iconst_5
+     776: if_icmpne     782
+     779: goto          899
+     782: iload_1
+     783: bipush        20
+     785: if_icmpne     822
+     788: aload_3
+     789: getstatic     #1610               // Field JinRyuu/JRMCore/mod_JRMCore.instance:LJinRyuu/JRMCore/mod_JRMCore;
+     792: iconst_2
+     793: aload_3
+     794: getfield      #1518               // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+     797: aload_3
+     798: getfield      #1611               // Field net/minecraft/entity/player/EntityPlayer.field_70165_t:D
+     801: d2i
+     802: aload_3
+     803: getfield      #1612               // Field net/minecraft/entity/player/EntityPlayer.field_70163_u:D
+     806: d2i
+     807: aload_3
+     808: getfield      #1613               // Field net/minecraft/entity/player/EntityPlayer.field_70161_v:D
+     811: d2i
+     812: invokevirtual #1617               // Method net/minecraft/entity/player/EntityPlayer.openGui:(Ljava/lang/Object;ILnet/minecraft/world/World;III)V
+     815: aload_2
+     816: putstatic     #1620               // Field JinRyuu/JRMCore/JRMCoreH.ask:Ljava/lang/String;
+     819: goto          899
+     822: iload_1
+     823: bipush        22
+     825: if_icmpne     862
+     828: aload_3
+     829: getstatic     #1610               // Field JinRyuu/JRMCore/mod_JRMCore.instance:LJinRyuu/JRMCore/mod_JRMCore;
+     832: iconst_3
+     833: aload_3
+     834: getfield      #1518               // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+     837: aload_3
+     838: getfield      #1611               // Field net/minecraft/entity/player/EntityPlayer.field_70165_t:D
+     841: d2i
+     842: aload_3
+     843: getfield      #1612               // Field net/minecraft/entity/player/EntityPlayer.field_70163_u:D
+     846: d2i
+     847: aload_3
+     848: getfield      #1613               // Field net/minecraft/entity/player/EntityPlayer.field_70161_v:D
+     851: d2i
+     852: invokevirtual #1617               // Method net/minecraft/entity/player/EntityPlayer.openGui:(Ljava/lang/Object;ILnet/minecraft/world/World;III)V
+     855: aload_2
+     856: putstatic     #1620               // Field JinRyuu/JRMCore/JRMCoreH.ask:Ljava/lang/String;
+     859: goto          899
+     862: iload_1
+     863: iconst_1
+     864: if_icmpne     899
+     867: aload_2
+     868: ldc           #176                // String ::
+     870: if_acmpne     880
+     873: aconst_null
+     874: putstatic     #180                // Field JinRyuu/JRMCore/JRMCoreH.plyrsArnd:[Ljava/lang/String;
+     877: goto          899
+     880: aload_2
+     881: invokevirtual #184                // Method java/lang/String.toString:()Ljava/lang/String;
+     884: ldc           #176                // String ::
+     886: ldc           #186                // String
+     888: invokevirtual #190                // Method java/lang/String.replaceAll:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     891: ldc           #192                // String :
+     893: invokevirtual #196                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     896: putstatic     #180                // Field JinRyuu/JRMCore/JRMCoreH.plyrsArnd:[Ljava/lang/String;
+     899: return
+
+  public void handleNotification(net.minecraft.entity.player.EntityPlayer, java.lang.String, java.lang.String, byte, byte, byte, int);
+    Code:
+       0: aload_0
+       1: aload_2
+       2: aload_3
+       3: iload         4
+       5: iload         5
+       7: iload         6
+       9: iload         7
+      11: invokevirtual #1636               // Method handleNotification:(Ljava/lang/String;Ljava/lang/String;BBBI)V
+      14: return
+
+  public void handleNotification(java.lang.String, java.lang.String, byte, byte, byte, int);
+    Code:
+       0: getstatic     #1647               // Field JinRyuu/JRMCore/client/notification/JGNotificationGUI.categoryState:[I
+       3: iload_3
+       4: iaload
+       5: iconst_2
+       6: if_icmpeq     37
+       9: getstatic     #1647               // Field JinRyuu/JRMCore/client/notification/JGNotificationGUI.categoryState:[I
+      12: iconst_0
+      13: iaload
+      14: iconst_2
+      15: if_icmpeq     37
+      18: new           #1649               // class JinRyuu/JRMCore/client/notification/JGNotification
+      21: dup
+      22: aload_1
+      23: aload_2
+      24: iload_3
+      25: iload         4
+      27: iload         5
+      29: iload         6
+      31: invokespecial #1652               // Method JinRyuu/JRMCore/client/notification/JGNotification."<init>":(Ljava/lang/String;Ljava/lang/String;IIII)V
+      34: invokestatic  #1658               // Method JinRyuu/JRMCore/client/notification/JGNotificationHandlerC.addNotification:(LJinRyuu/JRMCore/client/notification/JGNotification;)V
+      37: return
+}

@@ -1,0 +1,408 @@
+﻿JinRyuu/JRMCore/ComJrmc.func_71515_b(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V @319: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+    +2 VAR op=54 v=19
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=19
+    +6 VAR op=21 v=18
+JinRyuu/JRMCore/ComJrmc.func_71515_b(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V @334: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+    +2 LABEL
+    +3 LINE
+    +4 VAR op=25 v=13
+    +5 OP 3
+    +6 OP 50
+JinRyuu/JRMCore/ComJrmcCheck.func_71515_b(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V @220: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+    +2 VAR op=54 v=19
+    +3 LABEL
+    +4 LINE
+    +5 OP 7
+    +6 TYPE op=189 java/lang/String
+JinRyuu/JRMCore/ComJrmcRacialSkill.func_71515_b(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V @529: LDC jrmcTpint
+    +1 VAR op=25 v=0
+    +2 FIELD op=180 JinRyuu/JRMCore/ComJrmcRacialSkill.tp_current:I
+    +3 VAR op=25 v=0
+    +4 FIELD op=180 JinRyuu/JRMCore/ComJrmcRacialSkill.tp_cost:I
+    +5 OP 100
+    +6 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+JinRyuu/JRMCore/ComJrmcRacialSkill.canAfford(ZZLjava/lang/String;Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/nbt/NBTTagCompound;BBZZ)V @277: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +2 FIELD op=181 JinRyuu/JRMCore/ComJrmcRacialSkill.tp_current:I
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=6
+    +6 INVOKE JinRyuu/JRMCore/JRMCoreH.rSai(I)Z
+JinRyuu/JRMCore/ComJrmctp.func_71515_b(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V @505: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +2 VAR op=54 v=13
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=13
+    +6 OP 133
+JinRyuu/JRMCore/ComJrmctp.func_71515_b(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V @532: LDC jrmcTpint
+    +1 VAR op=21 v=14
+    +2 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=11
+    +6 JUMP op=153
+JinRyuu/JRMCore/ComJrmctp.func_71515_b(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V @577: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +2 VAR op=54 v=13
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=13
+    +6 OP 133
+JinRyuu/JRMCore/ComJrmctp.func_71515_b(Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V @622: LDC jrmcTpint
+    +1 VAR op=21 v=16
+    +2 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=11
+    +6 JUMP op=153
+JinRyuu/JRMCore/JRMCoreComTickH.updatePlayersData(Lnet/minecraft/server/MinecraftServer;ILnet/minecraft/entity/player/EntityPlayerMP;LJinRyuu/JRMCore/server/JGPlayerMP;Lnet/minecraft/nbt/NBTTagCompound;)V @1340: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74781_a(Ljava/lang/String;)Lnet/minecraft/nbt/NBTBase;
+    +2 JUMP op=199
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=25 v=5
+    +6 LDC jrmcTp
+JinRyuu/JRMCore/JRMCoreComTickH.updatePlayersData(Lnet/minecraft/server/MinecraftServer;ILnet/minecraft/entity/player/EntityPlayerMP;LJinRyuu/JRMCore/server/JGPlayerMP;Lnet/minecraft/nbt/NBTTagCompound;)V @1352: LDC jrmcTpint
+    +1 VAR op=21 v=42
+    +2 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=25 v=5
+    +6 LDC jrmcTp
+JinRyuu/JRMCore/JRMCoreComTickH.updatePlayersData(Lnet/minecraft/server/MinecraftServer;ILnet/minecraft/entity/player/EntityPlayerMP;LJinRyuu/JRMCore/server/JGPlayerMP;Lnet/minecraft/nbt/NBTTagCompound;)V @1511: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +2 VAR op=21 v=42
+    +3 OP 96
+    +4 VAR op=54 v=44
+    +5 LABEL
+    +6 LINE
+JinRyuu/JRMCore/JRMCoreComTickH.updatePlayersData(Lnet/minecraft/server/MinecraftServer;ILnet/minecraft/entity/player/EntityPlayerMP;LJinRyuu/JRMCore/server/JGPlayerMP;Lnet/minecraft/nbt/NBTTagCompound;)V @1519: LDC jrmcTpint
+    +1 VAR op=21 v=44
+    +2 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=25 v=5
+    +6 FIELD op=178 JinRyuu/JRMCore/JRMCoreH.techNbt:[Ljava/lang/String;
+JinRyuu/JRMCore/JRMCoreComTickH.updatePlayersData(Lnet/minecraft/server/MinecraftServer;ILnet/minecraft/entity/player/EntityPlayerMP;LJinRyuu/JRMCore/server/JGPlayerMP;Lnet/minecraft/nbt/NBTTagCompound;)V @2491: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +2 INVOKE java/lang/StringBuilder.append(I)Ljava/lang/StringBuilder;
+    +3 INVOKE java/lang/StringBuilder.toString()Ljava/lang/String;
+    +4 OP 83
+    +5 LABEL
+    +6 LINE
+JinRyuu/JRMCore/JRMCoreGuiBars.renderTrainGui()V @213: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiBars.renderTrainGui()V @221: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiBars.renderTrainGui()V @243: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiSCM.func_73863_a(IIF)V @1351: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiSCM.func_73863_a(IIF)V @1562: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiScreen.func_73863_a(IIF)V @495: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiScreen.func_73863_a(IIF)V @20255: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiScreen.func_73863_a(IIF)V @20727: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiScreen.func_73863_a(IIF)V @24771: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiScreen.func_73863_a(IIF)V @31044: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiScreen.func_73863_a(IIF)V @31091: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiScreen.func_73863_a(IIF)V @32374: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiScreen.func_73863_a(IIF)V @32421: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiScreen.func_73863_a(IIF)V @32575: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiScreen.func_73863_a(IIF)V @32857: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiScreen.func_73863_a(IIF)V @33233: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreGuiScreen.func_73863_a(IIF)V @33484: FIELD op=178 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreH.expPls(Lnet/minecraft/entity/player/EntityPlayer;I)V @55: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+    +2 VAR op=54 v=5
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=1
+    +6 VAR op=54 v=6
+JinRyuu/JRMCore/JRMCoreH.expPls(Lnet/minecraft/entity/player/EntityPlayer;I)V @108: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+    +2 LABEL
+    +3 LINE
+    +4 FRAME
+    +5 IINC v=7 1
+    +6 JUMP op=167
+JinRyuu/JRMCore/JRMCoreH.Stats2(Lnet/minecraft/entity/player/EntityPlayer;IIB[I)V @8: CTOR JinRyuu/JRMCore/p/JRMCorePStats2(IIB[I)V
+JinRyuu/JRMCore/JRMCoreH.resetChar()V @113: FIELD op=179 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCoreH.jrmcExp(Lnet/minecraft/entity/Entity;II)V @205: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+    +2 VAR op=54 v=19
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=25 v=13
+    +6 LDC jrmcDiff
+JinRyuu/JRMCore/JRMCoreH.jrmcExp(Lnet/minecraft/entity/Entity;II)V @264: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+    +2 LABEL
+    +3 LINE
+    +4 FRAME
+    +5 VAR op=25 v=15
+    +6 VAR op=25 v=13
+JinRyuu/JRMCore/JRMCoreH.jrmcExp(Lnet/minecraft/entity/Entity;II)V @310: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+    +2 VAR op=54 v=14
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=25 v=3
+    +6 LDC jrmcDiff
+JinRyuu/JRMCore/JRMCoreH.jrmcExp(Lnet/minecraft/entity/Entity;II)V @358: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+    +2 LABEL
+    +3 LINE
+    +4 FRAME
+    +5 OP 177
+    +6 LABEL
+JinRyuu/JRMCore/JRMCoreH.tpalgn(Lnet/minecraft/entity/player/EntityPlayer;II)V @30: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+    +2 VAR op=21 v=1
+    +3 OP 96
+    +4 VAR op=54 v=6
+    +5 LABEL
+    +6 LINE
+JinRyuu/JRMCore/JRMCoreH.tpalgn(Lnet/minecraft/entity/player/EntityPlayer;II)V @48: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+    +2 LABEL
+    +3 JUMP op=167
+    +4 LABEL
+    +5 LINE
+    +6 FRAME
+JinRyuu/JRMCore/JRMCoreH.tpalgn(Lnet/minecraft/entity/player/EntityPlayer;II)V @234: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+    +2 VAR op=21 v=1
+    +3 OP 96
+    +4 VAR op=54 v=11
+    +5 LABEL
+    +6 LINE
+JinRyuu/JRMCore/JRMCoreH.tpalgn(Lnet/minecraft/entity/player/EntityPlayer;II)V @252: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+    +2 LABEL
+    +3 LINE
+    +4 FRAME
+    +5 IINC v=7 1
+    +6 JUMP op=167
+JinRyuu/JRMCore/JRMCoreH.<clinit>()V @2638: FIELD op=179 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCorePacHanC.handleData(ILjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V @1011: FIELD op=179 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCorePacHanC.handleStats2(IIB[ILnet/minecraft/entity/player/EntityPlayer;)V @3: FIELD op=179 JinRyuu/JRMCore/JRMCoreH.curTP:I
+JinRyuu/JRMCore/JRMCorePacHanS.handleData(ILjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V @595: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +2 VAR op=54 v=20
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=25 v=15
+    +6 VAR op=21 v=11
+JinRyuu/JRMCore/JRMCorePacHanS.handleData(ILjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V @636: LDC jrmcTpint
+    +1 VAR op=21 v=22
+    +2 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=1
+    +6 TYPE op=187 java/lang/StringBuilder
+JinRyuu/JRMCore/JRMCorePacHanS.handleQuad(IIIILnet/minecraft/entity/player/EntityPlayer;)V @790: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +2 VAR op=54 v=8
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=2
+    +6 JUMP op=154
+JinRyuu/JRMCore/JRMCorePacHanS.handleQuad(IIIILnet/minecraft/entity/player/EntityPlayer;)V @809: LDC jrmcTpint
+    +1 VAR op=21 v=8
+    +2 OP 4
+    +3 OP 100
+    +4 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+    +5 LABEL
+    +6 LINE
+JinRyuu/JRMCore/JRMCorePacHanS.handleQuad(IIIILnet/minecraft/entity/player/EntityPlayer;)V @974: LDC jrmcTpint
+    +1 VAR op=21 v=8
+    +2 OP 4
+    +3 OP 100
+    +4 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+    +5 JUMP op=167
+    +6 LABEL
+JinRyuu/JRMCore/JRMCorePacHanS.handleQuad(IIIILnet/minecraft/entity/player/EntityPlayer;)V @1078: LDC jrmcTpint
+    +1 VAR op=21 v=15
+    +2 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=25 v=7
+    +6 LDC jrmcTPlimit
+JinRyuu/JRMCore/JRMCorePacHanS.handleQuad(IIIILnet/minecraft/entity/player/EntityPlayer;)V @1188: LDC jrmcTpint
+    +1 VAR op=21 v=8
+    +2 OP 4
+    +3 OP 100
+    +4 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+    +5 JUMP op=167
+    +6 LABEL
+JinRyuu/JRMCore/JRMCorePacHanS.handleQuad(IIIILnet/minecraft/entity/player/EntityPlayer;)V @1292: LDC jrmcTpint
+    +1 VAR op=21 v=15
+    +2 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=25 v=7
+    +6 LDC jrmcTPlimit2
+JinRyuu/JRMCore/JRMCorePacHanS.handleTech(BLjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V @430: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+    +2 VAR op=54 v=13
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=13
+    +6 VAR op=21 v=12
+JinRyuu/JRMCore/JRMCorePacHanS.handleTech(BLjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V @439: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+    +2 LABEL
+    +3 LINE
+    +4 JUMP op=167
+    +5 LABEL
+    +6 FRAME
+JinRyuu/JRMCore/JRMCorePacHanS.handleTech(BLjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V @468: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+    +2 VAR op=54 v=12
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=12
+    +6 VAR op=21 v=11
+JinRyuu/JRMCore/JRMCorePacHanS.handleTech(BLjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V @477: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+    +2 LABEL
+    +3 LINE
+    +4 FRAME
+    +5 LDC  
+    +6 VAR op=25 v=3
+JinRyuu/JRMCore/JRMCorePacHanS.handleTech(BLjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V @593: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+    +2 VAR op=54 v=18
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=18
+    +6 VAR op=21 v=17
+JinRyuu/JRMCore/JRMCorePacHanS.handleTech(BLjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V @608: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+    +2 LABEL
+    +3 LINE
+    +4 TYPE op=187 java/lang/StringBuilder
+    +5 OP 89
+    +6 INVOKE java/lang/StringBuilder.<init>()V
+JinRyuu/JRMCore/JRMCorePacHanS.handleTech(BLjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V @727: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+    +2 VAR op=54 v=14
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=14
+    +6 VAR op=21 v=13
+JinRyuu/JRMCore/JRMCorePacHanS.handleTech(BLjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V @744: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+    +2 LABEL
+    +3 LINE
+    +4 TYPE op=187 java/lang/StringBuilder
+    +5 OP 89
+    +6 INVOKE java/lang/StringBuilder.<init>()V
+JinRyuu/JRMCore/JRMCorePacHanS.handleTech(BLjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V @822: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+    +2 VAR op=54 v=11
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=11
+    +6 VAR op=21 v=10
+JinRyuu/JRMCore/JRMCorePacHanS.handleTech(BLjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V @837: LDC jrmcTpint
+    +1 INVOKE JinRyuu/JRMCore/JRMCoreH.setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+    +2 LABEL
+    +3 LINE
+    +4 VAR op=25 v=2
+    +5 VAR op=25 v=3
+    +6 FIELD op=178 JinRyuu/JRMCore/JRMCoreH.techNbt:[Ljava/lang/String;
+JinRyuu/JRMCore/JRMCorePacHanS.handleStats3(BBBLnet/minecraft/entity/player/EntityPlayer;)V @324: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +2 VAR op=54 v=31
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=2
+    +6 OP 3
+JinRyuu/JRMCore/JRMCorePacHanS.handleStats3(BBBLnet/minecraft/entity/player/EntityPlayer;)V @651: LDC jrmcTpint
+    +1 VAR op=21 v=42
+    +2 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+    +3 LABEL
+    +4 LINE
+    +5 FRAME
+    +6 JUMP op=167
+JinRyuu/JRMCore/JRMCorePacHanS.handleStats3(BBBLnet/minecraft/entity/player/EntityPlayer;)V @1022: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +2 VAR op=54 v=38
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=21 v=10
+    +6 INVOKE JinRyuu/JRMCore/JRMCoreH.rSai(I)Z
+JinRyuu/JRMCore/JRMCorePacHanS.handleStats3(BBBLnet/minecraft/entity/player/EntityPlayer;)V @1198: LDC jrmcTpint
+    +1 VAR op=21 v=38
+    +2 VAR op=21 v=37
+    +3 OP 100
+    +4 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+    +5 LABEL
+    +6 LINE
+JinRyuu/JRMCore/JRMCorePacHanS.handleUpgrade(BLnet/minecraft/entity/player/EntityPlayer;)V @195: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +2 VAR op=21 v=17
+    +3 JUMP op=161
+    +4 VAR op=25 v=3
+    +5 FIELD op=178 JinRyuu/JRMCore/JRMCoreH.AttrbtNbtI:[Ljava/lang/String;
+    +6 VAR op=21 v=1
+JinRyuu/JRMCore/JRMCorePacHanS.handleUpgrade(BLnet/minecraft/entity/player/EntityPlayer;)V @256: LDC jrmcTpint
+    +1 VAR op=25 v=3
+    +2 LDC jrmcTpint
+    +3 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +4 VAR op=21 v=17
+    +5 OP 100
+    +6 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+JinRyuu/JRMCore/JRMCorePacHanS.handleUpgrade(BLnet/minecraft/entity/player/EntityPlayer;)V @258: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +2 VAR op=21 v=17
+    +3 OP 100
+    +4 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+    +5 LABEL
+    +6 LINE
+JinRyuu/JRMCore/JRMCorePacHanS.handleUpgrade(BLnet/minecraft/entity/player/EntityPlayer;)V @494: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +2 VAR op=25 v=3
+    +3 LDC jrmcExp
+    +4 INVOKE net/minecraft/nbt/NBTTagCompound.func_74771_c(Ljava/lang/String;)B
+    +5 VAR op=25 v=3
+    +6 LDC jrmcAlign
+JinRyuu/JRMCore/JRMCorePacHanS.handleUpgrade(BLnet/minecraft/entity/player/EntityPlayer;)V @503: CALL JinRyuu/JRMCore/JRMCoreH.Stats2(Lnet/minecraft/entity/player/EntityPlayer;IIB[I)V
+JinRyuu/JRMCore/JRMCorePacHanS.handleChar(BILnet/minecraft/entity/player/EntityPlayer;)V @416: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +2 VAR op=25 v=4
+    +3 LDC jrmcExp
+    +4 INVOKE net/minecraft/nbt/NBTTagCompound.func_74771_c(Ljava/lang/String;)B
+    +5 VAR op=25 v=4
+    +6 LDC jrmcAlign
+JinRyuu/JRMCore/JRMCorePacHanS.handleChar(BILnet/minecraft/entity/player/EntityPlayer;)V @425: CALL JinRyuu/JRMCore/JRMCoreH.Stats2(Lnet/minecraft/entity/player/EntityPlayer;IIB[I)V
+JinRyuu/JRMCore/JRMCorePacHanS.handleChar(BILnet/minecraft/entity/player/EntityPlayer;)V @663: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +2 VAR op=54 v=11
+    +3 LABEL
+    +4 LINE
+    +5 VAR op=25 v=3
+    +6 INVOKE JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts(Lnet/minecraft/entity/player/EntityPlayer;)[I
+JinRyuu/JRMCore/JRMCorePacHanS.handleChar(BILnet/minecraft/entity/player/EntityPlayer;)V @705: LDC jrmcTpint
+    +1 VAR op=21 v=11
+    +2 INT op=16 20
+    +3 OP 100
+    +4 INVOKE net/minecraft/nbt/NBTTagCompound.func_74768_a(Ljava/lang/String;I)V
+    +5 LABEL
+    +6 LINE
+JinRyuu/JRMCore/JRMCorePacHanS.handleTick(ILjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V @102: LDC jrmcTpint
+    +1 INVOKE net/minecraft/nbt/NBTTagCompound.func_74762_e(Ljava/lang/String;)I
+    +2 VAR op=25 v=4
+    +3 LDC jrmcExp
+    +4 INVOKE net/minecraft/nbt/NBTTagCompound.func_74771_c(Ljava/lang/String;)B
+    +5 VAR op=25 v=4
+    +6 LDC jrmcAlign
+JinRyuu/JRMCore/JRMCorePacHanS.handleTick(ILjava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;)V @111: CALL JinRyuu/JRMCore/JRMCoreH.Stats2(Lnet/minecraft/entity/player/EntityPlayer;IIB[I)V
+JinRyuu/JRMCore/p/JRMCorePStats2$Handler.handleClientMessage(Lnet/minecraft/entity/player/EntityPlayer;LJinRyuu/JRMCore/p/JRMCorePStats2;Lcpw/mods/fml/common/network/simpleimpl/MessageContext;)Lcpw/mods/fml/common/network/simpleimpl/IMessage; @4: FIELD op=180 JinRyuu/JRMCore/p/JRMCorePStats2.curTP:I
+JinRyuu/JRMCore/p/JRMCorePStats2$Handler.handleClientMessage(Lnet/minecraft/entity/player/EntityPlayer;LJinRyuu/JRMCore/p/JRMCorePStats2;Lcpw/mods/fml/common/network/simpleimpl/MessageContext;)Lcpw/mods/fml/common/network/simpleimpl/IMessage; @12: CALL JinRyuu/JRMCore/JRMCorePacHanC.handleStats2(IIB[ILnet/minecraft/entity/player/EntityPlayer;)V
+JinRyuu/JRMCore/p/JRMCorePStats2.<init>(IIB[I)V @15: FIELD op=181 JinRyuu/JRMCore/p/JRMCorePStats2.curTP:I
+JinRyuu/JRMCore/p/JRMCorePStats2.toBytes(Lio/netty/buffer/ByteBuf;)V @11: FIELD op=180 JinRyuu/JRMCore/p/JRMCorePStats2.curTP:I
+JinRyuu/JRMCore/p/JRMCorePStats2.fromBytes(Lio/netty/buffer/ByteBuf;)V @5: FIELD op=181 JinRyuu/JRMCore/p/JRMCorePStats2.curTP:I

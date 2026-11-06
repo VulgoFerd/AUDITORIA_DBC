@@ -1,0 +1,961 @@
+﻿Compiled from "ComJrmcRacialSkill.java"
+public class JinRyuu.JRMCore.ComJrmcRacialSkill extends net.minecraft.command.CommandBase {
+  private final java.lang.String[] MODES;
+
+  private final java.lang.String[] AMOUNT;
+
+  private final java.lang.String[] BOOLEAN;
+
+  final java.lang.String name;
+
+  final java.lang.String desc;
+
+  private byte result;
+
+  private boolean doit;
+
+  private int tp_current;
+
+  private int tp_cost;
+
+  private final byte SET;
+
+  private final byte ADD;
+
+  private final byte TAKE;
+
+  private final byte NA;
+
+  public JinRyuu.JRMCore.ComJrmcRacialSkill();
+    Code:
+       0: aload_0
+       1: invokespecial #35                 // Method net/minecraft/command/CommandBase."<init>":()V
+       4: aload_0
+       5: iconst_2
+       6: anewarray     #37                 // class java/lang/String
+       9: dup
+      10: iconst_0
+      11: ldc           #39                 // String set
+      13: aastore
+      14: dup
+      15: iconst_1
+      16: ldc           #41                 // String add
+      18: aastore
+      19: putfield      #43                 // Field MODES:[Ljava/lang/String;
+      22: aload_0
+      23: iconst_4
+      24: anewarray     #37                 // class java/lang/String
+      27: dup
+      28: iconst_0
+      29: ldc           #45                 // String 0
+      31: aastore
+      32: dup
+      33: iconst_1
+      34: ldc           #47                 // String 1
+      36: aastore
+      37: dup
+      38: iconst_2
+      39: ldc           #49                 // String 10
+      41: aastore
+      42: dup
+      43: iconst_3
+      44: ldc           #51                 // String -1
+      46: aastore
+      47: putfield      #53                 // Field AMOUNT:[Ljava/lang/String;
+      50: aload_0
+      51: iconst_2
+      52: anewarray     #37                 // class java/lang/String
+      55: dup
+      56: iconst_0
+      57: ldc           #55                 // String true
+      59: aastore
+      60: dup
+      61: iconst_1
+      62: ldc           #57                 // String false
+      64: aastore
+      65: putfield      #59                 // Field BOOLEAN:[Ljava/lang/String;
+      68: aload_0
+      69: ldc           #13                 // String jrmcracialskill
+      71: putfield      #61                 // Field name:Ljava/lang/String;
+      74: aload_0
+      75: ldc           #16                 // String Usage: \'/jrmcracialskill (Set or Add) amount [playerName] [tpCostOn] [ignoreMindCostOn]\' and the ADD amount can be negative too.
+      77: putfield      #63                 // Field desc:Ljava/lang/String;
+      80: aload_0
+      81: iconst_0
+      82: putfield      #65                 // Field SET:B
+      85: aload_0
+      86: iconst_1
+      87: putfield      #67                 // Field ADD:B
+      90: aload_0
+      91: iconst_2
+      92: putfield      #69                 // Field TAKE:B
+      95: aload_0
+      96: iconst_m1
+      97: putfield      #71                 // Field NA:B
+     100: return
+
+  public java.lang.String func_71517_b();
+    Code:
+       0: ldc           #13                 // String jrmcracialskill
+       2: areturn
+
+  public int func_82362_a();
+    Code:
+       0: iconst_2
+       1: ireturn
+
+  public java.lang.String func_71518_a(net.minecraft.command.ICommandSender);
+    Code:
+       0: ldc           #16                 // String Usage: \'/jrmcracialskill (Set or Add) amount [playerName] [tpCostOn] [ignoreMindCostOn]\' and the ADD amount can be negative too.
+       2: areturn
+
+  public void func_71515_b(net.minecraft.command.ICommandSender, java.lang.String[]);
+    Code:
+       0: aload_2
+       1: arraylength
+       2: ifgt          19
+       5: new           #87                 // class net/minecraft/command/WrongUsageException
+       8: dup
+       9: ldc           #16                 // String Usage: \'/jrmcracialskill (Set or Add) amount [playerName] [tpCostOn] [ignoreMindCostOn]\' and the ADD amount can be negative too.
+      11: iconst_0
+      12: anewarray     #89                 // class java/lang/Object
+      15: invokespecial #92                 // Method net/minecraft/command/WrongUsageException."<init>":(Ljava/lang/String;[Ljava/lang/Object;)V
+      18: athrow
+      19: aload_0
+      20: iconst_m1
+      21: putfield      #94                 // Field result:B
+      24: aload_0
+      25: iconst_1
+      26: putfield      #96                 // Field doit:Z
+      29: aload_0
+      30: iconst_0
+      31: putfield      #98                 // Field tp_current:I
+      34: aload_0
+      35: iconst_0
+      36: putfield      #100                // Field tp_cost:I
+      39: iconst_0
+      40: istore_3
+      41: iconst_0
+      42: istore        4
+      44: aload_2
+      45: arraylength
+      46: iconst_2
+      47: if_icmple     89
+      50: aload_1
+      51: aload_2
+      52: iconst_2
+      53: aaload
+      54: invokestatic  #104                // Method func_82359_c:(Lnet/minecraft/command/ICommandSender;Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayerMP;
+      57: astore        5
+      59: aload_2
+      60: arraylength
+      61: iconst_3
+      62: if_icmple     72
+      65: aload_2
+      66: iconst_3
+      67: aaload
+      68: invokestatic  #110                // Method java/lang/Boolean.parseBoolean:(Ljava/lang/String;)Z
+      71: istore_3
+      72: aload_2
+      73: arraylength
+      74: iconst_4
+      75: if_icmple     95
+      78: aload_2
+      79: iconst_4
+      80: aaload
+      81: invokestatic  #110                // Method java/lang/Boolean.parseBoolean:(Ljava/lang/String;)Z
+      84: istore        4
+      86: goto          95
+      89: aload_1
+      90: invokestatic  #116                // Method func_71521_c:(Lnet/minecraft/command/ICommandSender;)Lnet/minecraft/entity/player/EntityPlayerMP;
+      93: astore        5
+      95: ldc           #118                // String Console
+      97: astore        6
+      99: aload_1
+     100: invokestatic  #116                // Method func_71521_c:(Lnet/minecraft/command/ICommandSender;)Lnet/minecraft/entity/player/EntityPlayerMP;
+     103: astore        7
+     105: aload         7
+     107: invokevirtual #121                // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+     110: astore        6
+     112: goto          117
+     115: astore        7
+     117: aload         6
+     119: ldc           #118                // String Console
+     121: invokevirtual #128                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     124: ifeq          133
+     127: getstatic     #133                // Field JinRyuu/JRMCore/JRMCoreConfig.ComRSNAC:Z
+     130: goto          155
+     133: aload         6
+     135: aload         5
+     137: invokevirtual #121                // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+     140: invokevirtual #128                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     143: ifeq          152
+     146: getstatic     #136                // Field JinRyuu/JRMCore/JRMCoreConfig.ComRSNAS:Z
+     149: goto          155
+     152: getstatic     #139                // Field JinRyuu/JRMCore/JRMCoreConfig.ComRSNAO:Z
+     155: istore        7
+     157: aload         5
+     159: ldc           #141                // String pres
+     161: invokestatic  #147                // Method JinRyuu/JRMCore/JRMCoreH.nbt:(Lnet/minecraft/entity/Entity;Ljava/lang/String;)Lnet/minecraft/nbt/NBTTagCompound;
+     164: astore        8
+     166: aload_2
+     167: iconst_0
+     168: aaload
+     169: invokevirtual #150                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+     172: astore        9
+     174: aload         9
+     176: ldc           #41                 // String add
+     178: invokevirtual #128                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     181: ifeq          188
+     184: iconst_1
+     185: goto          203
+     188: aload         9
+     190: ldc           #39                 // String set
+     192: invokevirtual #128                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     195: ifeq          202
+     198: iconst_0
+     199: goto          203
+     202: iconst_m1
+     203: istore        10
+     205: aload_2
+     206: iconst_1
+     207: aaload
+     208: astore        11
+     210: aload         11
+     212: invokestatic  #158                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+     215: istore        12
+     217: iload         12
+     219: ifge          226
+     222: iconst_1
+     223: goto          227
+     226: iconst_0
+     227: istore        13
+     229: iload         13
+     231: ifeq          241
+     234: iload         12
+     236: iconst_m1
+     237: imul
+     238: i2b
+     239: istore        12
+     241: iconst_1
+     242: istore        14
+     244: aload         8
+     246: ldc           #160                // String jrmcPwrtyp
+     248: invokevirtual #163                // Method net/minecraft/nbt/NBTTagCompound.func_74771_c:(Ljava/lang/String;)B
+     251: iconst_1
+     252: if_icmpne     259
+     255: iconst_1
+     256: goto          260
+     259: iconst_0
+     260: istore        15
+     262: aload         8
+     264: ldc           #160                // String jrmcPwrtyp
+     266: invokevirtual #163                // Method net/minecraft/nbt/NBTTagCompound.func_74771_c:(Ljava/lang/String;)B
+     269: iconst_2
+     270: if_icmpne     277
+     273: iconst_1
+     274: goto          278
+     277: iconst_0
+     278: istore        16
+     280: iload         15
+     282: ifne          290
+     285: iload         16
+     287: ifeq          957
+     290: aload         8
+     292: ldc           #165                // String jrmcRace
+     294: invokevirtual #163                // Method net/minecraft/nbt/NBTTagCompound.func_74771_c:(Ljava/lang/String;)B
+     297: istore        17
+     299: iconst_0
+     300: istore        18
+     302: iconst_0
+     303: istore        19
+     305: iload         15
+     307: ifeq          315
+     310: ldc           #167                // String jrmcSSltX
+     312: goto          317
+     315: ldc           #169                // String jrmcSSltY
+     317: astore        20
+     319: aload         8
+     321: aload         20
+     323: invokevirtual #172                // Method net/minecraft/nbt/NBTTagCompound.func_74764_b:(Ljava/lang/String;)Z
+     326: ifeq          957
+     329: aload         8
+     331: aload         20
+     333: invokevirtual #176                // Method net/minecraft/nbt/NBTTagCompound.func_74779_i:(Ljava/lang/String;)Ljava/lang/String;
+     336: ldc           #178                // String pty
+     338: invokevirtual #182                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     341: ifne          957
+     344: aload         8
+     346: aload         20
+     348: invokevirtual #176                // Method net/minecraft/nbt/NBTTagCompound.func_74779_i:(Ljava/lang/String;)Ljava/lang/String;
+     351: invokevirtual #185                // Method java/lang/String.length:()I
+     354: iconst_1
+     355: if_icmple     957
+     358: iload         16
+     360: ifeq          390
+     363: aload         8
+     365: ldc           #169                // String jrmcSSltY
+     367: invokevirtual #176                // Method net/minecraft/nbt/NBTTagCompound.func_74779_i:(Ljava/lang/String;)Ljava/lang/String;
+     370: ldc           #187                // String Sai
+     372: invokevirtual #182                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     375: ifne          957
+     378: iload         17
+     380: iconst_1
+     381: if_icmpeq     957
+     384: iload         17
+     386: iconst_2
+     387: if_icmpeq     957
+     390: iload         15
+     392: iload         16
+     394: iload         17
+     396: invokestatic  #193                // Method JinRyuu/JRMCore/server/JGRaceHelper.getMaxRacialSkillLevel:(ZZB)B
+     399: istore        21
+     401: aload         8
+     403: aload         20
+     405: invokevirtual #176                // Method net/minecraft/nbt/NBTTagCompound.func_74779_i:(Ljava/lang/String;)Ljava/lang/String;
+     408: iconst_2
+     409: invokevirtual #197                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     412: invokestatic  #158                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+     415: istore        19
+     417: iload         10
+     419: ifne          427
+     422: iload         12
+     424: goto          453
+     427: iload         10
+     429: iconst_1
+     430: if_icmpne     452
+     433: iload         19
+     435: iload         13
+     437: ifeq          444
+     440: iconst_m1
+     441: goto          445
+     444: iconst_1
+     445: iload         12
+     447: imul
+     448: iadd
+     449: goto          453
+     452: iconst_m1
+     453: i2b
+     454: istore        22
+     456: iload         22
+     458: ifge          465
+     461: iconst_0
+     462: goto          479
+     465: iload         22
+     467: iload         21
+     469: if_icmple     477
+     472: iload         21
+     474: goto          479
+     477: iload         22
+     479: istore        22
+     481: iload         19
+     483: iload         22
+     485: if_icmpge     492
+     488: iconst_1
+     489: goto          493
+     492: iconst_0
+     493: istore        23
+     495: iload         10
+     497: ifne          518
+     500: iload_3
+     501: ifne          509
+     504: iload         4
+     506: ifeq          513
+     509: iconst_1
+     510: goto          529
+     513: iload         12
+     515: goto          529
+     518: iload         10
+     520: iconst_1
+     521: if_icmpne     528
+     524: iconst_1
+     525: goto          529
+     528: iconst_0
+     529: i2b
+     530: istore        24
+     532: aload         8
+     534: aload         20
+     536: invokevirtual #176                // Method net/minecraft/nbt/NBTTagCompound.func_74779_i:(Ljava/lang/String;)Ljava/lang/String;
+     539: iconst_2
+     540: invokevirtual #197                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     543: invokestatic  #158                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+     546: istore        18
+     548: bipush        15
+     550: istore        25
+     552: iload         14
+     554: ifeq          754
+     557: aload_0
+     558: getfield      #96                 // Field doit:Z
+     561: ifeq          754
+     564: iload         22
+     566: iconst_m1
+     567: if_icmpeq     754
+     570: iload         19
+     572: iload         22
+     574: if_icmpeq     754
+     577: iload         25
+     579: ifle          754
+     582: aload         8
+     584: aload         20
+     586: invokevirtual #176                // Method net/minecraft/nbt/NBTTagCompound.func_74779_i:(Ljava/lang/String;)Ljava/lang/String;
+     589: iconst_2
+     590: invokevirtual #197                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     593: invokestatic  #158                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+     596: istore        19
+     598: iload_3
+     599: ifeq          610
+     602: iload         23
+     604: ifeq          610
+     607: goto          615
+     610: iload         4
+     612: ifeq          636
+     615: aload_0
+     616: iload         15
+     618: iload         16
+     620: aload         20
+     622: aload         5
+     624: aload         8
+     626: iload         17
+     628: iload         21
+     630: iload_3
+     631: iload         4
+     633: invokespecial #201                // Method canAfford:(ZZLjava/lang/String;Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/nbt/NBTTagCompound;BBZZ)V
+     636: aload_0
+     637: iload         10
+     639: iload         13
+     641: iload         19
+     643: iload         24
+     645: iload         21
+     647: iload_3
+     648: iload         23
+     650: iload         4
+     652: invokespecial #205                // Method setValue:(BZBBBZZZ)B
+     655: istore        19
+     657: aload_0
+     658: getfield      #96                 // Field doit:Z
+     661: ifeq          748
+     664: aload         8
+     666: aload         20
+     668: new           #207                // class java/lang/StringBuilder
+     671: dup
+     672: invokespecial #208                // Method java/lang/StringBuilder."<init>":()V
+     675: iload         15
+     677: ifeq          688
+     680: getstatic     #211                // Field JinRyuu/JRMCore/JRMCoreH.vlblRSkls:[Ljava/lang/String;
+     683: iconst_0
+     684: aaload
+     685: goto          699
+     688: getstatic     #214                // Field JinRyuu/JRMCore/JRMCoreH.ncCSkls:[Ljava/lang/String;
+     691: aload         8
+     693: ldc           #216                // String jrmcClass
+     695: invokevirtual #163                // Method net/minecraft/nbt/NBTTagCompound.func_74771_c:(Ljava/lang/String;)B
+     698: aaload
+     699: invokevirtual #220                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     702: iload         19
+     704: invokevirtual #223                // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+     707: invokevirtual #226                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     710: invokevirtual #230                // Method net/minecraft/nbt/NBTTagCompound.func_74778_a:(Ljava/lang/String;Ljava/lang/String;)V
+     713: iload_3
+     714: ifeq          748
+     717: iload         23
+     719: ifeq          748
+     722: iload_3
+     723: ifeq          745
+     726: aload         8
+     728: ldc           #232                // String jrmcTpint
+     730: aload_0
+     731: getfield      #98                 // Field tp_current:I
+     734: aload_0
+     735: getfield      #100                // Field tp_cost:I
+     738: isub
+     739: invokevirtual #236                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+     742: goto          748
+     745: iconst_0
+     746: istore        14
+     748: iinc          25, -1
+     751: goto          552
+     754: iload         7
+     756: ifeq          957
+     759: aload_0
+     760: getfield      #94                 // Field result:B
+     763: iconst_m1
+     764: if_icmpeq     957
+     767: aload_0
+     768: getfield      #94                 // Field result:B
+     771: ifne          779
+     774: ldc           #238                // String was set
+     776: goto          880
+     779: new           #207                // class java/lang/StringBuilder
+     782: dup
+     783: invokespecial #208                // Method java/lang/StringBuilder."<init>":()V
+     786: aload_0
+     787: getfield      #94                 // Field result:B
+     790: iconst_1
+     791: if_icmpne     822
+     794: new           #207                // class java/lang/StringBuilder
+     797: dup
+     798: invokespecial #208                // Method java/lang/StringBuilder."<init>":()V
+     801: ldc           #240                // String lost
+     803: invokevirtual #220                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     806: iload         12
+     808: invokevirtual #223                // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+     811: ldc           #242                // String  level(s)
+     813: invokevirtual #220                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     816: invokevirtual #226                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     819: goto          847
+     822: new           #207                // class java/lang/StringBuilder
+     825: dup
+     826: invokespecial #208                // Method java/lang/StringBuilder."<init>":()V
+     829: ldc           #244                // String received
+     831: invokevirtual #220                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     834: iload         12
+     836: invokevirtual #223                // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+     839: ldc           #242                // String  level(s)
+     841: invokevirtual #220                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     844: invokevirtual #226                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     847: invokevirtual #220                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     850: ldc           #246                // String  (
+     852: invokevirtual #220                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     855: aload_0
+     856: getfield      #96                 // Field doit:Z
+     859: ifeq          867
+     862: ldc           #248                // String Success
+     864: goto          869
+     867: ldc           #250                // String Fail
+     869: invokevirtual #220                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     872: ldc           #252                // String )
+     874: invokevirtual #220                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     877: invokevirtual #226                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     880: astore        26
+     882: aload         8
+     884: aload         20
+     886: invokevirtual #176                // Method net/minecraft/nbt/NBTTagCompound.func_74779_i:(Ljava/lang/String;)Ljava/lang/String;
+     889: iconst_2
+     890: invokevirtual #197                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     893: invokestatic  #158                // Method java/lang/Byte.parseByte:(Ljava/lang/String;)B
+     896: istore        19
+     898: aload_0
+     899: aload_1
+     900: new           #207                // class java/lang/StringBuilder
+     903: dup
+     904: invokespecial #208                // Method java/lang/StringBuilder."<init>":()V
+     907: ldc           #254                // String Racial Skill
+     909: invokevirtual #220                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     912: aload         26
+     914: invokevirtual #220                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     917: ldc_w         #256                // String  from: %s to: %s for %s
+     920: invokevirtual #220                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     923: invokevirtual #226                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     926: iconst_3
+     927: anewarray     #89                 // class java/lang/Object
+     930: dup
+     931: iconst_0
+     932: iload         18
+     934: invokestatic  #262                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     937: aastore
+     938: dup
+     939: iconst_1
+     940: iload         19
+     942: invokestatic  #262                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     945: aastore
+     946: dup
+     947: iconst_2
+     948: aload         5
+     950: invokevirtual #121                // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+     953: aastore
+     954: invokespecial #266                // Method notifyAdmins:(Lnet/minecraft/command/ICommandSender;Ljava/lang/String;[Ljava/lang/Object;)V
+     957: return
+    Exception table:
+       from    to  target type
+          99   112   115   Class java/lang/Exception
+
+  private void notifyAdmins(net.minecraft.command.ICommandSender, java.lang.String, java.lang.Object[]);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: aload_2
+       3: aload_3
+       4: invokestatic  #297                // Method func_152373_a:(Lnet/minecraft/command/ICommandSender;Lnet/minecraft/command/ICommand;Ljava/lang/String;[Ljava/lang/Object;)V
+       7: return
+
+  public java.util.List func_71516_a(net.minecraft.command.ICommandSender, java.lang.String[]);
+    Code:
+       0: aload_2
+       1: arraylength
+       2: istore_3
+       3: iload_3
+       4: tableswitch   { // 1 to 5
+
+                     1: 40
+
+                     2: 49
+
+                     3: 58
+
+                     4: 67
+
+                     5: 76
+               default: 85
+          }
+      40: aload_2
+      41: aload_0
+      42: getfield      #43                 // Field MODES:[Ljava/lang/String;
+      45: invokestatic  #307                // Method func_71530_a:([Ljava/lang/String;[Ljava/lang/String;)Ljava/util/List;
+      48: areturn
+      49: aload_2
+      50: aload_0
+      51: getfield      #53                 // Field AMOUNT:[Ljava/lang/String;
+      54: invokestatic  #307                // Method func_71530_a:([Ljava/lang/String;[Ljava/lang/String;)Ljava/util/List;
+      57: areturn
+      58: aload_2
+      59: aload_0
+      60: invokevirtual #311                // Method getListOfPlayers:()[Ljava/lang/String;
+      63: invokestatic  #307                // Method func_71530_a:([Ljava/lang/String;[Ljava/lang/String;)Ljava/util/List;
+      66: areturn
+      67: aload_2
+      68: aload_0
+      69: getfield      #59                 // Field BOOLEAN:[Ljava/lang/String;
+      72: invokestatic  #307                // Method func_71530_a:([Ljava/lang/String;[Ljava/lang/String;)Ljava/util/List;
+      75: areturn
+      76: aload_2
+      77: aload_0
+      78: getfield      #59                 // Field BOOLEAN:[Ljava/lang/String;
+      81: invokestatic  #307                // Method func_71530_a:([Ljava/lang/String;[Ljava/lang/String;)Ljava/util/List;
+      84: areturn
+      85: aconst_null
+      86: areturn
+
+  protected java.lang.String[] getListOfPlayers();
+    Code:
+       0: invokestatic  #319                // Method net/minecraft/server/MinecraftServer.func_71276_C:()Lnet/minecraft/server/MinecraftServer;
+       3: invokevirtual #322                // Method net/minecraft/server/MinecraftServer.func_71213_z:()[Ljava/lang/String;
+       6: areturn
+
+  public boolean isUsernameIndex(int);
+    Code:
+       0: iload_1
+       1: ifne          8
+       4: iconst_1
+       5: goto          9
+       8: iconst_0
+       9: ireturn
+
+  private void canAfford(boolean, boolean, java.lang.String, net.minecraft.entity.player.EntityPlayerMP, net.minecraft.nbt.NBTTagCompound, byte, byte, boolean, boolean);
+    Code:
+       0: aconst_null
+       1: checkcast     #327                // class "[[I"
+       4: astore        13
+       6: aconst_null
+       7: checkcast     #327                // class "[[I"
+      10: astore        17
+      12: iload_1
+      13: ifeq          84
+      16: getstatic     #211                // Field JinRyuu/JRMCore/JRMCoreH.vlblRSkls:[Ljava/lang/String;
+      19: astore        10
+      21: getstatic     #330                // Field JinRyuu/JRMCore/JRMCoreH.DBCRacialSkillTPCost:[[I
+      24: astore        11
+      26: getstatic     #333                // Field JinRyuu/JRMCore/JRMCoreH.vlblRSklsNms:[Ljava/lang/String;
+      29: astore        12
+      31: getstatic     #336                // Field JinRyuu/JRMCore/JRMCoreH.DBCRacialSkillMindCost:[[I
+      34: astore        13
+      36: getstatic     #339                // Field JinRyuu/JRMCore/JRMCoreH.vlblCSkls:[Ljava/lang/String;
+      39: astore        14
+      41: getstatic     #342                // Field JinRyuu/JRMCore/JRMCoreH.vlblCSklsLvl:[[I
+      44: astore        15
+      46: getstatic     #345                // Field JinRyuu/JRMCore/JRMCoreH.vlblCSklsNms:[Ljava/lang/String;
+      49: astore        16
+      51: getstatic     #348                // Field JinRyuu/JRMCore/JRMCoreH.DBCSkillsIDs:[Ljava/lang/String;
+      54: astore        18
+      56: getstatic     #352                // Field JinRyuu/JRMCore/JRMCoreH.vlblSklsUps:[I
+      59: astore        19
+      61: getstatic     #355                // Field JinRyuu/JRMCore/JRMCoreH.DBCSkillTPCost:[[I
+      64: astore        20
+      66: getstatic     #358                // Field JinRyuu/JRMCore/JRMCoreH.DBCSkillNames:[Ljava/lang/String;
+      69: astore        21
+      71: getstatic     #361                // Field JinRyuu/JRMCore/JRMCoreH.DBCSkillMindCost:[[I
+      74: astore        22
+      76: ldc_w         #362                // String dbc
+      79: astore        23
+      81: goto          149
+      84: getstatic     #365                // Field JinRyuu/JRMCore/JRMCoreH.ncRSkls:[Ljava/lang/String;
+      87: astore        10
+      89: getstatic     #368                // Field JinRyuu/JRMCore/JRMCoreH.ncRSklsLvl:[[I
+      92: astore        11
+      94: getstatic     #371                // Field JinRyuu/JRMCore/JRMCoreH.ncRSklsNms:[Ljava/lang/String;
+      97: astore        12
+      99: getstatic     #214                // Field JinRyuu/JRMCore/JRMCoreH.ncCSkls:[Ljava/lang/String;
+     102: astore        14
+     104: getstatic     #374                // Field JinRyuu/JRMCore/JRMCoreH.NCRacialSkillTPCost:[[I
+     107: astore        15
+     109: getstatic     #377                // Field JinRyuu/JRMCore/JRMCoreH.NCRacialSkillAbilityNames:[Ljava/lang/String;
+     112: astore        16
+     114: getstatic     #380                // Field JinRyuu/JRMCore/JRMCoreH.NCRacialSkillMindCost:[[I
+     117: astore        17
+     119: getstatic     #383                // Field JinRyuu/JRMCore/JRMCoreH.NCSkillIDs:[Ljava/lang/String;
+     122: astore        18
+     124: getstatic     #386                // Field JinRyuu/JRMCore/JRMCoreH.ncSklsUps:[I
+     127: astore        19
+     129: getstatic     #389                // Field JinRyuu/JRMCore/JRMCoreH.NCSkillTPCost:[[I
+     132: astore        20
+     134: getstatic     #392                // Field JinRyuu/JRMCore/JRMCoreH.NCSkillNames:[Ljava/lang/String;
+     137: astore        21
+     139: getstatic     #395                // Field JinRyuu/JRMCore/JRMCoreH.NCSkillMindCost:[[I
+     142: astore        22
+     144: ldc_w         #396                // String nc
+     147: astore        23
+     149: aload         5
+     151: ldc           #167                // String jrmcSSltX
+     153: invokevirtual #176                // Method net/minecraft/nbt/NBTTagCompound.func_74779_i:(Ljava/lang/String;)Ljava/lang/String;
+     156: astore        24
+     158: aload         5
+     160: ldc           #169                // String jrmcSSltY
+     162: invokevirtual #176                // Method net/minecraft/nbt/NBTTagCompound.func_74779_i:(Ljava/lang/String;)Ljava/lang/String;
+     165: astore        25
+     167: aload         4
+     169: invokestatic  #401                // Method JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts:(Lnet/minecraft/entity/player/EntityPlayer;)[I
+     172: astore        26
+     174: aload         5
+     176: ldc_w         #403                // String jrmcSSlts
+     179: invokevirtual #176                // Method net/minecraft/nbt/NBTTagCompound.func_74779_i:(Ljava/lang/String;)Ljava/lang/String;
+     182: ldc_w         #405                // String ,
+     185: invokevirtual #409                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     188: astore        27
+     190: aload         27
+     192: aload         18
+     194: aload         22
+     196: invokestatic  #413                // Method JinRyuu/JRMCore/JRMCoreH.skillSlot_SpentMindRequirement:([Ljava/lang/String;[Ljava/lang/String;[[I)I
+     199: aload         24
+     201: iload         6
+     203: aload         13
+     205: invokestatic  #417                // Method JinRyuu/JRMCore/JRMCoreH.skillSlot_SpentMindRequirement_X:(Ljava/lang/String;I[[I)I
+     208: iadd
+     209: aload         25
+     211: aload         14
+     213: aload         17
+     215: invokestatic  #420                // Method JinRyuu/JRMCore/JRMCoreH.skillSlot_SpentMindRequirement:(Ljava/lang/String;[Ljava/lang/String;[[I)I
+     218: iadd
+     219: istore        28
+     221: aload         26
+     223: iconst_4
+     224: iaload
+     225: iload         28
+     227: invokestatic  #424                // Method JinRyuu/JRMCore/JRMCoreH.canAffordSkill:(II)Z
+     230: istore        29
+     232: aload         5
+     234: aload_3
+     235: invokevirtual #176                // Method net/minecraft/nbt/NBTTagCompound.func_74779_i:(Ljava/lang/String;)Ljava/lang/String;
+     238: astore        30
+     240: iload         9
+     242: ifeq          310
+     245: iload_1
+     246: ifeq          281
+     249: aload         30
+     251: iload         6
+     253: aload         13
+     255: invokestatic  #427                // Method JinRyuu/JRMCore/JRMCoreH.skillMindRequirement_X:(Ljava/lang/String;I[[I)I
+     258: istore        31
+     260: iload         28
+     262: iload         31
+     264: iadd
+     265: istore        32
+     267: aload         26
+     269: iconst_4
+     270: iaload
+     271: iload         32
+     273: invokestatic  #424                // Method JinRyuu/JRMCore/JRMCoreH.canAffordSkill:(II)Z
+     276: istore        29
+     278: goto          310
+     281: aload         30
+     283: aload         14
+     285: aload         17
+     287: invokestatic  #430                // Method JinRyuu/JRMCore/JRMCoreH.skillMindRequirement:(Ljava/lang/String;[Ljava/lang/String;[[I)I
+     290: istore        31
+     292: iload         28
+     294: iload         31
+     296: iadd
+     297: istore        32
+     299: aload         26
+     301: iconst_4
+     302: iaload
+     303: iload         32
+     305: invokestatic  #424                // Method JinRyuu/JRMCore/JRMCoreH.canAffordSkill:(II)Z
+     308: istore        29
+     310: aload         30
+     312: iconst_2
+     313: invokevirtual #197                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     316: invokestatic  #434                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+     319: iconst_1
+     320: iadd
+     321: istore        31
+     323: iconst_0
+     324: istore        32
+     326: iload_1
+     327: ifeq          344
+     330: aload         24
+     332: iload         6
+     334: aload         11
+     336: invokestatic  #437                // Method JinRyuu/JRMCore/JRMCoreH.skillTPCost_X:(Ljava/lang/String;I[[I)I
+     339: istore        32
+     341: goto          355
+     344: aload         25
+     346: iload         6
+     348: aload         15
+     350: invokestatic  #437                // Method JinRyuu/JRMCore/JRMCoreH.skillTPCost_X:(Ljava/lang/String;I[[I)I
+     353: istore        32
+     355: iload         8
+     357: ifeq          473
+     360: aload_0
+     361: aload         5
+     363: ldc           #232                // String jrmcTpint
+     365: invokevirtual #440                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+     368: putfield      #98                 // Field tp_current:I
+     371: iload         6
+     373: invokestatic  #443                // Method JinRyuu/JRMCore/JRMCoreH.rSai:(I)Z
+     376: ifeq          408
+     379: iload_1
+     380: ifeq          408
+     383: aload_0
+     384: iload         32
+     386: putfield      #100                // Field tp_cost:I
+     389: iload         31
+     391: bipush        7
+     393: if_icmple     401
+     396: bipush        7
+     398: goto          403
+     401: iload         31
+     403: istore        31
+     405: goto          473
+     408: iload         6
+     410: iconst_4
+     411: if_icmpne     443
+     414: iload_1
+     415: ifeq          443
+     418: aload_0
+     419: iload         32
+     421: putfield      #100                // Field tp_cost:I
+     424: iload         31
+     426: bipush        6
+     428: if_icmple     436
+     431: bipush        6
+     433: goto          438
+     436: iload         31
+     438: istore        31
+     440: goto          473
+     443: iload         6
+     445: iconst_4
+     446: if_icmpeq     473
+     449: iload_1
+     450: ifeq          473
+     453: aload_0
+     454: iload         32
+     456: putfield      #100                // Field tp_cost:I
+     459: iload         31
+     461: iconst_5
+     462: if_icmple     469
+     465: iconst_5
+     466: goto          471
+     469: iload         31
+     471: istore        31
+     473: aload_0
+     474: iload         8
+     476: ifeq          498
+     479: aload_0
+     480: getfield      #98                 // Field tp_current:I
+     483: aload_0
+     484: getfield      #100                // Field tp_cost:I
+     487: if_icmplt     512
+     490: aload_0
+     491: getfield      #100                // Field tp_cost:I
+     494: iconst_m1
+     495: if_icmpeq     512
+     498: iload         9
+     500: ifeq          508
+     503: iload         29
+     505: ifeq          512
+     508: iconst_1
+     509: goto          513
+     512: iconst_0
+     513: putfield      #96                 // Field doit:Z
+     516: return
+
+  private byte setValue(byte, boolean, byte, byte, byte, boolean, boolean, boolean);
+    Code:
+       0: iload_1
+       1: ifne          81
+       4: iload         6
+       6: ifne          38
+       9: iload         8
+      11: ifne          38
+      14: iload         4
+      16: istore_3
+      17: iload_3
+      18: ifge          26
+      21: iconst_0
+      22: istore_3
+      23: goto          73
+      26: iload_3
+      27: iload         5
+      29: if_icmple     73
+      32: iload         5
+      34: istore_3
+      35: goto          73
+      38: iload         7
+      40: ifne          58
+      43: iload_3
+      44: iload         4
+      46: isub
+      47: i2b
+      48: istore_3
+      49: iload_3
+      50: ifge          73
+      53: iconst_0
+      54: istore_3
+      55: goto          73
+      58: iload_3
+      59: iload         4
+      61: iadd
+      62: i2b
+      63: istore_3
+      64: iload_3
+      65: iload         5
+      67: if_icmple     73
+      70: iload         5
+      72: istore_3
+      73: aload_0
+      74: iconst_0
+      75: putfield      #94                 // Field result:B
+      78: goto          130
+      81: iload_1
+      82: iconst_1
+      83: if_icmpne     130
+      86: iload_2
+      87: ifeq          110
+      90: iload_3
+      91: iload         4
+      93: isub
+      94: i2b
+      95: istore_3
+      96: iload_3
+      97: ifge          102
+     100: iconst_0
+     101: istore_3
+     102: aload_0
+     103: iconst_1
+     104: putfield      #94                 // Field result:B
+     107: goto          130
+     110: iload_3
+     111: iload         4
+     113: iadd
+     114: i2b
+     115: istore_3
+     116: iload_3
+     117: iload         5
+     119: if_icmple     125
+     122: iload         5
+     124: istore_3
+     125: aload_0
+     126: iconst_2
+     127: putfield      #94                 // Field result:B
+     130: iload_3
+     131: ireturn
+}

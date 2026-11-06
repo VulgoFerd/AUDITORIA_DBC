@@ -1,0 +1,466 @@
+﻿Compiled from "ComJrmc.java"
+public class JinRyuu.JRMCore.ComJrmc extends net.minecraft.command.CommandBase {
+  public JinRyuu.JRMCore.ComJrmc();
+    Code:
+       0: aload_0
+       1: invokespecial #9                  // Method net/minecraft/command/CommandBase."<init>":()V
+       4: return
+
+  public java.lang.String func_71517_b();
+    Code:
+       0: ldc           #15                 // String jrmc
+       2: areturn
+
+  public java.lang.String func_71518_a(net.minecraft.command.ICommandSender);
+    Code:
+       0: ldc           #19                 // String Use \'/jrmc startnew\' to Start from the begining, resetting attributes and character look.and Use \'/dbc accept\' to accept offers like revive with teleport.
+       2: areturn
+
+  public int func_82362_a();
+    Code:
+       0: iconst_0
+       1: ireturn
+
+  public boolean func_71519_b(net.minecraft.command.ICommandSender);
+    Code:
+       0: iconst_1
+       1: ireturn
+
+  private net.minecraft.nbt.NBTTagCompound nbt(net.minecraft.entity.player.EntityPlayer, java.lang.String);
+    Code:
+       0: aload_1
+       1: aload_2
+       2: invokestatic  #33                 // Method JinRyuu/JRMCore/JRMCoreH.nbt:(Lnet/minecraft/entity/Entity;Ljava/lang/String;)Lnet/minecraft/nbt/NBTTagCompound;
+       5: areturn
+
+  public void func_71515_b(net.minecraft.command.ICommandSender, java.lang.String[]);
+    Code:
+       0: aload_2
+       1: arraylength
+       2: ifgt          22
+       5: new           #41                 // class net/minecraft/command/WrongUsageException
+       8: dup
+       9: aload_0
+      10: aload_1
+      11: invokevirtual #43                 // Method func_71518_a:(Lnet/minecraft/command/ICommandSender;)Ljava/lang/String;
+      14: iconst_0
+      15: anewarray     #45                 // class java/lang/Object
+      18: invokespecial #48                 // Method net/minecraft/command/WrongUsageException."<init>":(Ljava/lang/String;[Ljava/lang/Object;)V
+      21: athrow
+      22: aload_2
+      23: arraylength
+      24: iconst_1
+      25: if_icmple     39
+      28: aload_1
+      29: aload_2
+      30: iconst_1
+      31: aaload
+      32: invokestatic  #52                 // Method func_82359_c:(Lnet/minecraft/command/ICommandSender;Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayerMP;
+      35: astore_3
+      36: goto          44
+      39: aload_1
+      40: invokestatic  #56                 // Method func_71521_c:(Lnet/minecraft/command/ICommandSender;)Lnet/minecraft/entity/player/EntityPlayerMP;
+      43: astore_3
+      44: aload_3
+      45: ldc           #60                 // String jrmcPwrtyp
+      47: invokestatic  #64                 // Method JinRyuu/JRMCore/JRMCoreH.getByte:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+      50: istore        4
+      52: aload_2
+      53: iconst_0
+      54: aaload
+      55: astore        5
+      57: aload         5
+      59: invokevirtual #69                 // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+      62: ldc           #71                 // String startnew
+      64: invokevirtual #75                 // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+      67: istore        6
+      69: iconst_0
+      70: istore        7
+      72: aload         5
+      74: invokevirtual #69                 // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+      77: ldc           #77                 // String accept
+      79: invokevirtual #75                 // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+      82: istore        8
+      84: aload         5
+      86: invokevirtual #69                 // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+      89: ldc           #79                 // String decline
+      91: invokevirtual #75                 // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+      94: istore        9
+      96: aload_3
+      97: ifnull        206
+     100: getstatic     #85                 // Field JinRyuu/JRMCore/JRMCoreConfig.osbic:I
+     103: ifle          206
+     106: getstatic     #88                 // Field JinRyuu/JRMCore/JRMCoreH.osbic:Ljava/util/HashMap;
+     109: aload_3
+     110: invokevirtual #91                 // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+     113: invokevirtual #97                 // Method java/util/HashMap.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     116: checkcast     #99                 // class java/lang/Integer
+     119: invokevirtual #102                // Method java/lang/Integer.intValue:()I
+     122: getstatic     #85                 // Field JinRyuu/JRMCore/JRMCoreConfig.osbic:I
+     125: bipush        20
+     127: imul
+     128: if_icmpge     206
+     131: aload_3
+     132: new           #104                // class net/minecraft/util/ChatComponentTranslation
+     135: dup
+     136: new           #106                // class java/lang/StringBuilder
+     139: dup
+     140: invokespecial #107                // Method java/lang/StringBuilder."<init>":()V
+     143: ldc           #109                // String Offline Protection:
+     145: invokevirtual #113                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     148: getstatic     #85                 // Field JinRyuu/JRMCore/JRMCoreConfig.osbic:I
+     151: bipush        20
+     153: imul
+     154: getstatic     #88                 // Field JinRyuu/JRMCore/JRMCoreH.osbic:Ljava/util/HashMap;
+     157: aload_3
+     158: invokevirtual #91                 // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+     161: invokevirtual #97                 // Method java/util/HashMap.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     164: checkcast     #99                 // class java/lang/Integer
+     167: invokevirtual #102                // Method java/lang/Integer.intValue:()I
+     170: isub
+     171: i2f
+     172: ldc           #114                // float 0.05f
+     174: fmul
+     175: f2i
+     176: iconst_1
+     177: iadd
+     178: invokevirtual #117                // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+     181: ldc           #119                // String s left
+     183: invokevirtual #113                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     186: invokevirtual #122                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     189: iconst_0
+     190: anewarray     #45                 // class java/lang/Object
+     193: invokespecial #123                // Method net/minecraft/util/ChatComponentTranslation."<init>":(Ljava/lang/String;[Ljava/lang/Object;)V
+     196: getstatic     #129                // Field JinRyuu/JRMCore/JRMCoreH2.styl_ylw:Lnet/minecraft/util/ChatStyle;
+     199: invokevirtual #133                // Method net/minecraft/util/ChatComponentTranslation.func_150255_a:(Lnet/minecraft/util/ChatStyle;)Lnet/minecraft/util/IChatComponent;
+     202: invokevirtual #137                // Method net/minecraft/entity/player/EntityPlayerMP.func_145747_a:(Lnet/minecraft/util/IChatComponent;)V
+     205: return
+     206: iload         6
+     208: ifeq          275
+     211: aload_3
+     212: astore        10
+     214: invokestatic  #145                // Method JinRyuu/JRMCore/JRMCoreH.DBC:()Z
+     217: ifeq          272
+     220: aload         10
+     222: invokestatic  #149                // Method JinRyuu/JRMCore/JRMCoreH.isFused:(Lnet/minecraft/entity/Entity;)Z
+     225: ifne          254
+     228: aload         10
+     230: invokestatic  #153                // Method JinRyuu/JRMCore/JRMCoreH.resetChar:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     233: aload_0
+     234: aload_1
+     235: ldc           #155                // String Resetting attributes and character look has been processed.
+     237: iconst_1
+     238: anewarray     #45                 // class java/lang/Object
+     241: dup
+     242: iconst_0
+     243: aload_3
+     244: invokevirtual #91                 // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+     247: aastore
+     248: invokespecial #159                // Method notifyAdmins:(Lnet/minecraft/command/ICommandSender;Ljava/lang/String;[Ljava/lang/Object;)V
+     251: goto          272
+     254: aload_0
+     255: aload_1
+     256: ldc           #161                // String Unable to reset attributes and character look while fused.
+     258: iconst_1
+     259: anewarray     #45                 // class java/lang/Object
+     262: dup
+     263: iconst_0
+     264: aload_3
+     265: invokevirtual #91                 // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+     268: aastore
+     269: invokespecial #159                // Method notifyAdmins:(Lnet/minecraft/command/ICommandSender;Ljava/lang/String;[Ljava/lang/Object;)V
+     272: goto          872
+     275: iload         8
+     277: ifne          285
+     280: iload         9
+     282: ifeq          840
+     285: invokestatic  #167                // Method cpw/mods/fml/common/FMLCommonHandler.instance:()Lcpw/mods/fml/common/FMLCommonHandler;
+     288: invokevirtual #171                // Method cpw/mods/fml/common/FMLCommonHandler.getMinecraftServerInstance:()Lnet/minecraft/server/MinecraftServer;
+     291: astore        10
+     293: aload_3
+     294: astore        11
+     296: aload         11
+     298: ldc           #173                // String jrmcTechLearn
+     300: invokestatic  #177                // Method JinRyuu/JRMCore/JRMCoreH.getString:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)Ljava/lang/String;
+     303: astore        12
+     305: aload         12
+     307: ldc           #179                // String ;:;
+     309: invokevirtual #75                 // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     312: ifeq          808
+     315: aload         12
+     317: ldc           #179                // String ;:;
+     319: invokevirtual #183                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     322: astore        13
+     324: aload         13
+     326: iconst_0
+     327: aaload
+     328: ldc           #185                // String ;
+     330: invokevirtual #183                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     333: astore        14
+     335: aload         10
+     337: aload         13
+     339: iconst_1
+     340: aaload
+     341: invokestatic  #189                // Method JinRyuu/JRMCore/JRMCoreH.getPlayerForUsername:(Lnet/minecraft/server/MinecraftServer;Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayerMP;
+     344: astore        15
+     346: aload         15
+     348: ifnull        641
+     351: aload         11
+     353: aload         15
+     355: invokevirtual #193                // Method net/minecraft/entity/player/EntityPlayerMP.func_70032_d:(Lnet/minecraft/entity/Entity;)F
+     358: ldc           #194                // float 8.0f
+     360: fcmpg
+     361: ifge          641
+     364: iload         8
+     366: ifeq          641
+     369: iload         4
+     371: iconst_1
+     372: if_icmpne     805
+     375: iconst_0
+     376: istore        16
+     378: iconst_0
+     379: istore        17
+     381: iconst_0
+     382: istore        18
+     384: iload         18
+     386: iconst_4
+     387: if_icmpge     435
+     390: aload         11
+     392: getstatic     #201                // Field JinRyuu/JRMCore/JRMCoreH.techNbt:[Ljava/lang/String;
+     395: iload         18
+     397: aaload
+     398: invokestatic  #177                // Method JinRyuu/JRMCore/JRMCoreH.getString:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)Ljava/lang/String;
+     401: astore        19
+     403: aload         19
+     405: ldc           #185                // String ;
+     407: invokevirtual #75                 // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     410: ifeq          419
+     413: iconst_0
+     414: istore        17
+     416: goto          429
+     419: iload         18
+     421: istore        16
+     423: iconst_1
+     424: istore        17
+     426: goto          435
+     429: iinc          18, 1
+     432: goto          384
+     435: iload         17
+     437: ifeq          609
+     440: aload         14
+     442: iconst_1
+     443: invokestatic  #205                // Method JinRyuu/JRMCore/JRMCoreH.techDBCtpc:([Ljava/lang/String;Z)I
+     446: iconst_2
+     447: imul
+     448: istore        18
+     450: aload         11
+     452: ldc           #207                // String jrmcTpint
+     454: invokestatic  #211                // Method JinRyuu/JRMCore/JRMCoreH.getInt:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+     457: istore        19
+     459: iload         19
+     461: iload         18
+     463: isub
+     464: iflt          577
+     467: iload         19
+     469: iload         18
+     471: isub
+     472: aload         11
+     474: ldc           #207                // String jrmcTpint
+     476: invokestatic  #215                // Method JinRyuu/JRMCore/JRMCoreH.setInt:(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     479: aload         13
+     481: iconst_0
+     482: aaload
+     483: aload         11
+     485: getstatic     #201                // Field JinRyuu/JRMCore/JRMCoreH.techNbt:[Ljava/lang/String;
+     488: iload         16
+     490: aaload
+     491: invokestatic  #219                // Method JinRyuu/JRMCore/JRMCoreH.setString:(Ljava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     494: aload         15
+     496: new           #104                // class net/minecraft/util/ChatComponentTranslation
+     499: dup
+     500: ldc           #15                 // String jrmc
+     502: ldc           #221                // String teachingOfferAccepted
+     504: invokestatic  #225                // Method JinRyuu/JRMCore/JRMCoreH.trlai:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     507: iconst_2
+     508: anewarray     #45                 // class java/lang/Object
+     511: dup
+     512: iconst_0
+     513: aload         11
+     515: invokevirtual #91                 // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+     518: aastore
+     519: dup
+     520: iconst_1
+     521: aload         14
+     523: iconst_0
+     524: aaload
+     525: aastore
+     526: invokespecial #123                // Method net/minecraft/util/ChatComponentTranslation."<init>":(Ljava/lang/String;[Ljava/lang/Object;)V
+     529: getstatic     #129                // Field JinRyuu/JRMCore/JRMCoreH2.styl_ylw:Lnet/minecraft/util/ChatStyle;
+     532: invokevirtual #133                // Method net/minecraft/util/ChatComponentTranslation.func_150255_a:(Lnet/minecraft/util/ChatStyle;)Lnet/minecraft/util/IChatComponent;
+     535: invokevirtual #226                // Method net/minecraft/entity/player/EntityPlayer.func_145747_a:(Lnet/minecraft/util/IChatComponent;)V
+     538: aload         11
+     540: new           #104                // class net/minecraft/util/ChatComponentTranslation
+     543: dup
+     544: ldc           #15                 // String jrmc
+     546: ldc           #228                // String techadded
+     548: invokestatic  #225                // Method JinRyuu/JRMCore/JRMCoreH.trlai:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     551: iconst_1
+     552: anewarray     #45                 // class java/lang/Object
+     555: dup
+     556: iconst_0
+     557: aload         14
+     559: iconst_0
+     560: aaload
+     561: aastore
+     562: invokespecial #123                // Method net/minecraft/util/ChatComponentTranslation."<init>":(Ljava/lang/String;[Ljava/lang/Object;)V
+     565: getstatic     #129                // Field JinRyuu/JRMCore/JRMCoreH2.styl_ylw:Lnet/minecraft/util/ChatStyle;
+     568: invokevirtual #133                // Method net/minecraft/util/ChatComponentTranslation.func_150255_a:(Lnet/minecraft/util/ChatStyle;)Lnet/minecraft/util/IChatComponent;
+     571: invokevirtual #137                // Method net/minecraft/entity/player/EntityPlayerMP.func_145747_a:(Lnet/minecraft/util/IChatComponent;)V
+     574: goto          606
+     577: aload         11
+     579: new           #104                // class net/minecraft/util/ChatComponentTranslation
+     582: dup
+     583: ldc           #15                 // String jrmc
+     585: ldc           #230                // String notenoughtp
+     587: invokestatic  #225                // Method JinRyuu/JRMCore/JRMCoreH.trlai:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     590: iconst_0
+     591: anewarray     #45                 // class java/lang/Object
+     594: invokespecial #123                // Method net/minecraft/util/ChatComponentTranslation."<init>":(Ljava/lang/String;[Ljava/lang/Object;)V
+     597: getstatic     #129                // Field JinRyuu/JRMCore/JRMCoreH2.styl_ylw:Lnet/minecraft/util/ChatStyle;
+     600: invokevirtual #133                // Method net/minecraft/util/ChatComponentTranslation.func_150255_a:(Lnet/minecraft/util/ChatStyle;)Lnet/minecraft/util/IChatComponent;
+     603: invokevirtual #137                // Method net/minecraft/entity/player/EntityPlayerMP.func_145747_a:(Lnet/minecraft/util/IChatComponent;)V
+     606: goto          638
+     609: aload         11
+     611: new           #104                // class net/minecraft/util/ChatComponentTranslation
+     614: dup
+     615: ldc           #15                 // String jrmc
+     617: ldc           #232                // String noslotleft
+     619: invokestatic  #225                // Method JinRyuu/JRMCore/JRMCoreH.trlai:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     622: iconst_0
+     623: anewarray     #45                 // class java/lang/Object
+     626: invokespecial #123                // Method net/minecraft/util/ChatComponentTranslation."<init>":(Ljava/lang/String;[Ljava/lang/Object;)V
+     629: getstatic     #129                // Field JinRyuu/JRMCore/JRMCoreH2.styl_ylw:Lnet/minecraft/util/ChatStyle;
+     632: invokevirtual #133                // Method net/minecraft/util/ChatComponentTranslation.func_150255_a:(Lnet/minecraft/util/ChatStyle;)Lnet/minecraft/util/IChatComponent;
+     635: invokevirtual #137                // Method net/minecraft/entity/player/EntityPlayerMP.func_145747_a:(Lnet/minecraft/util/IChatComponent;)V
+     638: goto          805
+     641: aload         12
+     643: ldc           #179                // String ;:;
+     645: invokevirtual #75                 // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     648: ifeq          753
+     651: iload         9
+     653: ifeq          753
+     656: ldc           #234                // String
+     658: aload         11
+     660: ldc           #173                // String jrmcTechLearn
+     662: invokestatic  #219                // Method JinRyuu/JRMCore/JRMCoreH.setString:(Ljava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     665: aload         11
+     667: new           #104                // class net/minecraft/util/ChatComponentTranslation
+     670: dup
+     671: ldc           #15                 // String jrmc
+     673: ldc           #236                // String teachingOfDeclByYou
+     675: invokestatic  #225                // Method JinRyuu/JRMCore/JRMCoreH.trlai:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     678: iconst_2
+     679: anewarray     #45                 // class java/lang/Object
+     682: dup
+     683: iconst_0
+     684: aload         13
+     686: iconst_1
+     687: aaload
+     688: aastore
+     689: dup
+     690: iconst_1
+     691: aload         14
+     693: iconst_0
+     694: aaload
+     695: aastore
+     696: invokespecial #123                // Method net/minecraft/util/ChatComponentTranslation."<init>":(Ljava/lang/String;[Ljava/lang/Object;)V
+     699: getstatic     #129                // Field JinRyuu/JRMCore/JRMCoreH2.styl_ylw:Lnet/minecraft/util/ChatStyle;
+     702: invokevirtual #133                // Method net/minecraft/util/ChatComponentTranslation.func_150255_a:(Lnet/minecraft/util/ChatStyle;)Lnet/minecraft/util/IChatComponent;
+     705: invokevirtual #137                // Method net/minecraft/entity/player/EntityPlayerMP.func_145747_a:(Lnet/minecraft/util/IChatComponent;)V
+     708: aload         15
+     710: ifnull        805
+     713: aload         15
+     715: new           #104                // class net/minecraft/util/ChatComponentTranslation
+     718: dup
+     719: ldc           #15                 // String jrmc
+     721: ldc           #238                // String teachingOfDeclByPlayr
+     723: invokestatic  #225                // Method JinRyuu/JRMCore/JRMCoreH.trlai:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     726: iconst_1
+     727: anewarray     #45                 // class java/lang/Object
+     730: dup
+     731: iconst_0
+     732: aload         11
+     734: invokevirtual #91                 // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+     737: aastore
+     738: invokespecial #123                // Method net/minecraft/util/ChatComponentTranslation."<init>":(Ljava/lang/String;[Ljava/lang/Object;)V
+     741: getstatic     #129                // Field JinRyuu/JRMCore/JRMCoreH2.styl_ylw:Lnet/minecraft/util/ChatStyle;
+     744: invokevirtual #133                // Method net/minecraft/util/ChatComponentTranslation.func_150255_a:(Lnet/minecraft/util/ChatStyle;)Lnet/minecraft/util/IChatComponent;
+     747: invokevirtual #226                // Method net/minecraft/entity/player/EntityPlayer.func_145747_a:(Lnet/minecraft/util/IChatComponent;)V
+     750: goto          805
+     753: ldc           #234                // String
+     755: aload         11
+     757: ldc           #173                // String jrmcTechLearn
+     759: invokestatic  #219                // Method JinRyuu/JRMCore/JRMCoreH.setString:(Ljava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+     762: aload         11
+     764: new           #104                // class net/minecraft/util/ChatComponentTranslation
+     767: dup
+     768: ldc           #15                 // String jrmc
+     770: ldc           #240                // String teachingOfferDeclined
+     772: invokestatic  #225                // Method JinRyuu/JRMCore/JRMCoreH.trlai:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     775: iconst_2
+     776: anewarray     #45                 // class java/lang/Object
+     779: dup
+     780: iconst_0
+     781: aload         13
+     783: iconst_1
+     784: aaload
+     785: aastore
+     786: dup
+     787: iconst_1
+     788: aload         14
+     790: iconst_0
+     791: aaload
+     792: aastore
+     793: invokespecial #123                // Method net/minecraft/util/ChatComponentTranslation."<init>":(Ljava/lang/String;[Ljava/lang/Object;)V
+     796: getstatic     #129                // Field JinRyuu/JRMCore/JRMCoreH2.styl_ylw:Lnet/minecraft/util/ChatStyle;
+     799: invokevirtual #133                // Method net/minecraft/util/ChatComponentTranslation.func_150255_a:(Lnet/minecraft/util/ChatStyle;)Lnet/minecraft/util/IChatComponent;
+     802: invokevirtual #137                // Method net/minecraft/entity/player/EntityPlayerMP.func_145747_a:(Lnet/minecraft/util/IChatComponent;)V
+     805: goto          837
+     808: aload         11
+     810: new           #104                // class net/minecraft/util/ChatComponentTranslation
+     813: dup
+     814: ldc           #15                 // String jrmc
+     816: ldc           #242                // String nothingtoaccept
+     818: invokestatic  #225                // Method JinRyuu/JRMCore/JRMCoreH.trlai:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     821: iconst_0
+     822: anewarray     #45                 // class java/lang/Object
+     825: invokespecial #123                // Method net/minecraft/util/ChatComponentTranslation."<init>":(Ljava/lang/String;[Ljava/lang/Object;)V
+     828: getstatic     #129                // Field JinRyuu/JRMCore/JRMCoreH2.styl_ylw:Lnet/minecraft/util/ChatStyle;
+     831: invokevirtual #133                // Method net/minecraft/util/ChatComponentTranslation.func_150255_a:(Lnet/minecraft/util/ChatStyle;)Lnet/minecraft/util/IChatComponent;
+     834: invokevirtual #137                // Method net/minecraft/entity/player/EntityPlayerMP.func_145747_a:(Lnet/minecraft/util/IChatComponent;)V
+     837: goto          872
+     840: aload_3
+     841: astore        10
+     843: aload         10
+     845: new           #104                // class net/minecraft/util/ChatComponentTranslation
+     848: dup
+     849: ldc           #15                 // String jrmc
+     851: ldc           #244                // String typedWrong
+     853: invokestatic  #225                // Method JinRyuu/JRMCore/JRMCoreH.trlai:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     856: iconst_0
+     857: anewarray     #45                 // class java/lang/Object
+     860: invokespecial #123                // Method net/minecraft/util/ChatComponentTranslation."<init>":(Ljava/lang/String;[Ljava/lang/Object;)V
+     863: getstatic     #247                // Field JinRyuu/JRMCore/JRMCoreH2.styl_red:Lnet/minecraft/util/ChatStyle;
+     866: invokevirtual #133                // Method net/minecraft/util/ChatComponentTranslation.func_150255_a:(Lnet/minecraft/util/ChatStyle;)Lnet/minecraft/util/IChatComponent;
+     869: invokevirtual #137                // Method net/minecraft/entity/player/EntityPlayerMP.func_145747_a:(Lnet/minecraft/util/IChatComponent;)V
+     872: return
+
+  private void notifyAdmins(net.minecraft.command.ICommandSender, java.lang.String, java.lang.Object[]);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: aload_2
+       3: aload_3
+       4: invokestatic  #271                // Method func_152373_a:(Lnet/minecraft/command/ICommandSender;Lnet/minecraft/command/ICommand;Ljava/lang/String;[Ljava/lang/Object;)V
+       7: return
+}

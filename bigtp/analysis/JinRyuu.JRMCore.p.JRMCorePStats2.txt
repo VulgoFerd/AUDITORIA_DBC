@@ -1,0 +1,117 @@
+﻿Compiled from "JRMCorePStats2.java"
+public class JinRyuu.JRMCore.p.JRMCorePStats2 implements cpw.mods.fml.common.network.simpleimpl.IMessage {
+  int curTP;
+
+  int curExp;
+
+  byte align;
+
+  int[] PlyrAttrbts;
+
+  public JinRyuu.JRMCore.p.JRMCorePStats2();
+    Code:
+       0: aload_0
+       1: invokespecial #21                 // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: getstatic     #25                 // Field JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts:[I
+       8: arraylength
+       9: newarray       int
+      11: putfield      #26                 // Field PlyrAttrbts:[I
+      14: return
+
+  public JinRyuu.JRMCore.p.JRMCorePStats2(int, int, byte, int[]);
+    Code:
+       0: aload_0
+       1: invokespecial #21                 // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: getstatic     #25                 // Field JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts:[I
+       8: arraylength
+       9: newarray       int
+      11: putfield      #26                 // Field PlyrAttrbts:[I
+      14: aload_0
+      15: iload_1
+      16: putfield      #31                 // Field curTP:I
+      19: aload_0
+      20: iload_2
+      21: putfield      #33                 // Field curExp:I
+      24: aload_0
+      25: iload_3
+      26: putfield      #35                 // Field align:B
+      29: aload_0
+      30: aload         4
+      32: putfield      #26                 // Field PlyrAttrbts:[I
+      35: return
+
+  public void toBytes(io.netty.buffer.ByteBuf);
+    Code:
+       0: aload_0
+       1: getfield      #26                 // Field PlyrAttrbts:[I
+       4: arraylength
+       5: newarray       int
+       7: astore_2
+       8: aload_1
+       9: aload_0
+      10: getfield      #31                 // Field curTP:I
+      13: invokevirtual #46                 // Method io/netty/buffer/ByteBuf.writeInt:(I)Lio/netty/buffer/ByteBuf;
+      16: pop
+      17: aload_1
+      18: aload_0
+      19: getfield      #33                 // Field curExp:I
+      22: invokevirtual #46                 // Method io/netty/buffer/ByteBuf.writeInt:(I)Lio/netty/buffer/ByteBuf;
+      25: pop
+      26: aload_1
+      27: aload_0
+      28: getfield      #35                 // Field align:B
+      31: invokevirtual #49                 // Method io/netty/buffer/ByteBuf.writeByte:(I)Lio/netty/buffer/ByteBuf;
+      34: pop
+      35: iconst_0
+      36: istore_3
+      37: iload_3
+      38: aload_2
+      39: arraylength
+      40: if_icmpge     60
+      43: aload_1
+      44: aload_0
+      45: getfield      #26                 // Field PlyrAttrbts:[I
+      48: iload_3
+      49: iaload
+      50: invokevirtual #46                 // Method io/netty/buffer/ByteBuf.writeInt:(I)Lio/netty/buffer/ByteBuf;
+      53: pop
+      54: iinc          3, 1
+      57: goto          37
+      60: aload_0
+      61: aload_2
+      62: putfield      #26                 // Field PlyrAttrbts:[I
+      65: return
+
+  public void fromBytes(io.netty.buffer.ByteBuf);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #58                 // Method io/netty/buffer/ByteBuf.readInt:()I
+       5: putfield      #31                 // Field curTP:I
+       8: aload_0
+       9: aload_1
+      10: invokevirtual #58                 // Method io/netty/buffer/ByteBuf.readInt:()I
+      13: putfield      #33                 // Field curExp:I
+      16: aload_0
+      17: aload_1
+      18: invokevirtual #62                 // Method io/netty/buffer/ByteBuf.readByte:()B
+      21: putfield      #35                 // Field align:B
+      24: iconst_0
+      25: istore_2
+      26: iload_2
+      27: aload_0
+      28: getfield      #26                 // Field PlyrAttrbts:[I
+      31: arraylength
+      32: if_icmpge     51
+      35: aload_0
+      36: getfield      #26                 // Field PlyrAttrbts:[I
+      39: iload_2
+      40: aload_1
+      41: invokevirtual #58                 // Method io/netty/buffer/ByteBuf.readInt:()I
+      44: iastore
+      45: iinc          2, 1
+      48: goto          26
+      51: return
+}

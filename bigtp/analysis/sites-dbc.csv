@@ -1,0 +1,39 @@
+classe,metodo,descritor,offset,chave,operacao,descritor_operacao,contexto
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,2159,curTP,field-read(curTP:I),I,"var7 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,2500,curTP,field-read(curTP:I),I,"var7 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,2797,curTP,field-read(curTP:I),I,"var7 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,3146,curTP,field-read(curTP:I),I,"var7 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,3639,curTP,field-read(curTP:I),I,"var7 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,3738,curTP,field-read(curTP:I),I,push10 | 0 | call:JRMCoreH.getDBCSkillTPCost
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,3991,curTP,field-read(curTP:I),I,var7 | dup | call:StringBuilder.<init>
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,4216,curTP,field-read(curTP:I),I,getfield:DBCTalkGui.fontRenderer | var22 | call:FontRenderer.func_78256_a | var29
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,4748,curTP,field-read(curTP:I),I,"var7 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,5206,curTP,field-read(curTP:I),I,"var7 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,5360,curTP,field-read(curTP:I),I,var7 | dup | call:StringBuilder.<init>
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,5586,curTP,field-read(curTP:I),I,getfield:DBCTalkGui.fontRenderer | var21 | call:FontRenderer.func_78256_a | var28
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,6091,curTP,field-read(curTP:I),I,"var7 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,6293,curTP,field-read(curTP:I),I,var7 | dup | call:StringBuilder.<init>
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,6530,curTP,field-read(curTP:I),I,getfield:DBCTalkGui.fontRenderer | var22 | call:FontRenderer.func_78256_a | var29
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,7021,curTP,field-read(curTP:I),I,"var7 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,7223,curTP,field-read(curTP:I),I,var7 | dup | call:StringBuilder.<init>
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,7454,curTP,field-read(curTP:I),I,getfield:DBCTalkGui.fontRenderer | var22 | call:FontRenderer.func_78256_a | var29
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,7959,curTP,field-read(curTP:I),I,"var7 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,8145,curTP,field-read(curTP:I),I,var7 | dup | call:StringBuilder.<init>
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,8370,curTP,field-read(curTP:I),I,getfield:DBCTalkGui.fontRenderer | var22 | call:FontRenderer.func_78256_a | var29
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,9018,curTP,field-read(curTP:I),I,"var7 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,9204,curTP,field-read(curTP:I),I,var7 | dup | call:StringBuilder.<init>
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,9425,curTP,field-read(curTP:I),I,getfield:DBCTalkGui.fontRenderer | var22 | call:FontRenderer.func_78256_a | var29
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,9983,curTP,field-read(curTP:I),I,"var7 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,10185,curTP,field-read(curTP:I),I,var7 | dup | call:StringBuilder.<init>
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,10413,curTP,field-read(curTP:I),I,getfield:DBCTalkGui.fontRenderer | var22 | call:FontRenderer.func_78256_a | var29
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,10919,curTP,field-read(curTP:I),I,"var7 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,11073,curTP,field-read(curTP:I),I,var7 | dup | call:StringBuilder.<init>
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,11298,curTP,field-read(curTP:I),I,getfield:DBCTalkGui.fontRenderer | var22 | call:FontRenderer.func_78256_a | var29
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,11789,curTP,field-read(curTP:I),I,"var7 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,11959,curTP,field-read(curTP:I),I,var7 | dup | call:StringBuilder.<init>
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,12190,curTP,field-read(curTP:I),I,getfield:DBCTalkGui.fontRenderer | var22 | call:FontRenderer.func_78256_a | var29
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,12681,curTP,field-read(curTP:I),I,"var7 | dup | call:StringBuilder.<init> | ldc""TP: "" | call:StringBuilder.append"
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,12851,curTP,field-read(curTP:I),I,var7 | dup | call:StringBuilder.<init>
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,func_73863_a,(IIF)V,13082,curTP,field-read(curTP:I),I,getfield:DBCTalkGui.fontRenderer | var22 | call:FontRenderer.func_78256_a | var29
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,sklLrn,(III)V,44,curTP,field-read(curTP:I),I,var1 | 0 | call:JRMCoreH.getDBCSkillTPCost
+JinRyuu/DragonBC/common/Gui/DBCTalkGui,sklLrn,(IIIZ)V,44,curTP,field-read(curTP:I),I,var1 | 0 | call:JRMCoreH.getDBCSkillTPCost

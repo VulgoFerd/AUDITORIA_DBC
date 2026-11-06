@@ -1,0 +1,715 @@
+﻿
+### JinRyuu.JRMCore.ComJrmc :: public void func_71515_b(net.minecraft.command.ICommandSender, java.lang.String[]);
+  @257 452: ldc           #207                // String jrmcTpint
+        454: invokestatic  #211                // Method JinRyuu/JRMCore/JRMCoreH.getInt:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+        457: istore        19
+        459: iload         19
+        461: iload         18
+        463: isub
+        464: iflt          577
+        467: iload         19
+        469: iload         18
+
+### JinRyuu.JRMCore.ComJrmc :: public void func_71515_b(net.minecraft.command.ICommandSender, java.lang.String[]);
+  @268 474: ldc           #207                // String jrmcTpint
+        476: invokestatic  #215                // Method JinRyuu/JRMCore/JRMCoreH.setInt:(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+        479: aload         13
+        481: iconst_0
+        482: aaload
+        483: aload         11
+        485: getstatic     #201                // Field JinRyuu/JRMCore/JRMCoreH.techNbt:[Ljava/lang/String;
+        488: iload         16
+        490: aaload
+
+### JinRyuu.JRMCore.ComJrmcCheck :: public void func_71515_b(net.minecraft.command.ICommandSender, java.lang.String[]);
+  @175 301: ldc           #169                // String jrmcTpint
+        303: invokestatic  #173                // Method JinRyuu/JRMCore/JRMCoreH.getInt:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+        306: istore        19
+        308: iconst_4
+        309: anewarray     #58                 // class java/lang/String
+        312: dup
+        313: iconst_0
+        314: ldc           #175                // String NotSelected
+        316: aastore
+
+### JinRyuu.JRMCore.ComJrmcRacialSkill :: public void func_71515_b(net.minecraft.command.ICommandSender, java.lang.String[]);
+  @465 728: ldc           #232                // String jrmcTpint
+        730: aload_0
+        731: getfield      #98                 // Field tp_current:I
+        734: aload_0
+        735: getfield      #100                // Field tp_cost:I
+        738: isub
+        739: invokevirtual #236                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        742: goto          748
+        745: iconst_0
+
+### JinRyuu.JRMCore.ComJrmcRacialSkill :: private void canAfford(boolean, boolean, java.lang.String, net.minecraft.entity.player.EntityPlayerMP, net.minecraft.nbt.NBTTagCompound, byte, byte, boolean, boolean);
+  @809 363: ldc           #232                // String jrmcTpint
+        365: invokevirtual #440                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        368: putfield      #98                 // Field tp_current:I
+        371: iload         6
+        373: invokestatic  #443                // Method JinRyuu/JRMCore/JRMCoreH.rSai:(I)Z
+        376: ifeq          408
+        379: iload_1
+        380: ifeq          408
+        383: aload_0
+
+### JinRyuu.JRMCore.ComJrmctp :: public java.lang.String func_71517_b();
+  @16 0: ldc           #21                 // String jrmctp
+        2: areturn
+        
+        public int func_82362_a();
+        Code:
+        0: iconst_2
+        1: ireturn
+        
+        public java.lang.String func_71518_a(net.minecraft.command.ICommandSender);
+
+### JinRyuu.JRMCore.ComJrmctp :: public void func_71515_b(net.minecraft.command.ICommandSender, java.lang.String[]);
+  @362 650: ldc           #190                // String jrmcTpint
+        652: invokevirtual #193                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        655: istore        13
+        657: iload         13
+        659: i2l
+        660: lload         6
+        662: lsub
+        663: l2i
+        664: istore        14
+
+### JinRyuu.JRMCore.ComJrmctp :: public void func_71515_b(net.minecraft.command.ICommandSender, java.lang.String[]);
+  @380 682: ldc           #190                // String jrmcTpint
+        684: iload         14
+        686: invokevirtual #197                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        689: iload         11
+        691: ifeq          739
+        694: aload_0
+        695: aload_1
+        696: ldc           #199                // String TP take away %s success %s
+        698: iconst_2
+
+### JinRyuu.JRMCore.ComJrmctp :: public void func_71515_b(net.minecraft.command.ICommandSender, java.lang.String[]);
+  @413 744: ldc           #190                // String jrmcTpint
+        746: invokevirtual #193                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        749: istore        13
+        751: iload         13
+        753: i2l
+        754: lload         6
+        756: ladd
+        757: lstore        14
+        759: lload         14
+
+### JinRyuu.JRMCore.ComJrmctp :: public void func_71515_b(net.minecraft.command.ICommandSender, java.lang.String[]);
+  @442 801: ldc           #190                // String jrmcTpint
+        803: iload         16
+        805: invokevirtual #197                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        808: iload         11
+        810: ifeq          863
+        813: aload_0
+        814: aload_1
+        815: ldc           #203                // String TP adding %s success for %s
+        817: iconst_2
+
+### JinRyuu.JRMCore.JRMCoreComTickH :: public void updatePlayersData(net.minecraft.server.MinecraftServer, int, net.minecraft.entity.player.EntityPlayerMP, JinRyuu.JRMCore.server.JGPlayerMP, net.minecraft.nbt.NBTTagCompound);
+  @6832 2134: ldc_w         #2000               // String jrmcTpint
+        2137: invokevirtual #1811               // Method net/minecraft/nbt/NBTTagCompound.func_74781_a:(Ljava/lang/String;)Lnet/minecraft/nbt/NBTBase;
+        2140: ifnonnull     2172
+        2143: aload         5
+        2145: ldc_w         #2002               // String jrmcTp
+        2148: invokevirtual #1987               // Method net/minecraft/nbt/NBTTagCompound.func_74765_d:(Ljava/lang/String;)S
+        2151: istore        42
+        2153: aload         5
+        2155: ldc_w         #2000               // String jrmcTpint
+
+### JinRyuu.JRMCore.JRMCoreComTickH :: public void updatePlayersData(net.minecraft.server.MinecraftServer, int, net.minecraft.entity.player.EntityPlayerMP, JinRyuu.JRMCore.server.JGPlayerMP, net.minecraft.nbt.NBTTagCompound);
+  @6836 2145: ldc_w         #2002               // String jrmcTp
+        2148: invokevirtual #1987               // Method net/minecraft/nbt/NBTTagCompound.func_74765_d:(Ljava/lang/String;)S
+        2151: istore        42
+        2153: aload         5
+        2155: ldc_w         #2000               // String jrmcTpint
+        2158: iload         42
+        2160: invokevirtual #874                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        2163: aload         5
+        2165: ldc_w         #2002               // String jrmcTp
+
+### JinRyuu.JRMCore.JRMCoreComTickH :: public void updatePlayersData(net.minecraft.server.MinecraftServer, int, net.minecraft.entity.player.EntityPlayerMP, JinRyuu.JRMCore.server.JGPlayerMP, net.minecraft.nbt.NBTTagCompound);
+  @6840 2155: ldc_w         #2000               // String jrmcTpint
+        2158: iload         42
+        2160: invokevirtual #874                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        2163: aload         5
+        2165: ldc_w         #2002               // String jrmcTp
+        2168: iconst_0
+        2169: invokevirtual #1991               // Method net/minecraft/nbt/NBTTagCompound.func_74777_a:(Ljava/lang/String;S)V
+        2172: aload         5
+        2174: ldc_w         #2004               // String tpgbfokt
+
+### JinRyuu.JRMCore.JRMCoreComTickH :: public void updatePlayersData(net.minecraft.server.MinecraftServer, int, net.minecraft.entity.player.EntityPlayerMP, JinRyuu.JRMCore.server.JGPlayerMP, net.minecraft.nbt.NBTTagCompound);
+  @6844 2165: ldc_w         #2002               // String jrmcTp
+        2168: iconst_0
+        2169: invokevirtual #1991               // Method net/minecraft/nbt/NBTTagCompound.func_74777_a:(Ljava/lang/String;S)V
+        2172: aload         5
+        2174: ldc_w         #2004               // String tpgbfokt
+        2177: invokevirtual #1811               // Method net/minecraft/nbt/NBTTagCompound.func_74781_a:(Ljava/lang/String;)Lnet/minecraft/nbt/NBTBase;
+        2180: ifnonnull     2528
+        2183: iconst_0
+        2184: istore        42
+
+### JinRyuu.JRMCore.JRMCoreComTickH :: public void updatePlayersData(net.minecraft.server.MinecraftServer, int, net.minecraft.entity.player.EntityPlayerMP, JinRyuu.JRMCore.server.JGPlayerMP, net.minecraft.nbt.NBTTagCompound);
+  @6950 2396: ldc_w         #2000               // String jrmcTpint
+        2399: invokevirtual #403                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        2402: iload         42
+        2404: iadd
+        2405: istore        44
+        2407: aload         5
+        2409: ldc_w         #2000               // String jrmcTpint
+        2412: iload         44
+        2414: invokevirtual #874                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+
+### JinRyuu.JRMCore.JRMCoreComTickH :: public void updatePlayersData(net.minecraft.server.MinecraftServer, int, net.minecraft.entity.player.EntityPlayerMP, JinRyuu.JRMCore.server.JGPlayerMP, net.minecraft.nbt.NBTTagCompound);
+  @6956 2409: ldc_w         #2000               // String jrmcTpint
+        2412: iload         44
+        2414: invokevirtual #874                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        2417: aload         5
+        2419: getstatic     #1978               // Field JinRyuu/JRMCore/JRMCoreH.techNbt:[Ljava/lang/String;
+        2422: iconst_0
+        2423: aaload
+        2424: ldc_w         #1713               // String
+        2427: invokevirtual #1067               // Method net/minecraft/nbt/NBTTagCompound.func_74778_a:(Ljava/lang/String;Ljava/lang/String;)V
+
+### JinRyuu.JRMCore.JRMCoreComTickH :: public void updatePlayersData(net.minecraft.server.MinecraftServer, int, net.minecraft.entity.player.EntityPlayerMP, JinRyuu.JRMCore.server.JGPlayerMP, net.minecraft.nbt.NBTTagCompound);
+  @7688 4132: ldc_w         #2000               // String jrmcTpint
+        4135: invokevirtual #403                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        4138: invokevirtual #651                // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+        4141: invokevirtual #634                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+        4144: aastore
+        4145: getstatic     #1489               // Field dat12:[Ljava/lang/String;
+        4148: iload_2
+        4149: new           #624                // class java/lang/StringBuilder
+        4152: dup
+
+### JinRyuu.JRMCore.JRMCoreH :: public static void expPls(net.minecraft.entity.player.EntityPlayer, int);
+  @21589 66: ldc_w         #1046               // String jrmcTpint
+        69: invokestatic  #1719               // Method getInt:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+        72: istore        5
+        74: iload_1
+        75: istore        6
+        77: iload         5
+        79: invokestatic  #3265               // Method getMaxTP:()I
+        82: if_icmpge     166
+        85: iload         4
+
+### JinRyuu.JRMCore.JRMCoreH :: public static void expPls(net.minecraft.entity.player.EntityPlayer, int);
+  @21628 130: ldc_w         #1046               // String jrmcTpint
+        133: invokestatic  #1735               // Method setInt:(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+        136: iinc          7, 1
+        139: goto          96
+        142: iload         4
+        144: iload_1
+        145: iadd
+        146: iload         4
+        148: iload_1
+
+### JinRyuu.JRMCore.JRMCoreH :: public static void jrmcExp(net.minecraft.entity.Entity, int, int);
+  @23995 296: ldc_w         #1046               // String jrmcTpint
+        299: invokestatic  #1719               // Method getInt:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+        302: istore        19
+        304: aload         13
+        306: ldc_w         #359                // String jrmcDiff
+        309: invokestatic  #1274               // Method getByte:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+        312: istore        20
+        314: iload         17
+        316: iload         18
+
+### JinRyuu.JRMCore.JRMCoreH :: public static void jrmcExp(net.minecraft.entity.Entity, int, int);
+  @24037 381: ldc_w         #1046               // String jrmcTpint
+        384: invokestatic  #1735               // Method setInt:(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+        387: aload         15
+        389: aload         13
+        391: invokevirtual #5293               // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+        394: invokevirtual #1808               // Method java/lang/String.equalsIgnoreCase:(Ljava/lang/String;)Z
+        397: ifeq          400
+        400: iinc          12, 1
+        403: goto          205
+
+### JinRyuu.JRMCore.JRMCoreH :: public static void jrmcExp(net.minecraft.entity.Entity, int, int);
+  @24063 443: ldc_w         #1046               // String jrmcTpint
+        446: invokestatic  #1719               // Method getInt:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+        449: istore        14
+        451: aload_3
+        452: ldc_w         #359                // String jrmcDiff
+        455: invokestatic  #1274               // Method getByte:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)B
+        458: istore        15
+        460: iload         12
+        462: iload         13
+
+### JinRyuu.JRMCore.JRMCoreH :: public static void jrmcExp(net.minecraft.entity.Entity, int, int);
+  @24096 513: ldc_w         #1046               // String jrmcTpint
+        516: invokestatic  #1735               // Method setInt:(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+        519: return
+        
+        public static int expgnrt(int, int, int, net.minecraft.entity.player.EntityPlayer);
+        Code:
+        0: fconst_1
+        1: fstore        4
+        3: invokestatic  #1206               // Method DBC:()Z
+
+### JinRyuu.JRMCore.JRMCoreH :: public static void tpalgn(net.minecraft.entity.player.EntityPlayer, int, int);
+  @24961 39: ldc_w         #1046               // String jrmcTpint
+        42: invokestatic  #1719               // Method getInt:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+        45: iload_1
+        46: iadd
+        47: istore        6
+        49: iload         6
+        51: invokestatic  #3265               // Method getMaxTP:()I
+        54: if_icmple     63
+        57: invokestatic  #3265               // Method getMaxTP:()I
+
+### JinRyuu.JRMCore.JRMCoreH :: public static void tpalgn(net.minecraft.entity.player.EntityPlayer, int, int);
+  @24973 66: ldc_w         #1046               // String jrmcTpint
+        69: invokestatic  #1735               // Method setInt:(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+        72: goto          367
+        75: aload_3
+        76: invokevirtual #5285               // Method net/minecraft/server/MinecraftServer.func_71213_z:()[Ljava/lang/String;
+        79: ifnull        367
+        82: aload_3
+        83: invokevirtual #5285               // Method net/minecraft/server/MinecraftServer.func_71213_z:()[Ljava/lang/String;
+        86: arraylength
+
+### JinRyuu.JRMCore.JRMCoreH :: public static void tpalgn(net.minecraft.entity.player.EntityPlayer, int, int);
+  @25097 327: ldc_w         #1046               // String jrmcTpint
+        330: invokestatic  #1719               // Method getInt:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+        333: iload_1
+        334: iadd
+        335: istore        11
+        337: iload         11
+        339: invokestatic  #3265               // Method getMaxTP:()I
+        342: if_icmple     351
+        345: invokestatic  #3265               // Method getMaxTP:()I
+
+### JinRyuu.JRMCore.JRMCoreH :: public static void tpalgn(net.minecraft.entity.player.EntityPlayer, int, int);
+  @25109 355: ldc_w         #1046               // String jrmcTpint
+        358: invokestatic  #1735               // Method setInt:(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+        361: iinc          7, 1
+        364: goto          268
+        367: return
+        
+        public static int ctb(int, int);
+        Code:
+        0: iload_0
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleData(int, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+  @614 940: ldc_w         #376                // String jrmcTpint
+        943: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        946: istore        20
+        948: aload         15
+        950: iload         11
+        952: aaload
+        953: iconst_2
+        954: invokevirtual #327                // Method java/lang/String.substring:(I)Ljava/lang/String;
+        957: invokestatic  #209                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleData(int, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+  @640 995: ldc_w         #376                // String jrmcTpint
+        998: iload         22
+        1000: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        1003: iload_1
+        1004: new           #237                // class java/lang/StringBuilder
+        1007: dup
+        1008: invokespecial #238                // Method java/lang/StringBuilder."<init>":()V
+        1011: iload         18
+        1013: invokevirtual #351                // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleQuad(int, int, int, int, net.minecraft.entity.player.EntityPlayer);
+  @4189 1175: ldc_w         #376                // String jrmcTpint
+        1178: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        1181: istore        8
+        1183: iload_2
+        1184: ifne          1420
+        1187: aload         5
+        1189: invokestatic  #1244               // Method JinRyuu/JRMCore/JRMCoreH.isFusionSpectator:(Lnet/minecraft/entity/Entity;)Z
+        1192: ifne          2059
+        1195: iload         8
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleQuad(int, int, int, int, net.minecraft.entity.player.EntityPlayer);
+  @4200 1202: ldc_w         #376                // String jrmcTpint
+        1205: iload         8
+        1207: iconst_1
+        1208: isub
+        1209: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        1212: aload         7
+        1214: getstatic     #149                // Field Acc:Ljava/lang/String;
+        1217: invokevirtual #618                // Method net/minecraft/nbt/NBTTagCompound.func_74771_c:(Ljava/lang/String;)B
+        1220: istore        9
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleQuad(int, int, int, int, net.minecraft.entity.player.EntityPlayer);
+  @4314 1445: ldc_w         #1284               // String jrmcTPlimit
+        1448: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        1451: invokespecial #1287               // Method JinRyuu/JRMCore/p/JRMCorePQuad."<init>":(IIII)V
+        1454: aload         5
+        1456: checkcast     #755                // class net/minecraft/entity/player/EntityPlayerMP
+        1459: invokestatic  #759                // Method JinRyuu/JRMCore/p/PD.sendTo:(Lcpw/mods/fml/common/network/simpleimpl/IMessage;Lnet/minecraft/entity/player/EntityPlayerMP;)V
+        1462: goto          2059
+        1465: iload_3
+        1466: ifne          1484
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleQuad(int, int, int, int, net.minecraft.entity.player.EntityPlayer);
+  @4324 1471: ldc_w         #376                // String jrmcTpint
+        1474: iload         8
+        1476: iconst_1
+        1477: isub
+        1478: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        1481: goto          2059
+        1484: iload_3
+        1485: iconst_1
+        1486: if_icmpne     2059
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleQuad(int, int, int, int, net.minecraft.entity.player.EntityPlayer);
+  @4359 1538: ldc_w         #1284               // String jrmcTPlimit
+        1541: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        1544: istore        12
+        1546: iload         12
+        1548: iload         10
+        1550: iadd
+        1551: istore        13
+        1553: iload         10
+        1555: istore        14
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleQuad(int, int, int, int, net.minecraft.entity.player.EntityPlayer);
+  @4391 1605: ldc_w         #376                // String jrmcTpint
+        1608: iload         15
+        1610: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        1613: aload         7
+        1615: ldc_w         #1284               // String jrmcTPlimit
+        1618: iload         13
+        1620: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        1623: aload         5
+        1625: new           #403                // class net/minecraft/util/ChatComponentText
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleQuad(int, int, int, int, net.minecraft.entity.player.EntityPlayer);
+  @4395 1615: ldc_w         #1284               // String jrmcTPlimit
+        1618: iload         13
+        1620: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        1623: aload         5
+        1625: new           #403                // class net/minecraft/util/ChatComponentText
+        1628: dup
+        1629: new           #237                // class java/lang/StringBuilder
+        1632: dup
+        1633: invokespecial #238                // Method java/lang/StringBuilder."<init>":()V
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleQuad(int, int, int, int, net.minecraft.entity.player.EntityPlayer);
+  @4441 1721: ldc_w         #1284               // String jrmcTPlimit
+        1724: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        1727: invokespecial #1287               // Method JinRyuu/JRMCore/p/JRMCorePQuad."<init>":(IIII)V
+        1730: aload         5
+        1732: checkcast     #755                // class net/minecraft/entity/player/EntityPlayerMP
+        1735: invokestatic  #759                // Method JinRyuu/JRMCore/p/PD.sendTo:(Lcpw/mods/fml/common/network/simpleimpl/IMessage;Lnet/minecraft/entity/player/EntityPlayerMP;)V
+        1738: goto          2059
+        1741: iload_2
+        1742: iconst_2
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleQuad(int, int, int, int, net.minecraft.entity.player.EntityPlayer);
+  @4462 1766: ldc_w         #1307               // String jrmcTPlimit2
+        1769: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        1772: invokespecial #1287               // Method JinRyuu/JRMCore/p/JRMCorePQuad."<init>":(IIII)V
+        1775: aload         5
+        1777: checkcast     #755                // class net/minecraft/entity/player/EntityPlayerMP
+        1780: invokestatic  #759                // Method JinRyuu/JRMCore/p/PD.sendTo:(Lcpw/mods/fml/common/network/simpleimpl/IMessage;Lnet/minecraft/entity/player/EntityPlayerMP;)V
+        1783: goto          2059
+        1786: iload_3
+        1787: ifne          1805
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleQuad(int, int, int, int, net.minecraft.entity.player.EntityPlayer);
+  @4472 1792: ldc_w         #376                // String jrmcTpint
+        1795: iload         8
+        1797: iconst_1
+        1798: isub
+        1799: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        1802: goto          2059
+        1805: iload_3
+        1806: iconst_1
+        1807: if_icmpne     2059
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleQuad(int, int, int, int, net.minecraft.entity.player.EntityPlayer);
+  @4507 1859: ldc_w         #1307               // String jrmcTPlimit2
+        1862: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        1865: istore        12
+        1867: iload         12
+        1869: iload         10
+        1871: iadd
+        1872: istore        13
+        1874: iload         10
+        1876: istore        14
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleQuad(int, int, int, int, net.minecraft.entity.player.EntityPlayer);
+  @4539 1926: ldc_w         #376                // String jrmcTpint
+        1929: iload         15
+        1931: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        1934: aload         7
+        1936: ldc_w         #1307               // String jrmcTPlimit2
+        1939: iload         13
+        1941: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        1944: aload         5
+        1946: new           #403                // class net/minecraft/util/ChatComponentText
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleQuad(int, int, int, int, net.minecraft.entity.player.EntityPlayer);
+  @4543 1936: ldc_w         #1307               // String jrmcTPlimit2
+        1939: iload         13
+        1941: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        1944: aload         5
+        1946: new           #403                // class net/minecraft/util/ChatComponentText
+        1949: dup
+        1950: new           #237                // class java/lang/StringBuilder
+        1953: dup
+        1954: invokespecial #238                // Method java/lang/StringBuilder."<init>":()V
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleQuad(int, int, int, int, net.minecraft.entity.player.EntityPlayer);
+  @4589 2042: ldc_w         #1307               // String jrmcTPlimit2
+        2045: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        2048: invokespecial #1287               // Method JinRyuu/JRMCore/p/JRMCorePQuad."<init>":(IIII)V
+        2051: aload         5
+        2053: checkcast     #755                // class net/minecraft/entity/player/EntityPlayerMP
+        2056: invokestatic  #759                // Method JinRyuu/JRMCore/p/PD.sendTo:(Lcpw/mods/fml/common/network/simpleimpl/IMessage;Lnet/minecraft/entity/player/EntityPlayerMP;)V
+        2059: return
+        
+        public void handleFall(byte, net.minecraft.entity.player.EntityPlayer);
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleTech(byte, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+  @4929 652: ldc_w         #376                // String jrmcTpint
+        655: invokestatic  #1228               // Method JinRyuu/JRMCore/JRMCoreH.getInt:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+        658: istore        13
+        660: iload         13
+        662: iload         12
+        664: iadd
+        665: aload_3
+        666: ldc_w         #376                // String jrmcTpint
+        669: invokestatic  #215                // Method JinRyuu/JRMCore/JRMCoreH.setInt:(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleTech(byte, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+  @4936 666: ldc_w         #376                // String jrmcTpint
+        669: invokestatic  #215                // Method JinRyuu/JRMCore/JRMCoreH.setInt:(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+        672: goto          728
+        675: aload         9
+        677: ldc           #231                // String ;
+        679: invokevirtual #235                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+        682: ifeq          728
+        685: aload         9
+        687: invokevirtual #1411               // Method java/lang/String.toString:()Ljava/lang/String;
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleTech(byte, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+  @4955 708: ldc_w         #376                // String jrmcTpint
+        711: invokestatic  #1228               // Method JinRyuu/JRMCore/JRMCoreH.getInt:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+        714: istore        12
+        716: iload         12
+        718: iload         11
+        720: iadd
+        721: aload_3
+        722: ldc_w         #376                // String jrmcTpint
+        725: invokestatic  #215                // Method JinRyuu/JRMCore/JRMCoreH.setInt:(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleTech(byte, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+  @4962 722: ldc_w         #376                // String jrmcTpint
+        725: invokestatic  #215                // Method JinRyuu/JRMCore/JRMCoreH.setInt:(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+        728: ldc_w         #1234               // String
+        731: aload_3
+        732: getstatic     #1366               // Field JinRyuu/JRMCore/JRMCoreH.techNbt:[Ljava/lang/String;
+        735: iload_1
+        736: aaload
+        737: invokestatic  #178                // Method JinRyuu/JRMCore/JRMCoreH.setString:(Ljava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+        740: goto          1262
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleTech(byte, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+  @5044 874: ldc_w         #376                // String jrmcTpint
+        877: invokestatic  #1228               // Method JinRyuu/JRMCore/JRMCoreH.getInt:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+        880: istore        18
+        882: iload         18
+        884: iload         17
+        886: isub
+        887: iflt          962
+        890: iload         18
+        892: iload         17
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleTech(byte, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+  @5055 896: ldc_w         #376                // String jrmcTpint
+        899: invokestatic  #215                // Method JinRyuu/JRMCore/JRMCoreH.setInt:(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+        902: new           #237                // class java/lang/StringBuilder
+        905: dup
+        906: invokespecial #238                // Method java/lang/StringBuilder."<init>":()V
+        909: ldc_w         #389                // String
+        912: invokevirtual #242                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+        915: iload         9
+        917: invokevirtual #351                // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleTech(byte, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+  @5136 1066: ldc_w         #376                // String jrmcTpint
+        1069: invokestatic  #1228               // Method JinRyuu/JRMCore/JRMCoreH.getInt:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+        1072: istore        14
+        1074: iload         14
+        1076: iload         13
+        1078: isub
+        1079: iflt          1132
+        1082: iload         11
+        1084: ifeq          1132
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleTech(byte, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+  @5149 1093: ldc_w         #376                // String jrmcTpint
+        1096: invokestatic  #215                // Method JinRyuu/JRMCore/JRMCoreH.setInt:(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+        1099: new           #237                // class java/lang/StringBuilder
+        1102: dup
+        1103: invokespecial #238                // Method java/lang/StringBuilder."<init>":()V
+        1106: ldc_w         #389                // String
+        1109: invokevirtual #242                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+        1112: iload         9
+        1114: invokevirtual #351                // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleTech(byte, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+  @5203 1218: ldc_w         #376                // String jrmcTpint
+        1221: invokestatic  #1228               // Method JinRyuu/JRMCore/JRMCoreH.getInt:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+        1224: istore        11
+        1226: iload         11
+        1228: iload         10
+        1230: isub
+        1231: iflt          1262
+        1234: iload         11
+        1236: iload         10
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleTech(byte, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+  @5214 1240: ldc_w         #376                // String jrmcTpint
+        1243: invokestatic  #215                // Method JinRyuu/JRMCore/JRMCoreH.setInt:(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+        1246: aload_2
+        1247: aload_3
+        1248: getstatic     #1366               // Field JinRyuu/JRMCore/JRMCoreH.techNbt:[Ljava/lang/String;
+        1251: iload_1
+        1252: aaload
+        1253: invokestatic  #178                // Method JinRyuu/JRMCore/JRMCoreH.setString:(Ljava/lang/String;Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V
+        1256: aload_3
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleStats3(byte, byte, byte, net.minecraft.entity.player.EntityPlayer);
+  @6301 481: ldc_w         #376                // String jrmcTpint
+        484: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        487: istore        31
+        489: iload_2
+        490: iconst_0
+        491: iload         7
+        493: invokestatic  #1703               // Method JinRyuu/JRMCore/JRMCoreH.isPowerTypeKi:(I)Z
+        496: invokestatic  #1819               // Method JinRyuu/JRMCore/JRMCoreH.getSkillTPCost:(IIZ)I
+        499: istore        32
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleStats3(byte, byte, byte, net.minecraft.entity.player.EntityPlayer);
+  @6529 1000: ldc_w         #376                // String jrmcTpint
+        1003: iload         42
+        1005: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        1008: goto          2442
+        1011: iload_1
+        1012: iconst_2
+        1013: if_icmpne     1088
+        1016: aload         9
+        1018: iload_2
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleStats3(byte, byte, byte, net.minecraft.entity.player.EntityPlayer);
+  @6772 1533: ldc_w         #376                // String jrmcTpint
+        1536: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        1539: istore        38
+        1541: iload         10
+        1543: invokestatic  #1871               // Method JinRyuu/JRMCore/JRMCoreH.rSai:(I)Z
+        1546: ifeq          1574
+        1549: iload_2
+        1550: bipush        100
+        1552: if_icmpne     1574
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleStats3(byte, byte, byte, net.minecraft.entity.player.EntityPlayer);
+  @6896 1811: ldc_w         #376                // String jrmcTpint
+        1814: iload         38
+        1816: iload         37
+        1818: isub
+        1819: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        1822: goto          1919
+        1825: getstatic     #1205               // Field JinRyuu/JRMCore/JRMCoreConfig.DebugInfo:Z
+        1828: ifeq          1919
+        1831: ldc_w         #1883               // String JRMC has found Potential hacking at ID:05 by player: %s
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleUpgrade(byte, net.minecraft.entity.player.EntityPlayer);
+  @7339 325: ldc_w         #376                // String jrmcTpint
+        328: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        331: iload         17
+        333: if_icmplt     598
+        336: aload_3
+        337: getstatic     #1996               // Field JinRyuu/JRMCore/JRMCoreH.AttrbtNbtI:[Ljava/lang/String;
+        340: iload_1
+        341: bipush        6
+        343: irem
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleUpgrade(byte, net.minecraft.entity.player.EntityPlayer);
+  @7385 415: ldc_w         #376                // String jrmcTpint
+        418: aload_3
+        419: ldc_w         #376                // String jrmcTpint
+        422: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        425: iload         17
+        427: isub
+        428: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        431: aload_3
+        432: getstatic     #1996               // Field JinRyuu/JRMCore/JRMCoreH.AttrbtNbtI:[Ljava/lang/String;
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleUpgrade(byte, net.minecraft.entity.player.EntityPlayer);
+  @7387 419: ldc_w         #376                // String jrmcTpint
+        422: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        425: iload         17
+        427: isub
+        428: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        431: aload_3
+        432: getstatic     #1996               // Field JinRyuu/JRMCore/JRMCoreH.AttrbtNbtI:[Ljava/lang/String;
+        435: iload_1
+        436: bipush        6
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleUpgrade(byte, net.minecraft.entity.player.EntityPlayer);
+  @7566 740: ldc_w         #376                // String jrmcTpint
+        743: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        746: aload_3
+        747: ldc_w         #2020               // String jrmcExp
+        750: invokevirtual #618                // Method net/minecraft/nbt/NBTTagCompound.func_74771_c:(Ljava/lang/String;)B
+        753: aload_3
+        754: ldc_w         #761                // String jrmcAlign
+        757: invokevirtual #618                // Method net/minecraft/nbt/NBTTagCompound.func_74771_c:(Ljava/lang/String;)B
+        760: aload         6
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleChar(byte, int, net.minecraft.entity.player.EntityPlayer);
+  @7864 585: ldc_w         #376                // String jrmcTpint
+        588: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        591: aload         4
+        593: ldc_w         #2020               // String jrmcExp
+        596: invokevirtual #618                // Method net/minecraft/nbt/NBTTagCompound.func_74771_c:(Ljava/lang/String;)B
+        599: aload         4
+        601: ldc_w         #761                // String jrmcAlign
+        604: invokevirtual #618                // Method net/minecraft/nbt/NBTTagCompound.func_74771_c:(Ljava/lang/String;)B
+        607: aload         12
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleChar(byte, int, net.minecraft.entity.player.EntityPlayer);
+  @8045 1007: ldc_w         #376                // String jrmcTpint
+        1010: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        1013: istore        11
+        1015: aload_3
+        1016: invokestatic  #854                // Method JinRyuu/JRMCore/JRMCoreH.PlyrAttrbts:(Lnet/minecraft/entity/player/EntityPlayer;)[I
+        1019: astore        12
+        1021: aload_3
+        1022: iconst_2
+        1023: iload         7
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleChar(byte, int, net.minecraft.entity.player.EntityPlayer);
+  @8077 1073: ldc_w         #376                // String jrmcTpint
+        1076: iload         11
+        1078: bipush        20
+        1080: isub
+        1081: invokevirtual #387                // Method net/minecraft/nbt/NBTTagCompound.func_74768_a:(Ljava/lang/String;I)V
+        1084: aload_3
+        1085: iload         13
+        1087: i2f
+        1088: ldc_w         #1563               // float 0.1f
+
+### JinRyuu.JRMCore.JRMCorePacHanS :: public void handleTick(int, java.lang.String, net.minecraft.entity.player.EntityPlayer);
+  @8184 168: ldc_w         #376                // String jrmcTpint
+        171: invokevirtual #379                // Method net/minecraft/nbt/NBTTagCompound.func_74762_e:(Ljava/lang/String;)I
+        174: aload         4
+        176: ldc_w         #2020               // String jrmcExp
+        179: invokevirtual #618                // Method net/minecraft/nbt/NBTTagCompound.func_74771_c:(Ljava/lang/String;)B
+        182: aload         4
+        184: ldc_w         #761                // String jrmcAlign
+        187: invokevirtual #618                // Method net/minecraft/nbt/NBTTagCompound.func_74771_c:(Ljava/lang/String;)B
+        190: aload         5

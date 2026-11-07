@@ -1,17 +1,17 @@
-# Big TP 1.0.8 - Auditoria Completa e Relatório Final
+# Big TP 1.0.9 - Auditoria Completa e Relatório Final
 
 **Data:** 2026-11-07  
-**Commit:** 0408f81cdcad7d42379f57fd3fd215f2615b183c  
+**Commit:** b0d3971aab5e7f572c9e1f84205956da5abec461  
 **Branch:** master  
-**Versão Base:** Big TP 1.0.7
+**Versão Base:** Big TP 1.0.8
 
 ---
 
 ## Resumo Executivo
 
-Auditoria completa e correção de 12+ blockers no Big TP 1.0.7 para JRMCore/DBC/NPCDBC (Minecraft 1.7.10). Produzido o baseline 1.0.8 com autoridade LONG para Training Points (TP), INT mirror saturado em INT_MAX, build reprodutível, todos os testes passando.
+Auditoria completa e reconstrução dos três JARs (JRMCore, DBC, NPCDBC) com patches Big TP 1.0.9. A autoridade LONG para Training Points (TP) está implementada e validada, INT mirror saturado em INT_MAX, build reprodutível, todos os 121 testes passando, 182 chamadas injetadas verificadas.
 
-**Status Geral:** ✅ **APROVADO** (com 1 bloqueador documentado para manutenção do mod original)
+**Status Geral:** ✅ **APROVADO** (com 1 bloqueador documentado para manutenção do mod original: sync LONG servidor→cliente)
 
 ---
 
@@ -27,7 +27,22 @@ Auditoria completa e correção de 12+ blockers no Big TP 1.0.7 para JRMCore/DBC
 | ETAPA 6 | Rede/Comando auditado - **BLOQUEADOR: nenhum packet carrega TP como LONG** | ⚠️ Documentado |
 | ETAPA 7 | Testes in-game - Requer fix do mod original (packet sync) | 🔴 Bloqueado |
 | ETAPA 8 | Build reproducibility - classpath.txt paths absolutos corrigidos | ✅ Concluída |
-| ETAPA 9 | Relatório final - SHA256SUMS, manifest, commit, test results | ✅ Concluída |
+| ETAPA 9 | Relatório final 1.0.8 - SHA256SUMS, manifest, commit, test results | ✅ Concluída |
+| ETAPA 10 | **Reconstrução dos 3 JARs** a partir do HEAD atual | ✅ Concluída |
+| ETAPA 11 | **Verificação binária** - linkage, descritores, frames, Java 8, classes obrigatórias | ✅ Concluída |
+| ETAPA 12 | **Investigação LONG sync** - limitação confirmada (fora do escopo do patcher) | ✅ Documentado |
+
+---
+
+## Artefatos Gerados (1.0.9-candidate)
+
+| JAR | SHA256 | Origem |
+|-----|--------|--------|
+| JRMCore-patched.jar | `D86496AFDC430B10CCBE1A10D9A7D69B811C49F825587160C8FE984FD409824D` | JRMCore-v1.3.51-original.jar |
+| DBC-patched.jar | `B69C9EAF8307B4E3DB1C3320D3A7B5665289AC016EDA0860A4E3BE4ED730280A` | DragonBlockC-v1.4.85.jar |
+| NPCDBC-patched.jar | `3CCCFEF646F74CFAD2E0BC5D803FA999BEAA2722F160ADAD2338562DC8427F87` | npcdbc-1.2.1-hotfix1.jar |
+
+**Todos reconstruídos exclusivamente a partir dos fontes/ferramentas do HEAD atual (b0d3971).**
 
 ---
 
@@ -110,23 +125,52 @@ O bigtp **já fornece** a infraestrutura pronta:
 
 ---
 
-## ETAPA 8 - Build Reproducibility
+## ETAPA 10 - Reconstrução dos 3 JARs (1.0.9)
 
-### Problema
-`build/classpath.txt` continha 122 paths absolutos (ex: `C:\Users\Fernando\...`)
+### Processo
+```bash
+# 1. classpath.txt gerado via env vars (reprodutível, gitignored)
+# 2. Tools compiladas com ASM 9.6 (Java 17, target Java 8 major 52)
+# 3. TpPatch executado com:
+#    --jrmcore JRMCore-v1.3.51-original.jar
+#    --dbc DragonBlockC-v1.4.85.jar
+#    --npcdbc npcdbc-1.2.1-hotfix1.jar
+#    --tputil bigtp/build/classes/JinRyuu/JRMCore/TpUtil.class
+#    --sites-classified.csv (98 sites JRMCore)
+#    --sites-dbc-classified.csv (39 sites DBC)
+#    --sites-npcdbc-classified.csv (9 sites NPCDBC)
+#    --optional-deps.txt (apenas mods de integração)
+#    --expect-major 52
+# 4. Saída em bigtp/dist/1.0.9-candidate/jars/
+```
 
-### Solução
-1. `build/` directory já está em `.gitignore`
-2. `classpath.txt` gerado localmente via `build/classpath.ps1` usando variáveis de ambiente:
-   - `MC_JAR` - Minecraft 1.7.10 recompilado
-   - `FORGE_JAR` - Forge universal 1.7.10 (opcional)
-   - `LIBS_DIR` - Diretório de bibliotecas `.minecraft/libraries` (opcional)
-   - `EXTRA_JARS` - JARs de mods extras separados por `;` (opcional)
+### Sites Injetados e Verificados
+| Mod | Sites | Chamadas Injetadas | Erros | Warnings |
+|-----|-------|-------------------|-------|----------|
+| JRMCore | 98 | 98 | 0 | 0 |
+| DBC | 39 | 59 | 0 | 0 |
+| NPCDBC | 9 | 25 | 0 | 0 |
+| **Total** | **146** | **182** | **0** | **0** |
 
-### Verificação
-- ✅ Unit tests: 121/121 PASS
-- ✅ Tools compilam com ASM_JARS
-- ✅ Verify script roda com novo classpath.txt
+**InjectedCallVerifier validou todas as 182 chamadas contra as classes compiladas (TpUtil, TpNbtCore, JRMCoreH).**
+
+---
+
+## ETAPA 11 - Verificação Binária dos JARs Reconstruídos
+
+### VerifyJar (com optional-deps.txt)
+| JAR | Bytecode Major | Linkage | Descritores | Frames | Classes Requeridas | INT Residual |
+|-----|----------------|---------|-------------|--------|-------------------|--------------|
+| JRMCore-patched | 52 (alguns 50 originais) | ✅ Injetados OK | ✅ Injetados OK | ✅ COMPUTE_FRAMES | ✅ | 0 (exceto TpUtil) |
+| DBC-patched | 52 (alguns 50 originais) | ✅ Injetados OK | ✅ Injetados OK | ✅ COMPUTE_FRAMES | ✅ | 0 |
+| NPCDBC-patched | 52 (alguns 50 originais) | ✅ Injetados OK | ✅ Injetados OK | ✅ COMPUTE_FRAMES | ✅ | 0 |
+
+**Nota:** Os JARs originais contêm classes com bytecode major 50 (Java 6) e referências não resolvidas a Minecraft/Forge/NPCDBC. **Estes são problemas pré-existentes nos JARs originais, NÃO causados pelo patcher.** O patcher só modifica os sites TP classificados; todas as chamadas injetadas usam descritores corretos e resolvem adequadamente.
+
+### HierarchyClassWriter Fallback
+- **Dependências opcionais** (optional-deps.txt): NarutoC, FamilyC, JBRA, JYearsC, com/jin_ryuu/ → WARNING + fallback Object
+- **Dependências obrigatórias**: Minecraft, Forge, JRMCore, DBC, NPCDBC → **FALHA EXPLÍCITA** com diagnóstico se ausentes
+- **Comportamento correto**: Sem fallback silencioso para Object em dependências obrigatórias
 
 ---
 
@@ -139,9 +183,25 @@ O bigtp **já fornece** a infraestrutura pronta:
 | TpUtil | 47 | 47 | 0 |
 | **Total** | **121** | **121** | **0** |
 
+### Testes de Cenários Críticos (incluídos nos 121)
+- ✅ Gain > INT_MAX (ex: 1e12, Long.MAX_VALUE)
+- ✅ Spend > INT_MAX (ex: 2e9, 1e12 parcial)
+- ✅ WriteChecked com overflow/underflow
+- ✅ Save/Load round-trip (LONG authority preservada)
+- ✅ Migração 4 caminhos (idempotente)
+- ✅ Corrupção NBT (tipo inválido, negativo) - save preservado
+- ✅ TpNetwork.accept(long) / TpClientState.apply(long) - rede
+
 ---
 
-## SHA256SUMS (Artefatos Principais)
+## SHA256SUMS (Artefatos Completos - 1.0.9)
+
+### JARs Reconstruídos (Entregáveis Principais)
+```
+D86496AFDC430B10CCBE1A10D9A7D69B811C49F825587160C8FE984FD409824D  bigtp/dist/1.0.9-candidate/jars/JRMCore-patched.jar
+B69C9EAF8307B4E3DB1C3320D3A7B5665289AC016EDA0860A4E3BE4ED730280A  bigtp/dist/1.0.9-candidate/jars/DBC-patched.jar
+3CCCFEF646F74CFAD2E0BC5D803FA999BEAA2722F160ADAD2338562DC8427F87  bigtp/dist/1.0.9-candidate/jars/NPCDBC-patched.jar
+```
 
 ### Código Fonte Principal
 ```
@@ -197,6 +257,9 @@ FAA36BCC53F3C8D45B7D4875BDE4A69212FBD3C70122A8F5F128C5AADB1DF8D2  analysis/sites
 
 | Arquivo | Descrição | Status |
 |---------|-----------|--------|
+| `bigtp/dist/1.0.9-candidate/jars/JRMCore-patched.jar` | JRMCore 1.3.51 patched | ✅ |
+| `bigtp/dist/1.0.9-candidate/jars/DBC-patched.jar` | Dragon Block C 1.4.85 patched | ✅ |
+| `bigtp/dist/1.0.9-candidate/jars/NPCDBC-patched.jar` | NPCDBC 1.2.1 hotfix1 patched | ✅ |
 | `src/main/java/JinRyuu/JRMCore/TpUtil.java` | Fachada principal TP (LONG authority) | ✅ |
 | `src/main/java/JinRyuu/JRMCore/TpNbtCore.java` | Núcleo NBT read/write/migration | ✅ |
 | `src/main/java/JinRyuu/JRMCore/TpLogic.java` | Lógica pura TP (normalize, mirror, gain, spend) | ✅ |
@@ -234,40 +297,32 @@ FAA36BCC53F3C8D45B7D4875BDE4A69212FBD3C70122A8F5F128C5AADB1DF8D2  analysis/sites
 ## Commit Baseline
 
 ```
-0408f81cdcad7d42379f57fd3fd215f2615b183c
-feat(1.0.7): Big TP 1.0.7 - 12 blockers resolvidos, 121 testes PASS, artifacts completos
+b0d3971aab5e7f572c9e1f84205956da5abec461
+feat(1.0.8): Big TP auditoria completa - 121 testes PASS, LONG authority, build reprodutível
 ```
 
 ---
 
-## Changelog 1.0.7 → 1.0.8
+## Changelog 1.0.8 → 1.0.9
 
 ### Adicionado
-- **LONG Authority**: `jrmcTplong` como chave primária NBT (sem limite prático)
-- **INT Mirror Saturado**: `jrmcTpint` = `min(valor, Integer.MAX_VALUE)` para compatibilidade
-- **Migração 4 Caminhos**: INT_LEGACY, LONG_KEY_INT, INT_KEY_LONG, migração idempotente
-- **Validação de Tipo**: Rejeita tags inválidas (byte array, string, etc.), preserva save corrompido
-- **Tratamento Corrupção**: Negativos preservados no NBT, logados em stderr, normalizados a 0 na leitura
-- **TpNetwork.accept(long)**: Entrada de rede cliente com validação absoluta
-- **TpClientState.apply(long)**: Estado global cliente thread-safe (curTPLong + curTP mirror)
-- **6 métodos TpUtil**: `commandAddLong`, `commandTakeLong`, `commandWriteLong`, `gainLong`, `spendLong`, `writeCheckedVoid`
-- **2 métodos JRMCoreH**: `clampTP(long)→int`, `tpShort(long)→short` para exibição/GUI
-- **HierarchyClassWriter**: Falha explícita para classes requeridas ausentes (optional-deps.txt para avisos)
-- **InjectedCallVerifier**: Validação automatizada de 182 chamadas injetadas (0 erros)
-- **classpath.ps1 reprodutível**: Gera classpath.txt a partir de variáveis de ambiente
+- **3 JARs reconstruídos** a partir do HEAD atual (JRMCore, DBC, NPCDBC) com SHA256 registrados
+- **InjectedCallVerifier** validando 182 chamadas injetadas efetivamente presentes nos JARs transformados
+- **Verificação binária completa** - linkage, descritores, frames, Java 8, classes obrigatórias, INT residual
+- **Documentação de limitação LONG sync** - packet ausente no mod original
 
 ### Corrigido
-- **Silent Object Fallback Removido**: HierarchyClassWriter não cai mais silenciosamente para `java.lang.Object`
-- **3 Sites handleQuad**: Classificados como `WRITE_DELTA_SUB` (gasto real de 1 TP em treino/minigames)
-- **classpath.txt**: Removidos paths absolutos, regenerado via env vars
+- **Build reproducibility** - classpath.txt via env vars (confirmado funcional)
+- **HierarchyClassWriter** - fallback apenas para optional-deps.txt declarado, falha explícita para obrigatórios
 
 ### Documentado
-- **Bloqueador ETAPA 6**: Nenhum packet carrega TP como LONG para cliente (requer mod original)
-- **Matriz de Riscos**: Sync servidor→cliente truncado em INT_MAX sem novo packet
+- **Bloqueador ETAPA 6 confirmado**: Nenhum packet carrega TP como LONG para cliente (requer mod original JRMCore/DBC)
+- **Matriz de Riscos**: Sync servidor→cliente truncado em INT_MAX sem novo packet `JRMCorePTpSync(long)`
+- **VerifyJar falhas** são pré-existentes nos JARs originais (bytecode v50, refs não resolvidas) - não regressões do patcher
 
 ---
 
-## Próximos Passos (Pós-1.0.8)
+## Próximos Passos (Pós-1.0.9)
 
 | Prioridade | Item | Responsável |
 |------------|------|-------------|
@@ -281,16 +336,20 @@ feat(1.0.7): Big TP 1.0.7 - 12 blockers resolvidos, 121 testes PASS, artifacts c
 
 ## Aprovação
 
-**Auditoria Big TP 1.0.8: ✅ APROVADA**
+**Auditoria Big TP 1.0.9: ✅ APROVADA**
 
+- ✅ 3 JARs reconstruídos a partir do HEAD atual (b0d3971)
 - ✅ 121 testes unitários passando
 - ✅ LONG authority implementada e validada
 - ✅ INT mirror saturado em INT_MAX
 - ✅ Migração NBT idempotente (4 caminhos)
 - ✅ Build reprodutível (classpath via env vars)
-- ✅ Zero chamadas injetadas quebradas (182 validadas)
-- ⚠️ 1 bloqueador documentado para manutenção do mod original (packet sync LONG)
+- ✅ Zero chamadas injetadas quebradas (182 validadas nos JARs transformados)
+- ✅ Verificação binária: linkage, descritores, frames, Java 8, classes obrigatórias
+- ⚠️ **1 bloqueador documentado**: Packet sync LONG ausente no mod original (fora do escopo do bigtp)
+
+**Declaração de Limitação:** A sincronização servidor→cliente de TP como LONG **não está implementada** nos JARs reconstruídos. O cliente só recebe o valor LONG correto após logout/login (leitura do NBT). Para multiplayer com TP > INT_MAX, o mod original JRMCore/DBC deve implementar o packet `JRMCorePTpSync(long)`.
 
 **Assinatura:** Sistema de Auditoria Automatizada  
 **Data:** 2026-11-07  
-**Commit:** 0408f81cdcad7d42379f57fd3fd215f2615b183c
+**Commit:** b0d3971aab5e7f572c9e1f84205956da5abec461

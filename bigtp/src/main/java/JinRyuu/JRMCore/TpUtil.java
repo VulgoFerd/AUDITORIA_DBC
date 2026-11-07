@@ -1,6 +1,9 @@
 package JinRyuu.JRMCore;
 
+import JinRyuu.JRMCore.p.JRMCorePTpSync;
+import JinRyuu.JRMCore.p.PD;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
@@ -179,6 +182,22 @@ public final class TpUtil {
         writeChecked(player, value);
     }
 
+    // Combined operations with sync for player targets
+    public static void writeAndSync(EntityPlayer player, long value) {
+        writeCheckedVoid(player, value);
+        syncToClient(player);
+    }
+
+    public static void gainAndSync(EntityPlayer player, long amount) {
+        gainVoid(player, amount);
+        syncToClient(player);
+    }
+
+    public static void spendAndSync(EntityPlayer player, long amount) {
+        spendVoid(player, amount);
+        syncToClient(player);
+    }
+
     // -------------------------------------------------------------- comando
 
     /**
@@ -310,5 +329,18 @@ public final class TpUtil {
 
     private static void reportInvalid(TpNbtCore.ReadResult result) {
         System.err.println("BIGTP: NBT de TP invalido, save preservado: " + result);
+    }
+
+    /**
+     * Sincroniza o TP do jogador com o cliente.
+     * Envia pacote JRMCorePTpSync com o saldo atual.
+     */
+    public static void syncToClient(EntityPlayer player) {
+        if (player == null) {
+            return;
+        }
+        long current = getTP(player);
+        JRMCorePTpSync packet = new JRMCorePTpSync(current);
+        PD.sendTo(packet, (EntityPlayerMP) player);
     }
 }

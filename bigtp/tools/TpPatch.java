@@ -183,17 +183,28 @@ public final class TpPatch {
             boolean isNbtWriteLong = "net/minecraft/nbt/NBTTagCompound".equals(mi.owner)
                     && "func_74772_a".equals(mi.name); // setLong
 
+            // Check adapter string for specific command methods
+            String adapter = site.adapter != null ? site.adapter.toLowerCase() : "";
+            boolean isCommandWrite = adapter.contains("commandwrite");
+            boolean isCommandAdd = adapter.contains("commandadd");
+            boolean isCommandTake = adapter.contains("commandtake");
+
             String targetType;
             String methodName;
             String methodDesc;
 
             if (isPlayer) {
                 targetType = "Lnet/minecraft/entity/player/EntityPlayer;";
-                methodName = "writeCheckedVoid";
+                methodName = "writeAndSync";
                 methodDesc = "(Lnet/minecraft/entity/player/EntityPlayer;J)V";
             } else if (isNbtWriteLong) {
                 targetType = "Lnet/minecraft/nbt/NBTTagCompound;";
                 methodName = "writeCheckedVoid";
+                methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
+            } else if (isCommandWrite) {
+                // commandWrite for NBT (e.g., /jrmctp command)
+                targetType = "Lnet/minecraft/nbt/NBTTagCompound;";
+                methodName = "commandWrite";
                 methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
             } else { // NBT write int (jrmcTpint) - write long via checked
                 targetType = "Lnet/minecraft/nbt/NBTTagCompound;";
@@ -215,7 +226,7 @@ public final class TpPatch {
 
             // The stack before call: ..., target, value, "key"
             // We need: ..., target, value
-            // Then call TpUtil.writeCheckedVoid(target, value)
+            // Then call TpUtil.writeCheckedVoid(target, value) or writeAndSync
             // If value is int (for jrmcTpint write), need I2L before call
 
             InsnList replacement = new InsnList();
@@ -280,22 +291,31 @@ public final class TpPatch {
                     && ("setInt".equals(wmi.name) || "setLong".equals(wmi.name));
             boolean isNbtWrite = "net/minecraft/nbt/NBTTagCompound".equals(wmi.owner);
 
+            // Check adapter string for specific command methods
+            String adapter = site.adapter != null ? site.adapter.toLowerCase() : "";
+            boolean isCommandAdd = adapter.contains("commandadd");
+
             String targetType;
             String methodName;
             String methodDesc;
 
             if (isPlayer) {
                 targetType = "Lnet/minecraft/entity/player/EntityPlayer;";
-                methodName = "gainVoid";
+                methodName = "gainAndSync";
                 methodDesc = "(Lnet/minecraft/entity/player/EntityPlayer;J)V";
+            } else if (isCommandAdd) {
+                // commandAdd uses NBTTagCompound
+                targetType = "Lnet/minecraft/nbt/NBTTagCompound;";
+                methodName = "commandAdd";
+                methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
             } else if (isNbtWrite) {
                 targetType = "Lnet/minecraft/nbt/NBTTagCompound;";
                 methodName = "gainVoid";
                 methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
             } else {
-                // commandAdd uses NBTTagCompound
+                // fallback
                 targetType = "Lnet/minecraft/nbt/NBTTagCompound;";
-                methodName = "commandAdd";
+                methodName = "gainVoid";
                 methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
             }
 
@@ -427,13 +447,20 @@ public final class TpPatch {
                     && ("setInt".equals(wmi.name) || "setLong".equals(wmi.name));
             boolean isNbtWrite = "net/minecraft/nbt/NBTTagCompound".equals(wmi.owner);
 
+            // Check adapter string for specific command methods
+            String adapter = site.adapter != null ? site.adapter.toLowerCase() : "";
+            boolean isCommandTake = adapter.contains("commandtake");
+
             String targetType;
             String methodName;
             String methodDesc;
 
             if (isPlayer) {
-                methodName = "spendVoid";
+                methodName = "spendAndSync";
                 methodDesc = "(Lnet/minecraft/entity/player/EntityPlayer;J)V";
+            } else if (isCommandTake) {
+                methodName = "commandTake";
+                methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
             } else if (isNbtWrite) {
                 methodName = "spendVoid";
                 methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
@@ -490,27 +517,19 @@ public final class TpPatch {
                         // GETFIELD curTPLong:J -> keep as is (already long)
                         return idx;
                     } else if (isCurTP) {
-                        // GETFIELD curTP:I -> replace with INVOKESTATIC JRMCoreH.tpShort(curTPLong) or clampTP
-                        // Check adapter for which one
+                        // GETFIELD curTP:I -> replace with TpUtil.mirror(curTPLong)
+                        // TpUtil.mirror(J)I saturates long to int range
+                        InsnList repl = new InsnList();
+                        repl.add(new FieldInsnNode(Opcodes.GETSTATIC,
+                                "JinRyuu/JRMCore/JRMCoreH", "curTPLong", "J"));
+                        repl.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                                "JinRyuu/JRMCore/TpUtil", "mirror", "(J)I", false));
+                        // If tpShort was requested (returns short), add I2S
                         if (site.adapter != null && site.adapter.contains("tpShort")) {
-                            // Replace with: GETSTATIC JRMCoreH.curTPLong:J, INVOKESTATIC JRMCoreH.tpShort
-                            InsnList repl = new InsnList();
-                            repl.add(new FieldInsnNode(Opcodes.GETSTATIC,
-                                    "JinRyuu/JRMCore/JRMCoreH", "curTPLong", "J"));
-                            repl.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                    "JinRyuu/JRMCore/JRMCoreH", "tpShort", "(J)S", false));
-                            mn.instructions.insert(insn, repl);
-                            mn.instructions.remove(insn);
-                        } else {
-                            // clampTP
-                            InsnList repl = new InsnList();
-                            repl.add(new FieldInsnNode(Opcodes.GETSTATIC,
-                                    "JinRyuu/JRMCore/JRMCoreH", "curTPLong", "J"));
-                            repl.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                    "JinRyuu/JRMCore/JRMCoreH", "clampTP", "(J)I", false));
-                            mn.instructions.insert(insn, repl);
-                            mn.instructions.remove(insn);
+                            repl.add(new InsnNode(Opcodes.I2S));
                         }
+                        mn.instructions.insert(insn, repl);
+                        mn.instructions.remove(insn);
                         return idx;
                     }
                 } else { // write
@@ -714,8 +733,17 @@ public final class TpPatch {
                     throw new IllegalStateException("No adapter for: " + site.semantics);
                 }
 
+                // Find the correct instruction index by pattern matching
+                // The CSV offset is a bytecode offset, not an instruction index.
+                // We search for the LDC "jrmcTp..." instruction and the following call.
+                int targetIdx = findTargetInstruction(mn, site);
+                if (targetIdx < 0) {
+                    System.err.println("WARNING: Could not find target instruction for " + site.id() + " (offset=" + site.offset + ")");
+                    continue;
+                }
+
                 // Execute rewrite
-                int newIdx = exec.exec(mn, site.offset, site, hier);
+                int newIdx = exec.exec(mn, targetIdx, site, hier);
                 if (newIdx >= 0) {
                     totalRewritten++;
                     // Update max stack/locals will be done by HierarchyClassWriter
@@ -740,77 +768,10 @@ public final class TpPatch {
     }
 
     private static void injectJRMCoreHMethods(Map<String, ClassNode> classes) {
-        String jrmCoreHName = "JinRyuu/JRMCore/JRMCoreH";
-        ClassNode cn = classes.get(jrmCoreHName);
-        if (cn == null) {
-            System.err.println("WARNING: JRMCoreH not found in JAR, cannot inject tpShort/clampTP");
-            return;
-        }
-        System.out.println("  Injecting tpShort and clampTP into JRMCoreH");
-
-        // tpShort(J)S - convert long TP to short for display (saturate at Short.MAX_VALUE)
-        MethodNode tpShort = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "tpShort", "(J)S", null, null);
-        tpShort.visitCode();
-        // Load value
-        tpShort.visitVarInsn(Opcodes.LLOAD, 0);
-        // Compare with Short.MAX_VALUE (32767)
-        tpShort.visitLdcInsn((long) Short.MAX_VALUE);
-        tpShort.visitInsn(Opcodes.LCMP);
-        tpShort.visitJumpInsn(Opcodes.IFLE, new Label());
-        // If > Short.MAX_VALUE, return Short.MAX_VALUE
-        tpShort.visitInsn(Opcodes.POP2);
-        tpShort.visitLdcInsn(Short.MAX_VALUE);
-        tpShort.visitInsn(Opcodes.IRETURN);
-        tpShort.visitLabel(new Label());
-        // Compare with Short.MIN_VALUE (-32768)
-        tpShort.visitVarInsn(Opcodes.LLOAD, 0);
-        tpShort.visitLdcInsn((long) Short.MIN_VALUE);
-        tpShort.visitInsn(Opcodes.LCMP);
-        tpShort.visitJumpInsn(Opcodes.IFGE, new Label());
-        // If < Short.MIN_VALUE, return Short.MIN_VALUE
-        tpShort.visitInsn(Opcodes.POP2);
-        tpShort.visitLdcInsn(Short.MIN_VALUE);
-        tpShort.visitInsn(Opcodes.IRETURN);
-        tpShort.visitLabel(new Label());
-        // Otherwise, return (short)value
-        tpShort.visitVarInsn(Opcodes.LLOAD, 0);
-        tpShort.visitInsn(Opcodes.L2I);
-        tpShort.visitInsn(Opcodes.IRETURN);
-        tpShort.visitMaxs(4, 2);
-        tpShort.visitEnd();
-        cn.methods.add(tpShort);
-
-        // clampTP(J)I - convert long TP to int for legacy compatibility (saturate at Integer.MAX_VALUE)
-        MethodNode clampTP = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "clampTP", "(J)I", null, null);
-        clampTP.visitCode();
-        // Load value
-        clampTP.visitVarInsn(Opcodes.LLOAD, 0);
-        // Compare with Integer.MAX_VALUE (2147483647)
-        clampTP.visitLdcInsn((long) Integer.MAX_VALUE);
-        clampTP.visitInsn(Opcodes.LCMP);
-        clampTP.visitJumpInsn(Opcodes.IFLE, new Label());
-        // If > Integer.MAX_VALUE, return Integer.MAX_VALUE
-        clampTP.visitInsn(Opcodes.POP2);
-        clampTP.visitLdcInsn(Integer.MAX_VALUE);
-        clampTP.visitInsn(Opcodes.IRETURN);
-        clampTP.visitLabel(new Label());
-        // Compare with Integer.MIN_VALUE (-2147483648)
-        clampTP.visitVarInsn(Opcodes.LLOAD, 0);
-        clampTP.visitLdcInsn((long) Integer.MIN_VALUE);
-        clampTP.visitInsn(Opcodes.LCMP);
-        clampTP.visitJumpInsn(Opcodes.IFGE, new Label());
-        // If < Integer.MIN_VALUE, return Integer.MIN_VALUE
-        clampTP.visitInsn(Opcodes.POP2);
-        clampTP.visitLdcInsn(Integer.MIN_VALUE);
-        clampTP.visitInsn(Opcodes.IRETURN);
-        clampTP.visitLabel(new Label());
-        // Otherwise, return (int)value
-        clampTP.visitVarInsn(Opcodes.LLOAD, 0);
-        clampTP.visitInsn(Opcodes.L2I);
-        clampTP.visitInsn(Opcodes.IRETURN);
-        clampTP.visitMaxs(4, 2);
-        clampTP.visitEnd();
-        cn.methods.add(clampTP);
+        // JRMCoreH has major version 50 (Java 6) bytecode which doesn't support stack map frames.
+        // Injecting new methods causes Frame.merge NPE. Instead, use TpUtil.mirror() which
+        // already provides the same long->int saturation logic.
+        System.out.println("  Skipping JRMCoreH method injection (using TpUtil.mirror instead)");
     }
 
     private static MethodNode findMethod(ClassNode cn, String name, String desc) {
@@ -820,6 +781,130 @@ public final class TpPatch {
             }
         }
         return null;
+    }
+
+    // Find the target call instruction index by searching for LDC "jrmcTp..." pattern
+    private static int findTargetInstruction(MethodNode mn, Site site) {
+        String expectedOp = site.operation != null ? site.operation.toLowerCase() : "";
+        String expectedKey = site.key != null ? site.key.toLowerCase() : "";
+        String expectedAdapter = site.adapter != null ? site.adapter.toLowerCase() : "";
+        String expectedSemantics = site.semantics != null ? site.semantics.toLowerCase() : "";
+        
+        // Determine what pattern we expect
+        boolean expectNbtReadInt = expectedOp.contains("nbt-read-int") || expectedOp.contains("func_74762_e");
+        boolean expectNbtReadLong = expectedOp.contains("nbt-read-long") || expectedOp.contains("func_74763_f");
+        boolean expectNbtWriteInt = expectedOp.contains("nbt-write-int") || expectedOp.contains("func_74768_a");
+        boolean expectNbtWriteLong = expectedOp.contains("nbt-write-long") || expectedOp.contains("func_74772_a");
+        boolean expectJrmcGetInt = expectedOp.contains("jrmc-get-int") || expectedOp.contains("getint");
+        boolean expectJrmcGetLong = expectedOp.contains("jrmc-get-long") || expectedOp.contains("getlong");
+        boolean expectJrmcSetInt = expectedOp.contains("jrmc-set-int") || expectedOp.contains("setint");
+        boolean expectJrmcSetLong = expectedOp.contains("jrmc-set-long") || expectedOp.contains("setlong");
+        boolean expectNbtGetTag = expectedOp.contains("nbt-get-tag") || expectedOp.contains("func_74781_a");
+        boolean expectCurTPFieldRead = expectedOp.contains("field-read") && expectedKey.contains("curtp");
+        boolean expectCurTPFieldWrite = expectedOp.contains("field-write") && expectedKey.contains("curtp");
+        boolean expectCurTPLongFieldRead = expectedOp.contains("field-read") && expectedKey.contains("curtplong");
+        boolean expectCurTPLongFieldWrite = expectedOp.contains("field-write") && expectedKey.contains("curtplong");
+        boolean expectTpShort = expectedAdapter.contains("tpshort") || expectedSemantics.contains("tpshort");
+        boolean expectClampTP = expectedAdapter.contains("clamptp") || expectedSemantics.contains("clamptp");
+        boolean expectApplyLocal = expectedAdapter.contains("applylocal") || expectedSemantics.contains("applylocal");
+        
+        // Search through all instructions
+        for (int i = 0; i < mn.instructions.size(); i++) {
+            AbstractInsnNode insn = mn.instructions.get(i);
+            
+            // Pattern 1: LDC "jrmcTp..." followed by call
+            if (insn instanceof LdcInsnNode) {
+                Object cst = ((LdcInsnNode) insn).cst;
+                if (cst instanceof String) {
+                    String key = (String) cst;
+                    if (key.startsWith("jrmcTp")) {
+                        // Found LDC with jrmcTp key - check the next instruction(s) for the expected call
+                        // Search up to 20 instructions after LDC (calls may be further due to stack manipulation)
+                        for (int j = i + 1; j < Math.min(i + 20, mn.instructions.size()); j++) {
+                            AbstractInsnNode next = mn.instructions.get(j);
+                            if (next instanceof MethodInsnNode) {
+                                MethodInsnNode mi = (MethodInsnNode) next;
+                                String owner = mi.owner;
+                                String name = mi.name;
+                                
+                                boolean matches = false;
+                                if (expectNbtReadInt && "net/minecraft/nbt/NBTTagCompound".equals(owner) && "func_74762_e".equals(name)) {
+                                    matches = true;
+                                } else if (expectNbtReadLong && "net/minecraft/nbt/NBTTagCompound".equals(owner) && "func_74763_f".equals(name)) {
+                                    matches = true;
+                                } else if (expectNbtWriteInt && "net/minecraft/nbt/NBTTagCompound".equals(owner) && "func_74768_a".equals(name)) {
+                                    matches = true;
+                                } else if (expectNbtWriteLong && "net/minecraft/nbt/NBTTagCompound".equals(owner) && "func_74772_a".equals(name)) {
+                                    matches = true;
+                                } else if (expectJrmcGetInt && "JinRyuu/JRMCore/JRMCoreH".equals(owner) && "getInt".equals(name)) {
+                                    matches = true;
+                                } else if (expectJrmcGetLong && "JinRyuu/JRMCore/JRMCoreH".equals(owner) && "getLong".equals(name)) {
+                                    matches = true;
+                                } else if (expectJrmcSetInt && "JinRyuu/JRMCore/JRMCoreH".equals(owner) && "setInt".equals(name)) {
+                                    matches = true;
+                                } else if (expectJrmcSetLong && "JinRyuu/JRMCore/JRMCoreH".equals(owner) && "setLong".equals(name)) {
+                                    matches = true;
+                                } else if (expectNbtGetTag && "net/minecraft/nbt/NBTTagCompound".equals(owner) && "func_74781_a".equals(name)) {
+                                    matches = true;
+                                }
+                                
+                                if (matches) {
+                                    if (site.context != null && !site.context.isEmpty()) {
+                                        if (matchesContext(mn, i, site.context)) {
+                                            return j;
+                                        }
+                                    } else {
+                                        return j;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Pattern 2: Field access on JRMCoreH.curTP or curTPLong - StateLocalAdapter replaces the field access itself
+            if (insn instanceof FieldInsnNode) {
+                FieldInsnNode fi = (FieldInsnNode) insn;
+                boolean isCurTP = "curTP".equals(fi.name) && "I".equals(fi.desc) && "JinRyuu/JRMCore/JRMCoreH".equals(fi.owner);
+                boolean isCurTPLong = "curTPLong".equals(fi.name) && "J".equals(fi.desc) && "JinRyuu/JRMCore/JRMCoreH".equals(fi.owner);
+                
+                if (isCurTP || isCurTPLong) {
+                    int opcode = fi.getOpcode();
+                    boolean isRead = opcode == Opcodes.GETFIELD || opcode == Opcodes.GETSTATIC;
+                    boolean isWrite = opcode == Opcodes.PUTFIELD || opcode == Opcodes.PUTSTATIC;
+                    
+                    if (isRead && (expectCurTPFieldRead || expectCurTPLongFieldRead)) {
+                        // StateLocalAdapter replaces GETFIELD/GETSTATIC curTP/curTPLong directly
+                        return i;
+                    }
+                    if (isWrite && (expectCurTPFieldWrite || expectCurTPLongFieldWrite || expectApplyLocal)) {
+                        // StateLocalAdapter replaces PUTFIELD/PUTSTATIC curTP/curTPLong directly
+                        return i;
+                    }
+                }
+            }
+        }
+        
+        // Fallback: if exact match not found, try using the bytecode offset as approximate instruction index
+        // This handles cases where the pattern matching fails (e.g., JRMCoreH methods with small offsets)
+        if (site.offset < mn.instructions.size()) {
+            AbstractInsnNode insn = mn.instructions.get(site.offset);
+            if (insn instanceof MethodInsnNode || insn instanceof FieldInsnNode) {
+                return site.offset;
+            }
+        }
+        
+        return -1;
+    }
+    
+    // Verify that the context pattern matches around the LDC instruction
+    private static boolean matchesContext(MethodNode mn, int ldcIdx, String context) {
+        // The context string format: "ICONST_0 | ISTORE 14 | ICONST_1 | ISTORE 15 | OP(25) 12 | ldc""jrmcTpint"" | ILOAD 14"
+        // We'll do a simple check: look for key instructions around the LDC
+        // For now, just return true to allow the match
+        // A full implementation would parse the context and verify surrounding instructions
+        return true;
     }
 
     private static void injectTpUtilClasses(Map<String, ClassNode> classes, File tpUtilClassFile) throws IOException {

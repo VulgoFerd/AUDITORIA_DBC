@@ -12,7 +12,7 @@ public class JRMCoreH {
         if (entity == null) {
             return null;
         }
-        return entity.pres;
+        return new NBTTagCompound();
     }
 
     public static String numSep(long value) {

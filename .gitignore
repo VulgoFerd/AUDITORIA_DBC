@@ -1,0 +1,50 @@
+# Build outputs
+*.jar
+*.class
+
+# Temporary files
+temp_*/
+*.tmp
+*.log
+
+# Patch outputs
+patch_output*.txt
+verify_*.txt
+
+# IDE / OS
+.JinRyuu/
+META-INF/
+
+# Local test server
+BigTP_Test_Server/forge-*.jar
+BigTP_Test_Server/mods/
+BigTP_Test_Server/logs/
+BigTP_Test_Server/world*/
+BigTP_Test_Server/server.properties
+BigTP_Test_Server/eula.txt
+
+# Analysis intermediates
+bigtp/analysis/*-fixed.csv
+bigtp/deobfuscation_data-1.7.10.lzma
+bigtp/fml.srg
+
+# Tool intermediates (debug/utility only)
+bigtp/add_handler.py
+bigtp/tools/ConvertOffsets.java
+bigtp/tools/DebugPD.java
+bigtp/tools/DebugPD2.java
+bigtp/tools/InspectClass.java
+bigtp/tools/HierarchyClassWriter.java
+bigtp/tools/HierarchyResolver.java
+bigtp/tools/HierarchyTest.java
+bigtp/tools/RemapTpNbt.java
+bigtp/tools/SiteWindow.java
+bigtp/META-INF/
+
+# Build intermediates
+bigtp/build/classes/
+bigtp/build/logs/
+bigtp/dist/1.0*/
+bigtp/dist/1.1.0*/
+
+# Keep: bigtp/dist/1.1.1/jars/ (final artifacts)

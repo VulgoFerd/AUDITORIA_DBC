@@ -730,8 +730,87 @@ public final class TpPatch {
             injectTpUtilClasses(classes, cfg.tpUtilClass);
         }
 
+        // Inject tpShort and clampTP into JRMCoreH (required by StateLocalAdapter and GUI adapters)
+        if (injectTpUtil) {
+            injectJRMCoreHMethods(classes);
+        }
+
         // Write output JAR using HierarchyClassWriter
         writeJar(outJar, classes, hier, cfg);
+    }
+
+    private static void injectJRMCoreHMethods(Map<String, ClassNode> classes) {
+        String jrmCoreHName = "JinRyuu/JRMCore/JRMCoreH";
+        ClassNode cn = classes.get(jrmCoreHName);
+        if (cn == null) {
+            System.err.println("WARNING: JRMCoreH not found in JAR, cannot inject tpShort/clampTP");
+            return;
+        }
+        System.out.println("  Injecting tpShort and clampTP into JRMCoreH");
+
+        // tpShort(J)S - convert long TP to short for display (saturate at Short.MAX_VALUE)
+        MethodNode tpShort = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "tpShort", "(J)S", null, null);
+        tpShort.visitCode();
+        // Load value
+        tpShort.visitVarInsn(Opcodes.LLOAD, 0);
+        // Compare with Short.MAX_VALUE (32767)
+        tpShort.visitLdcInsn((long) Short.MAX_VALUE);
+        tpShort.visitInsn(Opcodes.LCMP);
+        tpShort.visitJumpInsn(Opcodes.IFLE, new Label());
+        // If > Short.MAX_VALUE, return Short.MAX_VALUE
+        tpShort.visitInsn(Opcodes.POP2);
+        tpShort.visitLdcInsn(Short.MAX_VALUE);
+        tpShort.visitInsn(Opcodes.IRETURN);
+        tpShort.visitLabel(new Label());
+        // Compare with Short.MIN_VALUE (-32768)
+        tpShort.visitVarInsn(Opcodes.LLOAD, 0);
+        tpShort.visitLdcInsn((long) Short.MIN_VALUE);
+        tpShort.visitInsn(Opcodes.LCMP);
+        tpShort.visitJumpInsn(Opcodes.IFGE, new Label());
+        // If < Short.MIN_VALUE, return Short.MIN_VALUE
+        tpShort.visitInsn(Opcodes.POP2);
+        tpShort.visitLdcInsn(Short.MIN_VALUE);
+        tpShort.visitInsn(Opcodes.IRETURN);
+        tpShort.visitLabel(new Label());
+        // Otherwise, return (short)value
+        tpShort.visitVarInsn(Opcodes.LLOAD, 0);
+        tpShort.visitInsn(Opcodes.L2I);
+        tpShort.visitInsn(Opcodes.IRETURN);
+        tpShort.visitMaxs(4, 2);
+        tpShort.visitEnd();
+        cn.methods.add(tpShort);
+
+        // clampTP(J)I - convert long TP to int for legacy compatibility (saturate at Integer.MAX_VALUE)
+        MethodNode clampTP = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "clampTP", "(J)I", null, null);
+        clampTP.visitCode();
+        // Load value
+        clampTP.visitVarInsn(Opcodes.LLOAD, 0);
+        // Compare with Integer.MAX_VALUE (2147483647)
+        clampTP.visitLdcInsn((long) Integer.MAX_VALUE);
+        clampTP.visitInsn(Opcodes.LCMP);
+        clampTP.visitJumpInsn(Opcodes.IFLE, new Label());
+        // If > Integer.MAX_VALUE, return Integer.MAX_VALUE
+        clampTP.visitInsn(Opcodes.POP2);
+        clampTP.visitLdcInsn(Integer.MAX_VALUE);
+        clampTP.visitInsn(Opcodes.IRETURN);
+        clampTP.visitLabel(new Label());
+        // Compare with Integer.MIN_VALUE (-2147483648)
+        clampTP.visitVarInsn(Opcodes.LLOAD, 0);
+        clampTP.visitLdcInsn((long) Integer.MIN_VALUE);
+        clampTP.visitInsn(Opcodes.LCMP);
+        clampTP.visitJumpInsn(Opcodes.IFGE, new Label());
+        // If < Integer.MIN_VALUE, return Integer.MIN_VALUE
+        clampTP.visitInsn(Opcodes.POP2);
+        clampTP.visitLdcInsn(Integer.MIN_VALUE);
+        clampTP.visitInsn(Opcodes.IRETURN);
+        clampTP.visitLabel(new Label());
+        // Otherwise, return (int)value
+        clampTP.visitVarInsn(Opcodes.LLOAD, 0);
+        clampTP.visitInsn(Opcodes.L2I);
+        clampTP.visitInsn(Opcodes.IRETURN);
+        clampTP.visitMaxs(4, 2);
+        clampTP.visitEnd();
+        cn.methods.add(clampTP);
     }
 
     private static MethodNode findMethod(ClassNode cn, String name, String desc) {
@@ -762,7 +841,7 @@ public final class TpPatch {
     private static byte[] writeClassWithFallback(ClassNode cn, HierarchyResolver hier, Config cfg) {
         // First attempt: COMPUTE_FRAMES (includes COMPUTE_MAXS)
         try {
-            ClassWriter cw = new HierarchyClassWriter(HierarchyClassWriter.FLAGS, hier);
+            ClassWriter cw = new HierarchyClassWriter(HierarchyClassWriter.FLAGS, hier, cfg.optionalDepsFile);
             cn.accept(cw);
             byte[] bytecode = cw.toByteArray();
 
@@ -788,7 +867,7 @@ public final class TpPatch {
         }
 
         // Fallback: COMPUTE_MAXS only (no stack map frames)
-        ClassWriter cw = new HierarchyClassWriter(ClassWriter.COMPUTE_MAXS, hier);
+        ClassWriter cw = new HierarchyClassWriter(ClassWriter.COMPUTE_MAXS, hier, cfg.optionalDepsFile);
         cn.accept(cw);
         byte[] bytecode = cw.toByteArray();
 

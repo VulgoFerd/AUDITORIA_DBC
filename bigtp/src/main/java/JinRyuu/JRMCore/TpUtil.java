@@ -185,7 +185,7 @@ public final class TpUtil {
      * Soma um valor positivo com teto em Long.MAX_VALUE.
      * Usado por /jrmctp. Devolve o saldo final.
      */
-    public static long commandAdd(NBTTagCompound tag, long amount) {
+    public static long commandAddLong(NBTTagCompound tag, long amount) {
         if (tag == null) {
             throw new IllegalArgumentException("NBTTagCompound nulo em TpUtil.commandAdd");
         }
@@ -203,7 +203,7 @@ public final class TpUtil {
      * Subtrai um valor positivo com piso em 0.
      * Usado por /jrmctp. Devolve o saldo final.
      */
-    public static long commandTake(NBTTagCompound tag, long amount) {
+    public static long commandTakeLong(NBTTagCompound tag, long amount) {
         if (tag == null) {
             throw new IllegalArgumentException("NBTTagCompound nulo em TpUtil.commandTake");
         }
@@ -216,7 +216,7 @@ public final class TpUtil {
     /**
      * Define um saldo absoluto pelo comando. Negativo vira 0 e e reportado.
      */
-    public static long commandWrite(NBTTagCompound tag, long value) {
+    public static long commandWriteLong(NBTTagCompound tag, long value) {
         if (tag == null) {
             throw new IllegalArgumentException("NBTTagCompound nulo em TpUtil.commandWrite");
         }
@@ -228,13 +228,37 @@ public final class TpUtil {
         return normalized;
     }
 
-    private static long readUsable(NBTTagCompound tag) {
+    // Void-returning variants for ASM adapters (CSV expects these exact names)
+    public static void commandAdd(NBTTagCompound tag, long amount) {
+        commandAddLong(tag, amount);
+    }
+
+    public static void commandTake(NBTTagCompound tag, long amount) {
+        commandTakeLong(tag, amount);
+    }
+
+    public static void commandWrite(NBTTagCompound tag, long value) {
+        commandWriteLong(tag, value);
+    }
+
+    public static long readUsable(NBTTagCompound tag) {
         TpNbtCore.ReadResult result = TpNbtCore.readAndMigrate(TpNbt.of(tag));
         if (!result.usable()) {
             reportInvalid(result);
             return 0L;
         }
         return result.value();
+    }
+
+    public static long readUsable(EntityPlayer player) {
+        if (player == null) {
+            return 0L;
+        }
+        NBTTagCompound tag = JRMCoreH.nbt(player, PLAYER_TAG);
+        if (tag == null) {
+            return 0L;
+        }
+        return readUsable(tag);
     }
 
     // --------------------------------------------------------------- estado
@@ -265,6 +289,23 @@ public final class TpUtil {
             throw new IllegalStateException("NBT 'pres' ausente para o jogador");
         }
         return tag;
+    }
+
+    /**
+     * Parseia string para long, usado por /jrmctp.
+     * Valor negativo ou invalido vira 0.
+     */
+    public static long parseLong(String s) {
+        if (s == null || s.isEmpty()) {
+            return 0L;
+        }
+        try {
+            long v = Long.parseLong(s);
+            return v < 0L ? 0L : v;
+        } catch (NumberFormatException e) {
+            System.err.println("BIGTP: parseLong falhou para: " + s);
+            return 0L;
+        }
     }
 
     private static void reportInvalid(TpNbtCore.ReadResult result) {

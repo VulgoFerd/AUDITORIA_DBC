@@ -48,3 +48,8 @@ bigtp/dist/1.0*/
 bigtp/dist/1.1.0*/
 
 # Keep: bigtp/dist/1.1.1/jars/ (final artifacts)
+
+# Reference JARs (original unmodified mods for patching baseline)
+!JRMCore-v1.3.51-original.jar
+!DragonBlockC-v1.4.85.jar
+!NPCDBC-v1.2.1-hotfix1.jar

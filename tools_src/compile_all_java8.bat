@@ -1,3 +1,0 @@
-@echo off
-cd /d "C:\Users\Fernando\Desktop\NanatsuCore\tools"
-"C:\Program Files\Eclipse Adoptium\jdk-17.0.20.101-hotspot\bin\javac.exe" -source 1.8 -target 1.8 -cp ".;asm-9.7.1.jar;asm-tree-9.7.1.jar;asm-util-9.7.1.jar;asm-commons-9.7.1.jar;asm-analysis-9.7.1.jar" TpPatch.java VerifyJar.java VerifyBytecode.java FrameCheck.java ClassDiff.java AnalyzeClass.java DumpMethod.java DumpRefs.java FindField.java InspectClass.java JarHierarchy.java MemberRefs.java ScanLdc.java ScanRefs.java ScanSites.java Sites.java TestHierarchy.java VarUse.java CurTPContext.java DebugMethod.java DebugMethodFull.java BuildMinimalHierarchy.java ExtractMethod.java FixMaxTP.java TpReport.java TpShapes.java

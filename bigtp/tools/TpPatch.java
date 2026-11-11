@@ -499,10 +499,15 @@ public final class TpPatch {
         }
     }
 
-    // ------------------------------------------------------------------ STATE_LOCAL: TpUtil.applyLocal / tpShort / clampTP
+    // ------------------------------------------------------------------ STATE_LOCAL: TpUtil.applyLocal / JRMCoreH.tpShort / JRMCoreH.clampTP
     static final class StateLocalAdapter implements AdapterExec {
         @Override public int exec(MethodNode mn, int idx, Site site, HierarchyResolver hier) {
             AbstractInsnNode insn = mn.instructions.get(idx);
+
+            // Determine which JRMCoreH method to use based on adapter string
+            // Adapter format: "JRMCoreH.tpShort(curTPLong)" or "JRMCoreH.clampTP(curTPLong)"
+            boolean useTpShort = site.adapter != null && site.adapter.contains("tpShort");
+            boolean useClampTP = site.adapter != null && site.adapter.contains("clampTP");
 
             // Field read: GETFIELD/GETSTATIC curTP or curTPLong
             // Field write: PUTFIELD/PUTSTATIC curTP or curTPLong
@@ -517,16 +522,24 @@ public final class TpPatch {
                         // GETFIELD curTPLong:J -> keep as is (already long)
                         return idx;
                     } else if (isCurTP) {
-                        // GETFIELD curTP:I -> replace with TpUtil.mirror(curTPLong)
-                        // TpUtil.mirror(J)I saturates long to int range
+                        // GETFIELD curTP:I -> replace with JRMCoreH.tpShort/clampTP(curTPLong) or TpUtil.mirror(curTPLong)
+                        // GUI adapters (DBCTalkGui, StatSheetGui) require JRMCoreH.tpShort/clampTP
                         InsnList repl = new InsnList();
                         repl.add(new FieldInsnNode(Opcodes.GETSTATIC,
                                 "JinRyuu/JRMCore/JRMCoreH", "curTPLong", "J"));
-                        repl.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                "JinRyuu/JRMCore/TpUtil", "mirror", "(J)I", false));
-                        // If tpShort was requested (returns short), add I2S
-                        if (site.adapter != null && site.adapter.contains("tpShort")) {
-                            repl.add(new InsnNode(Opcodes.I2S));
+
+                        if (useTpShort) {
+                            // JRMCoreH.tpShort(J)S - saturates to Short range
+                            repl.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                                    "JinRyuu/JRMCore/JRMCoreH", "tpShort", "(J)S", false));
+                        } else if (useClampTP) {
+                            // JRMCoreH.clampTP(J)I - saturates to Integer range
+                            repl.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                                    "JinRyuu/JRMCore/JRMCoreH", "clampTP", "(J)I", false));
+                        } else {
+                            // Fallback: TpUtil.mirror(J)I - saturates to Integer range
+                            repl.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                                    "JinRyuu/JRMCore/TpUtil", "mirror", "(J)I", false));
                         }
                         mn.instructions.insert(insn, repl);
                         mn.instructions.remove(insn);
@@ -535,8 +548,6 @@ public final class TpPatch {
                 } else { // write
                     if (isCurTPLong) {
                         // PUTFIELD curTPLong:J -> replace with TpUtil.applyLocal
-                        // Stack: target, value
-                        // But GETFIELD/PUTFIELD on JRMCoreH are static usually
                         InsnList repl = new InsnList();
                         repl.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
                                 "JinRyuu/JRMCore/TpUtil", "applyLocal", "(J)V", false));
@@ -545,7 +556,6 @@ public final class TpPatch {
                         return idx;
                     } else if (isCurTP) {
                         // PUTFIELD curTP:I -> replace with TpUtil.applyLocal(value) after I2L
-                        // Or just remove (legacy mirror, TpUtil.applyLocal writes both)
                         InsnList repl = new InsnList();
                         repl.add(new InsnNode(Opcodes.I2L));
                         repl.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
@@ -769,9 +779,141 @@ public final class TpPatch {
 
     private static void injectJRMCoreHMethods(Map<String, ClassNode> classes) {
         // JRMCoreH has major version 50 (Java 6) bytecode which doesn't support stack map frames.
-        // Injecting new methods causes Frame.merge NPE. Instead, use TpUtil.mirror() which
-        // already provides the same long->int saturation logic.
-        System.out.println("  Skipping JRMCoreH method injection (using TpUtil.mirror instead)");
+        // We inject tpShort(J)S and clampTP(J)I methods required by GUI adapters (DBCTalkGui, StatSheetGui).
+        // These methods are also present in the pre-compiled build/classes/JRMCoreH.class.
+        String jrmcHName = "JinRyuu/JRMCore/JRMCoreH";
+        ClassNode cn = classes.get(jrmcHName);
+        if (cn == null) {
+            System.err.println("WARNING: JRMCoreH not found in class map, cannot inject tpShort/clampTP");
+            return;
+        }
+
+        // Check if methods already exist (e.g., from pre-compiled class injection)
+        boolean hasTpShort = false;
+        boolean hasClampTP = false;
+        for (MethodNode m : cn.methods) {
+            if ("tpShort".equals(m.name) && "(J)S".equals(m.desc)) hasTpShort = true;
+            if ("clampTP".equals(m.name) && "(J)I".equals(m.desc)) hasClampTP = true;
+        }
+
+        if (hasTpShort && hasClampTP) {
+            System.out.println("  JRMCoreH already has tpShort and clampTP (from pre-compiled injection)");
+            return;
+        }
+
+        // Add tpShort(J)S - saturates long to Short range
+        if (!hasTpShort) {
+            InsnList tpShortBody = new InsnList();
+            // value > Short.MAX_VALUE ? Short.MAX_VALUE : (value < Short.MIN_VALUE ? Short.MIN_VALUE : (short)value)
+            LabelNode lGreater = new LabelNode();
+            LabelNode lLess = new LabelNode();
+            LabelNode lEnd = new LabelNode();
+
+            // if (value > Short.MAX_VALUE) goto lGreater
+            tpShortBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
+            tpShortBody.add(new LdcInsnNode(Short.MAX_VALUE));
+            tpShortBody.add(new InsnNode(Opcodes.LCMP));
+            tpShortBody.add(new JumpInsnNode(Opcodes.IFGT, lGreater));
+
+            // if (value < Short.MIN_VALUE) goto lLess
+            tpShortBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
+            tpShortBody.add(new LdcInsnNode(Short.MIN_VALUE));
+            tpShortBody.add(new InsnNode(Opcodes.LCMP));
+            tpShortBody.add(new JumpInsnNode(Opcodes.IFLT, lLess));
+
+            // return (short)value
+            tpShortBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
+            tpShortBody.add(new InsnNode(Opcodes.L2I));
+            tpShortBody.add(new InsnNode(Opcodes.I2S));
+            tpShortBody.add(new InsnNode(Opcodes.IRETURN));
+
+            // lGreater: return Short.MAX_VALUE
+            tpShortBody.add(lGreater);
+            tpShortBody.add(new InsnNode(Opcodes.ICONST_0)); // placeholder
+            tpShortBody.add(new InsnNode(Opcodes.ICONST_0)); // will be replaced
+            tpShortBody.add(new LdcInsnNode(Short.MAX_VALUE));
+            tpShortBody.add(new InsnNode(Opcodes.IRETURN));
+
+            // lLess: return Short.MIN_VALUE
+            tpShortBody.add(lLess);
+            tpShortBody.add(new LdcInsnNode(Short.MIN_VALUE));
+            tpShortBody.add(new InsnNode(Opcodes.IRETURN));
+
+            // Fix: the lGreater section had wrong instructions, let me simplify
+            // Actually, let me use a cleaner approach
+            tpShortBody.clear();
+
+            // if (value > Short.MAX_VALUE) return Short.MAX_VALUE;
+            LabelNode l1 = new LabelNode();
+            LabelNode l2 = new LabelNode();
+            LabelNode l3 = new LabelNode();
+
+            tpShortBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
+            tpShortBody.add(new LdcInsnNode(Short.MAX_VALUE));
+            tpShortBody.add(new InsnNode(Opcodes.LCMP));
+            tpShortBody.add(new JumpInsnNode(Opcodes.IFGT, l1));
+
+            tpShortBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
+            tpShortBody.add(new LdcInsnNode(Short.MIN_VALUE));
+            tpShortBody.add(new InsnNode(Opcodes.LCMP));
+            tpShortBody.add(new JumpInsnNode(Opcodes.IFLT, l2));
+
+            tpShortBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
+            tpShortBody.add(new InsnNode(Opcodes.L2I));
+            tpShortBody.add(new InsnNode(Opcodes.I2S));
+            tpShortBody.add(new InsnNode(Opcodes.IRETURN));
+
+            tpShortBody.add(l1);
+            tpShortBody.add(new LdcInsnNode(Short.MAX_VALUE));
+            tpShortBody.add(new InsnNode(Opcodes.IRETURN));
+
+            tpShortBody.add(l2);
+            tpShortBody.add(new LdcInsnNode(Short.MIN_VALUE));
+            tpShortBody.add(new InsnNode(Opcodes.IRETURN));
+
+            MethodNode tpShort = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                    "tpShort", "(J)S", null, null);
+            tpShort.instructions.add(tpShortBody);
+            tpShort.visitMaxs(4, 2); // stack=4, locals=2 (1 long param = 2 slots)
+            cn.methods.add(tpShort);
+            System.out.println("  Added tpShort(J)S to JRMCoreH");
+        }
+
+        // Add clampTP(J)I - saturates long to Integer range
+        if (!hasClampTP) {
+            InsnList clampTPBody = new InsnList();
+            LabelNode l1 = new LabelNode();
+            LabelNode l2 = new LabelNode();
+
+            clampTPBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
+            clampTPBody.add(new LdcInsnNode(Integer.MAX_VALUE));
+            clampTPBody.add(new InsnNode(Opcodes.LCMP));
+            clampTPBody.add(new JumpInsnNode(Opcodes.IFGT, l1));
+
+            clampTPBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
+            clampTPBody.add(new LdcInsnNode(Integer.MIN_VALUE));
+            clampTPBody.add(new InsnNode(Opcodes.LCMP));
+            clampTPBody.add(new JumpInsnNode(Opcodes.IFLT, l2));
+
+            clampTPBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
+            clampTPBody.add(new InsnNode(Opcodes.L2I));
+            clampTPBody.add(new InsnNode(Opcodes.IRETURN));
+
+            clampTPBody.add(l1);
+            clampTPBody.add(new LdcInsnNode(Integer.MAX_VALUE));
+            clampTPBody.add(new InsnNode(Opcodes.IRETURN));
+
+            clampTPBody.add(l2);
+            clampTPBody.add(new LdcInsnNode(Integer.MIN_VALUE));
+            clampTPBody.add(new InsnNode(Opcodes.IRETURN));
+
+            MethodNode clampTP = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                    "clampTP", "(J)I", null, null);
+            clampTP.instructions.add(clampTPBody);
+            clampTP.visitMaxs(4, 2); // stack=4, locals=2
+            cn.methods.add(clampTP);
+            System.out.println("  Added clampTP(J)I to JRMCoreH");
+        }
     }
 
     private static MethodNode findMethod(ClassNode cn, String name, String desc) {
@@ -938,13 +1080,11 @@ public final class TpPatch {
                 }
             }
             return bytecode;
-        } catch (IndexOutOfBoundsException e) {
-            // Frame computation failed - likely due to old class version (50) with modified bytecode
-            System.err.println("WARNING: Frame computation failed for " + cn.name + ", retrying with COMPUTE_MAXS only: " + e.getMessage());
-        } catch (Exception e) {
-            // Other frame-related errors
+        } catch (Throwable e) {
+            // Frame computation failed - catch ALL Throwables including Errors (e.g., NPE in Frame.merge for version 50 classes)
             String msg = e.getMessage();
-            if (msg != null && (msg.contains("Frame") || msg.contains("stack") || msg.contains("StackMap"))) {
+            boolean isFrameError = msg != null && (msg.contains("Frame") || msg.contains("stack") || msg.contains("StackMap") || msg.contains("merge"));
+            if (isFrameError || e instanceof IndexOutOfBoundsException) {
                 System.err.println("WARNING: Frame computation failed for " + cn.name + ", retrying with COMPUTE_MAXS only: " + msg);
             } else {
                 throw e;

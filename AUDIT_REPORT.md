@@ -3,7 +3,7 @@
 **Date:** 2026-11-11
 **Auditor:** OpenCode AI Agent
 **Scope:** Full implementation verification across JRMCore, DBC, and NPCDBC mods
-**Commit:** Parent a0b46e1, Submodule b10044a
+**Commit:** Parent a0b46e1, Submodule 922f17b
 
 ---
 
@@ -23,9 +23,9 @@ All three structural blockers identified in the initial audit have been fixed:
 ### SHA-256 Verification (Build 1.1.1)
 | Artifact | SHA-256 | Status |
 |----------|---------|--------|
-| JRMCore-patched.jar | `BA0AF97938040DE95E802A2892DF8CF0EC611A745BD701D494C0C021FFD8AA43` | ✅ Generated |
-| DBC-patched.jar | `8286CF6B1D07A2CF08428CD95119295CC23DA977F825203AF9738B53B8DCDDF6` | ✅ Generated |
-| NPCDBC-patched.jar | `E5A8699F3F3ADBA9FAF52D637C07E246587DD019D70F08BAC857925A98A864F4` | ✅ Generated |
+| JRMCore-patched.jar | `F4CEA76DDA6FEAB595DE48AD1A4ECA9CD625A2B40F753A8F1F81336C0252A3B0` | ✅ Generated |
+| DBC-patched.jar | `4E6A7C26A58F88E098FEBE37B3A10BC3CEA3EE49ED9286B26FC172ECF82B22DA` | ✅ Generated |
+| NPCDBC-patched.jar | `34DABC9E359E8F1C00DF2A7EFB94106B139BFF9B2EA8FE4878420FD1704275C2` | ✅ Generated |
 
 ### Callsite Classification (Verified on Rebuilt JARs)
 | Mod | Total Sites | Categories |
@@ -54,21 +54,19 @@ All three structural blockers identified in the initial audit have been fixed:
 
 ---
 
-## Known Violations (AuditPatched)
+## Known Limitations (Documented)
 
-The `AuditPatched` tool reports 3 violations in JRMCore-patched.jar. These are **documented known limitations** where the CSV classification did not cover all NBT operations on TP keys in certain handler methods:
+### 1. TpClientState.current() returns raw curTPLong without clamp
+**Location:** `JinRyuu/JRMCore/TpClientState.current()J @2`
+**Classification:** AuditPatched violation (leitura de curTPLong sem clamp)
+**Root cause:** This method is a client-side getter used for HUD/display purposes. Returning the raw `curTPLong` is correct for display; the clamp is applied by GUI adapters via `JRMCoreH.clampTP`.
+**Impact:** Low - display only, not a security boundary.
 
-| # | Violation | Location | Root Cause |
-|---|-----------|----------|------------|
-| 1 | NBT int direto em chave TP (write) | `JRMCorePacHanS.handleQuad @1292` | CSV covers 6 sites in handleQuad but misses this write at offset 1292 |
-| 2 | NBT int direto em chave TP (read) | `JRMCorePacHanS.handleUpgrade @494` | CSV covers 3 sites in handleUpgrade but misses this read at offset 494 |
-| 3 | Leitura de curTPLong sem clamp | `TpClientState.current()J @2` | Returns raw `curTPLong` for client-side display; not a security boundary |
-
-**Impact assessment:**
-- Violations 1-2: Direct `NBTTagCompound.func_74762_e/74768_a` calls on `jrmcTpint` key bypass the `TpUtil.getTagInt/setTagInt` delta logic. In practice these are read-modify-write sequences where the int delta semantics still apply because the value written is derived from an int load. Low risk for current gameplay values.
-- Violation 3: `TpClientState.current()` is a client-side getter used for HUD/display; returning raw long is correct for display purposes. The clamp is applied by GUI adapters via `JRMCoreH.clampTP`.
-
-These violations are **not regressions** - the original unpatched code also used direct NBT int access. The patcher only rewrites sites listed in the CSV. To fix: extend `sites-classified.csv` to cover all NBT operations on TP keys in these methods.
+### 2. CSV coverage gaps (resolved by sequential LDC matching)
+The patcher's `findTargetInstruction` now tracks used LDC indices to ensure each CSV site consumes a unique LDC. This resolved two previously unreachable sites:
+- `JRMCorePacHanS.handleQuad @1292` (jrmcTpint write)
+- `JRMCorePacHanS.handleUpgrade @494` (jrmcTpint read)
+These are now correctly rewritten to `TpUtil.setTagInt` and `TpUtil.getTagInt` respectively.
 
 ---
 
@@ -99,8 +97,9 @@ Tests run against stub classes (no game runtime required).
 
 ## Fixes Applied
 
-### 1. `TpPatch.java` - Retarget Architecture + `injectJRMCoreHMethods()`
+### 1. `TpPatch.java` - Retarget Architecture + `injectJRMCoreHMethods()` + `usedLdc` tracking
 - **Architecture change:** Replaced generic `ADAPTER_REGISTRY` with stack-identical retargeting via `RetargetAdapter` + `SkipAdapter`
+- **LDC deduplication:** Added `usedLdcByMethod` tracking to ensure each CSV site consumes a unique LDC instruction, fixing site collisions in methods with multiple same-key LDCs (e.g., handleQuad, handleUpgrade)
 - **Mappings active:**
   - `NBTTagCompound.func_74762_e/74768_a` → `TpUtil.getTagInt/setTagInt`
   - `JRMCoreH.getInt/setInt(EntityPlayer,String)` → `TpUtil.getPlayerInt/setPlayerInt`
@@ -121,6 +120,13 @@ Tests run against stub classes (no game runtime required).
 ### 4. Frame Strategy by Class Version
 - `major >= 51` (Java 7+): `COMPUTE_FRAMES | COMPUTE_MAXS` with explicit failure on error
 - `major <= 50` (Java 6/1.7): `COMPUTE_MAXS` only
+
+### 5. `injectTpUtilClasses()` - Explicit Allowlist with Protections
+- Explicit allowlist of 15 production helper classes
+- Rejects `JRMCoreH.class` from production directory (transformed separately)
+- Fails on unexpected `.class` files in production directory
+- Verifies all allowlisted classes are present
+- Does not replace original JAR classes (checks for collisions)
 
 ---
 
@@ -179,9 +185,8 @@ The `VerifyJar` tool reports many "metodo-nao-resolvido"/"campo-nao-resolvido" f
 The candidate build is labeled **1.1.1** (matching the target version). The original broken 1.1.1 release was never published.
 
 ### Known Limitations
-1. **CSV coverage gaps** - 3 AuditPatched violations (documented above) due to incomplete CSV classification in `handleUpgrade`/`handleQuad`
-2. **TpClientState.current()** returns raw long - by design for client display; GUI adapters apply clamp
-3. **Legacy int bridge** uses delta semantics - may differ from absolute-write expectations for non-TP keys (delegates to original NBT)
+1. **TpClientState.current()** returns raw long - by design for client display; GUI adapters apply clamp
+2. **Legacy int bridge** uses delta semantics - may differ from absolute-write expectations for non-TP keys (delegates to original NBT)
 
 ---
 
@@ -197,15 +202,16 @@ The three technically verified JARs (JRMCore, DBC, NPCDBC) have been produced wi
 - Zero residual jrmcTpint references in DBC/NPCDBC (only expected in JRMCore)
 - All 3 JARs pass -Xverify:all on Java 8
 - 121 offline unit tests pass
+- LDC deduplication fix ensures correct site matching in methods with multiple same-key LDCs
 
-**Classification: APROVADO COM RESSALVAS** - Ready for integration testing and release. The 3 documented AuditPatched violations are known limitations from CSV coverage gaps, not regressions. They should be addressed by extending the CSV classification before or alongside the next release cycle.
+**Classification: APROVADO** - Ready for integration testing and release. The single AuditPatched violation (`TpClientState.current()` returning raw `curTPLong`) is by design for client-side display and does not affect security or correctness.
 
 ---
 
 ## Files Examined / Modified
 
 ### Core Fixes (bigtp/tools/)
-- `TpPatch.java` - Retarget architecture, `injectJRMCoreHMethods()`, allowlist injection, packet registration
+- `TpPatch.java` - Retarget architecture, `injectJRMCoreHMethods()`, `usedLdc` tracking, allowlist injection, packet registration
 - `HierarchyClassWriter.java` - `writeClassWithFallback` catches Throwable
 - `VerifyJar.java` - Verification tool with SRG classpath support
 - `AuditPatched.java` - Post-patch violation auditor
@@ -279,6 +285,6 @@ Get-FileHash -Algorithm SHA256 bigtp/dist/1.1.1/jars/*.jar > bigtp/dist/1.1.1/ja
 
 ## Push Status
 
-**Submodule (AUDITORIA_DBC):** HEAD at `b10044a`, synchronized with `origin/master`.
+**Submodule (AUDITORIA_DBC):** HEAD at `922f17b`, synchronized with `origin/master`.
 
 **Parent (NanatsuCore):** HEAD at `a0b46e1`. **Push blocked** - `origin` points to `https://github.com/VulgoFerd/AUDITORIA_DBC.git`; `git pull` refuses "unrelated histories". Parent repo push requires separate resolution.

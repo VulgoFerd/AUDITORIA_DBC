@@ -29,30 +29,30 @@ public final class TpNbt implements TpTagView {
 
     @Override
     public int tagId(String key) {
-        NBTBase base = tag.getTag(key);
+        NBTBase base = tag.func_74781_a(key);
         if (base == null) {
             return ABSENT;
         }
-        return base.getId() & 0xFF;
+        return base.func_74732_a() & 0xFF;
     }
 
     @Override
     public int getInt(String key) {
-        return tag.getInteger(key);
+        return tag.func_74762_e(key);
     }
 
     @Override
     public long getLong(String key) {
-        return tag.getLong(key);
+        return tag.func_74763_f(key);
     }
 
     @Override
     public void setInt(String key, int value) {
-        tag.setInteger(key, value);
+        tag.func_74768_a(key, value);
     }
 
     @Override
     public void setLong(String key, long value) {
-        tag.setLong(key, value);
+        tag.func_74772_a(key, value);
     }
 }

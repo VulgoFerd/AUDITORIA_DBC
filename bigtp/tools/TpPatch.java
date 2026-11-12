@@ -11,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 
 /**
- * BigTP 1.0.7 Patcher - Strict, transactional, hierarchy-aware.
+ * BigTP 1.1.1 Patcher - Strict, transactional, hierarchy-aware.
  *
  * Pipeline:
  *  1. Load classification from SiteRewriter CSV
@@ -38,7 +38,7 @@ public final class TpPatch {
         File optionalDepsFile;      // analysis/optional-deps.txt
         boolean dryRun = false;
         boolean verify = true;      // run VerifyJar after patching
-        int expectMajor = 52;       // Java 8 class file version
+        int expectMajor = 0;        // 0 = aceitar a versao original de cada classe
     }
 
     // ============================================================ SITE DEFINITION
@@ -83,564 +83,137 @@ public final class TpPatch {
         int exec(MethodNode mn, int idx, Site site, HierarchyResolver hier);
     }
 
-    // ------------------------------------------------------------------ READ: TpUtil.getTP / getTPInt / readUsable
-    static final class ReadAdapter implements AdapterExec {
-        @Override public int exec(MethodNode mn, int idx, Site site, HierarchyResolver hier) {
-            // Pattern: [target] LDC "key" INVOKE... -> replace with INVOKESTATIC TpUtil.readUsable/getTP/getTPInt
-            // Target is either NBTTagCompound (on stack) or EntityPlayer
-            // We need to know which overload to call based on context.
+    // ------------------------------------------------------------------ RETARGET
+    /**
+     * Reescreve um site SEM alterar a forma da pilha.
+     *
+     * Regras:
+     *  - chamada de membro: substitui a instrucao por uma INVOKESTATIC que
+     *    recebe o mesmo receptor e os mesmos argumentos, na mesma ordem. A
+     *    pilha consumida e produzida e identica, portanto nao ha risco de
+     *    max stack, locais temporarios ou frames;
+     *  - leitura de {@code JRMCoreH.curTP}: passa a ler {@code curTPLong} e a
+     *    converter com {@code clampTP(J)I};
+     *  - escrita em {@code JRMCoreH.curTP}: grava o mesmo valor em
+     *    {@code curTPLong} (via I2L) e mantem o espelho atualizado.
+     *
+     * Qualquer site cuja instrucao nao corresponda a um mapeamento conhecido
+     * aborta o patch. Nenhum site e "resolvido" por suposicao.
+     */
+    static final class RetargetAdapter implements AdapterExec {
+        private static final String JRMCOREH = "JinRyuu/JRMCore/JRMCoreH";
+        private static final String NBT = "net/minecraft/nbt/NBTTagCompound";
+        private static final String TP = "JinRyuu/JRMCore/TpUtil";
 
-            AbstractInsnNode call = mn.instructions.get(idx);
-            if (!(call instanceof MethodInsnNode)) return -1;
-            MethodInsnNode mi = (MethodInsnNode) call;
-
-            boolean isPlayer = "JinRyuu/JRMCore/JRMCoreH".equals(mi.owner)
-                    && ("getInt".equals(mi.name) || "getLong".equals(mi.name));
-            boolean isNbtReadInt = "net/minecraft/nbt/NBTTagCompound".equals(mi.owner)
-                    && "func_74762_e".equals(mi.name); // getInteger
-            boolean isNbtReadLong = "net/minecraft/nbt/NBTTagCompound".equals(mi.owner)
-                    && "func_74763_f".equals(mi.name); // getLong
-
-            String targetType;
-            String methodName;
-            String methodDesc;
-
-            if (isPlayer) {
-                targetType = "Lnet/minecraft/entity/player/EntityPlayer;";
-                methodName = "readUsable"; // reads from player via JRMCoreH.nbt internally
-                methodDesc = "(Lnet/minecraft/entity/player/EntityPlayer;)J";
-            } else if (isNbtReadLong) {
-                targetType = "Lnet/minecraft/nbt/NBTTagCompound;";
-                methodName = "readUsable";
-                methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;)J";
-            } else if (isNbtReadInt) {
-                targetType = "Lnet/minecraft/nbt/NBTTagCompound;";
-                methodName = "getTPInt";
-                methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;)I";
-            } else {
-                // fallback: readUsable for NBT
-                targetType = "Lnet/minecraft/nbt/NBTTagCompound;";
-                methodName = "readUsable";
-                methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;)J";
-            }
-
-            // Remove the LDC "key" and the original call
-            // Find the LDC before the call (within 3 instructions)
-            int ldcIdx = -1;
-            for (int i = idx - 1; i >= Math.max(0, idx - 5); i--) {
-                if (mn.instructions.get(i) instanceof LdcInsnNode) {
-                    Object cst = ((LdcInsnNode) mn.instructions.get(i)).cst;
-                    if (cst instanceof String && ((String) cst).startsWith("jrmcTp")) {
-                        ldcIdx = i;
-                        break;
-                    }
-                }
-            }
-
-            InsnList replacement = new InsnList();
-            replacement.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                    "JinRyuu/JRMCore/TpUtil", methodName, methodDesc, false));
-
-            // If original method returned int but new method returns long, add L2I for compatibility
-            boolean originalReturnsInt = isPlayer && "getInt".equals(mi.name)
-                    || isNbtReadInt;
-            boolean newReturnsLong = methodDesc.endsWith(")J");
-            if (originalReturnsInt && newReturnsLong) {
-                replacement.add(new InsnNode(Opcodes.L2I));
-            }
-
-            if (ldcIdx >= 0) {
-                // Remove the LDC
-                mn.instructions.remove(mn.instructions.get(ldcIdx));
-                // Adjust idx since we removed an instruction before it
-                idx--;
-                // Replace the call with the replacement list
-                mn.instructions.insert(call, replacement);
-                mn.instructions.remove(call);
-            } else {
-                // No LDC found, just replace call
-                mn.instructions.insert(call, replacement);
-                mn.instructions.remove(call);
-            }
-            return idx;
-        }
-    }
-
-    // ------------------------------------------------------------------ WRITE_ABS: TpUtil.write / writeCheckedVoid
-    static final class WriteAbsAdapter implements AdapterExec {
-        @Override public int exec(MethodNode mn, int idx, Site site, HierarchyResolver hier) {
-            // Pattern: [target] [value] LDC "key" INVOKE...setInt/setLong/setInteger/setLong
-            // Replace with INVOKESTATIC TpUtil.writeCheckedVoid (or write)
-
-            AbstractInsnNode call = mn.instructions.get(idx);
-            if (!(call instanceof MethodInsnNode)) return -1;
-            MethodInsnNode mi = (MethodInsnNode) call;
-
-            boolean isPlayer = "JinRyuu/JRMCore/JRMCoreH".equals(mi.owner)
-                    && ("setInt".equals(mi.name) || "setLong".equals(mi.name));
-            boolean isNbtWriteInt = "net/minecraft/nbt/NBTTagCompound".equals(mi.owner)
-                    && "func_74768_a".equals(mi.name); // setInteger
-            boolean isNbtWriteLong = "net/minecraft/nbt/NBTTagCompound".equals(mi.owner)
-                    && "func_74772_a".equals(mi.name); // setLong
-
-            // Check adapter string for specific command methods
-            String adapter = site.adapter != null ? site.adapter.toLowerCase() : "";
-            boolean isCommandWrite = adapter.contains("commandwrite");
-            boolean isCommandAdd = adapter.contains("commandadd");
-            boolean isCommandTake = adapter.contains("commandtake");
-
-            String targetType;
-            String methodName;
-            String methodDesc;
-
-            if (isPlayer) {
-                targetType = "Lnet/minecraft/entity/player/EntityPlayer;";
-                methodName = "writeAndSync";
-                methodDesc = "(Lnet/minecraft/entity/player/EntityPlayer;J)V";
-            } else if (isNbtWriteLong) {
-                targetType = "Lnet/minecraft/nbt/NBTTagCompound;";
-                methodName = "writeCheckedVoid";
-                methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
-            } else if (isCommandWrite) {
-                // commandWrite for NBT (e.g., /jrmctp command)
-                targetType = "Lnet/minecraft/nbt/NBTTagCompound;";
-                methodName = "commandWrite";
-                methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
-            } else { // NBT write int (jrmcTpint) - write long via checked
-                targetType = "Lnet/minecraft/nbt/NBTTagCompound;";
-                methodName = "writeCheckedVoid";
-                methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
-            }
-
-            // Find and remove the LDC "key"
-            int ldcIdx = -1;
-            for (int i = idx - 1; i >= Math.max(0, idx - 5); i--) {
-                if (mn.instructions.get(i) instanceof LdcInsnNode) {
-                    Object cst = ((LdcInsnNode) mn.instructions.get(i)).cst;
-                    if (cst instanceof String && ((String) cst).startsWith("jrmcTp")) {
-                        ldcIdx = i;
-                        break;
-                    }
-                }
-            }
-
-            // The stack before call: ..., target, value, "key"
-            // We need: ..., target, value
-            // Then call TpUtil.writeCheckedVoid(target, value) or writeAndSync
-            // If value is int (for jrmcTpint write), need I2L before call
-
-            InsnList replacement = new InsnList();
-            // Check if we need I2L: original call was setInteger (int) or setInt (int)
-            boolean valueIsInt = isPlayer || isNbtWriteInt;
-            if (valueIsInt) {
-                replacement.add(new InsnNode(Opcodes.I2L));
-            }
-            replacement.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                    "JinRyuu/JRMCore/TpUtil", methodName, methodDesc, false));
-
-            if (ldcIdx >= 0) {
-                mn.instructions.remove(mn.instructions.get(ldcIdx));
-                idx--;
-            }
-            mn.instructions.insert(call, replacement);
-            mn.instructions.remove(call);
-            return idx;
-        }
-    }
-
-    // ------------------------------------------------------------------ WRITE_DELTA_ADD: TpUtil.gainVoid / commandAdd
-    static final class GainAdapter implements AdapterExec {
-        @Override public int exec(MethodNode mn, int idx, Site site, HierarchyResolver hier) {
-            // Pattern: READ (getInt/getLong) -> IADD/LADD -> WRITE (setInt/setLong)
-            // We need to replace the entire READ + ADD + WRITE sequence with a single call.
-            // The READ is at some earlier index, the WRITE is at idx.
-            // Context tells us it's an ADD (iadd/ladd present).
-
-            // Find the READ instruction (GETFIELD/GETSTATIC/INVOKESTATIC getInt/getLong)
-            // It's typically 5-15 instructions before the WRITE.
-            int readIdx = -1;
-            for (int i = idx - 1; i >= Math.max(0, idx - 20); i--) {
-                AbstractInsnNode n = mn.instructions.get(i);
-                if (n instanceof MethodInsnNode) {
-                    MethodInsnNode mi = (MethodInsnNode) n;
-                    if (("getInt".equals(mi.name) || "getLong".equals(mi.name)
-                            || "func_74762_e".equals(mi.name) || "func_74763_f".equals(mi.name))
-                            && ("JinRyuu/JRMCore/JRMCoreH".equals(mi.owner)
-                                    || "net/minecraft/nbt/NBTTagCompound".equals(mi.owner))) {
-                        readIdx = i;
-                        break;
-                    }
-                } else if (n instanceof FieldInsnNode) {
-                    FieldInsnNode fi = (FieldInsnNode) n;
-                    if (("curTP".equals(fi.name) || "curTPLong".equals(fi.name))
-                            && (fi.getOpcode() == Opcodes.GETFIELD || fi.getOpcode() == Opcodes.GETSTATIC)
-                            && "JinRyuu/JRMCore/JRMCoreH".equals(fi.owner)) {
-                        readIdx = i;
-                        break;
-                    }
-                }
-            }
-
-            if (readIdx < 0) return -1; // couldn't find read
-
-            // Determine target type and method
-            AbstractInsnNode writeCall = mn.instructions.get(idx);
-            MethodInsnNode wmi = (MethodInsnNode) writeCall;
-
-            boolean isPlayer = "JinRyuu/JRMCore/JRMCoreH".equals(wmi.owner)
-                    && ("setInt".equals(wmi.name) || "setLong".equals(wmi.name));
-            boolean isNbtWrite = "net/minecraft/nbt/NBTTagCompound".equals(wmi.owner);
-
-            // Check adapter string for specific command methods
-            String adapter = site.adapter != null ? site.adapter.toLowerCase() : "";
-            boolean isCommandAdd = adapter.contains("commandadd");
-
-            String targetType;
-            String methodName;
-            String methodDesc;
-
-            if (isPlayer) {
-                targetType = "Lnet/minecraft/entity/player/EntityPlayer;";
-                methodName = "gainAndSync";
-                methodDesc = "(Lnet/minecraft/entity/player/EntityPlayer;J)V";
-            } else if (isCommandAdd) {
-                // commandAdd uses NBTTagCompound
-                targetType = "Lnet/minecraft/nbt/NBTTagCompound;";
-                methodName = "commandAdd";
-                methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
-            } else if (isNbtWrite) {
-                targetType = "Lnet/minecraft/nbt/NBTTagCompound;";
-                methodName = "gainVoid";
-                methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
-            } else {
-                // fallback
-                targetType = "Lnet/minecraft/nbt/NBTTagCompound;";
-                methodName = "gainVoid";
-                methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
-            }
-
-            // We need to extract the GAIN value from the stack.
-            // Pattern: READ -> ... -> GAIN_VALUE -> IADD/LADD -> ... -> WRITE
-            // The GAIN_VALUE is pushed between read and add.
-            // We'll find the IADD/LADD and the value pushed before it.
-
-            // Find the LAST IADD/LADD before the WRITE (search backwards from WRITE)
-            int addIdx = -1;
-            for (int i = idx - 1; i > readIdx; i--) {
-                AbstractInsnNode n = mn.instructions.get(i);
-                if (n instanceof InsnNode && (n.getOpcode() == Opcodes.IADD || n.getOpcode() == Opcodes.LADD)) {
-                    addIdx = i;
-                    break;
-                }
-            }
-            if (addIdx < 0) return -1;
-
-            // The gain value is typically in a local variable loaded just before IADD
-            // Or it's a constant. We'll look for ILOAD/LLOAD/BIPUSH/SIPUSH/LDC before IADD.
-            // This is complex - we'll use a simpler approach: replace from READ to WRITE
-            // with a sequence that: reads the target, loads the gain, calls gainVoid.
-
-            // For now, assume the gain is in a local variable. We need to find which one.
-            // This is highly context-dependent. Let's use a more robust approach:
-            // Replace the WRITE instruction with a call that takes (target, gain)
-            // where gain is computed from the stack at the ADD point.
-
-            // Actually, the simplest correct transformation:
-            // 1. Keep the READ (it puts target on stack)
-            // 2. Replace IADD + WRITE with: gain_value, INVOKESTATIC gainVoid
-            // But we need the target to be under the gain value.
-
-            // Better: Replace the entire sequence from READ to WRITE with:
-            //   READ_TARGET (dup target) -> LOAD_GAIN -> INVOKESTATIC gainVoid
-            // This requires knowing the exact stack layout.
-
-            // Given the complexity, we'll use a conservative approach:
-            // Remove instructions from readIdx to idx inclusive, insert new sequence.
-
-            // Find the target base (what was loaded before READ)
-            // For player: ALOAD player before getInt
-            // For NBT: ALOAD nbt before getInteger/getLong
-
-            // This is getting very complex. Let's use a different strategy:
-            // For gain sites, we know the pattern from the explicit adapter table.
-            // The adapter string tells us exactly what to emit.
-            // e.g. "TpUtil.writeCheckedVoid(player, value + gain)" -> we emit read + gain + writeCheckedVoid
-            // But we don't have the 'value' and 'gain' separated in bytecode easily.
-
-            // Practical approach: For each known gain site (from EXPLICIT_ADAPTERS),
-            // we have a hardcoded transformation in the old TpPatch.
-            // We'll delegate to those for now and use generic only for simple cases.
-
-            // For this generic adapter, we'll handle the common case:
-            // READ (target on stack) -> LOAD gain -> IADD -> WRITE
-            // Transform to: READ (target) -> LOAD gain -> I2L -> INVOKESTATIC gainVoid
-
-            // Remove from IADD to WRITE inclusive, replace with gainVoid call
-            int startRemove = addIdx;
-            int endRemove = idx;
-
-            // But we need to keep the target and gain on stack.
-            // At IADD: stack has ..., target, gain
-            // We want: ..., target, gain -> I2L -> gainVoid(target, gain)
-            // So we replace IADD..WRITE with: I2L, INVOKESTATIC gainVoid
-
-            InsnList replacement = new InsnList();
-            // Stack at IADD: ..., target, gain (both int or both long)
-            // Determine if int or long by checking IADD vs LADD
-            AbstractInsnNode addInsn = mn.instructions.get(addIdx);
-            if (addInsn.getOpcode() == Opcodes.IADD) {
-                replacement.add(new InsnNode(Opcodes.I2L));
-            }
-            // target is already long on stack (from READ which we keep)
-            // gain is now long (after I2L)
-            replacement.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                    "JinRyuu/JRMCore/TpUtil", methodName, methodDesc, false));
-
-            // Remove IADD through WRITE
-            for (int i = endRemove; i >= startRemove; i--) {
-                mn.instructions.remove(mn.instructions.get(i));
-            }
-            // Insert at addIdx (where IADD was)
-            mn.instructions.insert(mn.instructions.get(addIdx), replacement);
-            // Remove the old IADD (now at addIdx)
-            mn.instructions.remove(mn.instructions.get(addIdx));
-
-            return addIdx;
-        }
-    }
-
-    // ------------------------------------------------------------------ WRITE_DELTA_SUB: TpUtil.spendVoid / commandTake
-    static final class SpendAdapter implements AdapterExec {
-        @Override public int exec(MethodNode mn, int idx, Site site, HierarchyResolver hier) {
-            // Similar to GainAdapter but for ISUB/LSUB -> spendVoid/commandTake
-            // Pattern: READ -> ... -> COST -> ISUB -> ... -> WRITE
-            // Transform: READ -> LOAD cost -> I2L -> INVOKESTATIC spendVoid
-
-            int readIdx = -1;
-            for (int i = idx - 1; i >= Math.max(0, idx - 20); i--) {
-                AbstractInsnNode n = mn.instructions.get(i);
-                if (n instanceof MethodInsnNode) {
-                    MethodInsnNode mi = (MethodInsnNode) n;
-                    if (("getInt".equals(mi.name) || "getLong".equals(mi.name)
-                            || "func_74762_e".equals(mi.name) || "func_74763_f".equals(mi.name))
-                            && ("JinRyuu/JRMCore/JRMCoreH".equals(mi.owner)
-                                    || "net/minecraft/nbt/NBTTagCompound".equals(mi.owner))) {
-                        readIdx = i;
-                        break;
-                    }
-                } else if (n instanceof FieldInsnNode) {
-                    FieldInsnNode fi = (FieldInsnNode) n;
-                    if (("curTP".equals(fi.name) || "curTPLong".equals(fi.name))
-                            && (fi.getOpcode() == Opcodes.GETFIELD || fi.getOpcode() == Opcodes.GETSTATIC)
-                            && "JinRyuu/JRMCore/JRMCoreH".equals(fi.owner)) {
-                        readIdx = i;
-                        break;
-                    }
-                }
-            }
-            if (readIdx < 0) return -1;
-
-            AbstractInsnNode writeCall = mn.instructions.get(idx);
-            MethodInsnNode wmi = (MethodInsnNode) writeCall;
-
-            boolean isPlayer = "JinRyuu/JRMCore/JRMCoreH".equals(wmi.owner)
-                    && ("setInt".equals(wmi.name) || "setLong".equals(wmi.name));
-            boolean isNbtWrite = "net/minecraft/nbt/NBTTagCompound".equals(wmi.owner);
-
-            // Check adapter string for specific command methods
-            String adapter = site.adapter != null ? site.adapter.toLowerCase() : "";
-            boolean isCommandTake = adapter.contains("commandtake");
-
-            String targetType;
-            String methodName;
-            String methodDesc;
-
-            if (isPlayer) {
-                methodName = "spendAndSync";
-                methodDesc = "(Lnet/minecraft/entity/player/EntityPlayer;J)V";
-            } else if (isCommandTake) {
-                methodName = "commandTake";
-                methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
-            } else if (isNbtWrite) {
-                methodName = "spendVoid";
-                methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
-            } else {
-                methodName = "commandTake";
-                methodDesc = "(Lnet/minecraft/nbt/NBTTagCompound;J)V";
-            }
-
-            // Find the LAST ISUB/LSUB before the WRITE (search backwards from WRITE)
-            int subIdx = -1;
-            for (int i = idx - 1; i > readIdx; i--) {
-                AbstractInsnNode n = mn.instructions.get(i);
-                if (n instanceof InsnNode && (n.getOpcode() == Opcodes.ISUB || n.getOpcode() == Opcodes.LSUB)) {
-                    subIdx = i;
-                    break;
-                }
-            }
-            if (subIdx < 0) return -1;
-
-            // Replace ISUB..WRITE with I2L + spendVoid
-            InsnList replacement = new InsnList();
-            AbstractInsnNode subInsn = mn.instructions.get(subIdx);
-            if (subInsn.getOpcode() == Opcodes.ISUB) {
-                replacement.add(new InsnNode(Opcodes.I2L));
-            }
-            replacement.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                    "JinRyuu/JRMCore/TpUtil", methodName, methodDesc, false));
-
-            for (int i = idx; i >= subIdx; i--) {
-                mn.instructions.remove(mn.instructions.get(i));
-            }
-            mn.instructions.insert(mn.instructions.get(subIdx), replacement);
-            mn.instructions.remove(mn.instructions.get(subIdx));
-
-            return subIdx;
-        }
-    }
-
-    // ------------------------------------------------------------------ STATE_LOCAL: TpUtil.applyLocal / JRMCoreH.tpShort / JRMCoreH.clampTP
-    static final class StateLocalAdapter implements AdapterExec {
         @Override public int exec(MethodNode mn, int idx, Site site, HierarchyResolver hier) {
             AbstractInsnNode insn = mn.instructions.get(idx);
+            if (insn == null) {
+                throw new IllegalStateException("Site sem instrucao: " + site.id());
+            }
 
-            // Determine which JRMCoreH method to use based on adapter string
-            // Adapter format: "JRMCoreH.tpShort(curTPLong)" or "JRMCoreH.clampTP(curTPLong)"
-            boolean useTpShort = site.adapter != null && site.adapter.contains("tpShort");
-            boolean useClampTP = site.adapter != null && site.adapter.contains("clampTP");
-
-            // Field read: GETFIELD/GETSTATIC curTP or curTPLong
-            // Field write: PUTFIELD/PUTSTATIC curTP or curTPLong
             if (insn instanceof FieldInsnNode) {
-                FieldInsnNode fi = (FieldInsnNode) insn;
-                boolean isRead = fi.getOpcode() == Opcodes.GETFIELD || fi.getOpcode() == Opcodes.GETSTATIC;
-                boolean isCurTPLong = "curTPLong".equals(fi.name);
-                boolean isCurTP = "curTP".equals(fi.name);
-
-                if (isRead) {
-                    if (isCurTPLong) {
-                        // GETFIELD curTPLong:J -> keep as is (already long)
-                        return idx;
-                    } else if (isCurTP) {
-                        // GETFIELD curTP:I -> replace with JRMCoreH.tpShort/clampTP(curTPLong) or TpUtil.mirror(curTPLong)
-                        // GUI adapters (DBCTalkGui, StatSheetGui) require JRMCoreH.tpShort/clampTP
-                        InsnList repl = new InsnList();
-                        repl.add(new FieldInsnNode(Opcodes.GETSTATIC,
-                                "JinRyuu/JRMCore/JRMCoreH", "curTPLong", "J"));
-
-                        if (useTpShort) {
-                            // JRMCoreH.tpShort(J)S - saturates to Short range
-                            repl.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                    "JinRyuu/JRMCore/JRMCoreH", "tpShort", "(J)S", false));
-                        } else if (useClampTP) {
-                            // JRMCoreH.clampTP(J)I - saturates to Integer range
-                            repl.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                    "JinRyuu/JRMCore/JRMCoreH", "clampTP", "(J)I", false));
-                        } else {
-                            // Fallback: TpUtil.mirror(J)I - saturates to Integer range
-                            repl.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                    "JinRyuu/JRMCore/TpUtil", "mirror", "(J)I", false));
-                        }
-                        mn.instructions.insert(insn, repl);
-                        mn.instructions.remove(insn);
-                        return idx;
-                    }
-                } else { // write
-                    if (isCurTPLong) {
-                        // PUTFIELD curTPLong:J -> replace with TpUtil.applyLocal
-                        InsnList repl = new InsnList();
-                        repl.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                "JinRyuu/JRMCore/TpUtil", "applyLocal", "(J)V", false));
-                        mn.instructions.insert(insn, repl);
-                        mn.instructions.remove(insn);
-                        return idx;
-                    } else if (isCurTP) {
-                        // PUTFIELD curTP:I -> replace with TpUtil.applyLocal(value) after I2L
-                        InsnList repl = new InsnList();
-                        repl.add(new InsnNode(Opcodes.I2L));
-                        repl.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                                "JinRyuu/JRMCore/TpUtil", "applyLocal", "(J)V", false));
-                        mn.instructions.insert(insn, repl);
-                        mn.instructions.remove(insn);
-                        return idx;
-                    }
-                }
+                return retargetField(mn, idx, (FieldInsnNode) insn, site);
             }
 
-            // Method call: applyLocal, acceptNetwork
-            if (insn instanceof MethodInsnNode) {
-                MethodInsnNode mi = (MethodInsnNode) insn;
-                if ("applyLocal".equals(mi.name) && "JinRyuu/JRMCore/TpUtil".equals(mi.owner)) {
-                    // Already correct
-                    return idx;
-                }
-                if ("acceptNetwork".equals(mi.name) && "JinRyuu/JRMCore/TpUtil".equals(mi.owner)) {
-                    return idx;
-                }
+            if (!(insn instanceof MethodInsnNode)) {
+                throw new IllegalStateException("Site nao suportado (" + insn.getClass().getSimpleName()
+                        + "): " + site.id());
             }
 
+            MethodInsnNode mi = (MethodInsnNode) insn;
+
+            // Presenca de chave TP nao depende do tipo; manter a chamada original.
+            if (NBT.equals(mi.owner) && "func_74781_a".equals(mi.name)) {
+                return idx;
+            }
+
+            MethodInsnNode repl = retargetCall(mi, site);
+            if (repl == null) {
+                throw new IllegalStateException("Sem mapeamento para a chamada " + mi.owner + "."
+                        + mi.name + mi.desc + " no site " + site.id());
+            }
+            // INVOKESTATIC recebe o receptor como primeiro argumento; a forma da
+            // pilha precisa ser identica a da chamada original.
+            String expectedDesc = mi.getOpcode() == Opcodes.INVOKESTATIC
+                    ? mi.desc
+                    : "(" + "L" + mi.owner + ";" + mi.desc.substring(1);
+            if (!repl.desc.equals(expectedDesc)) {
+                throw new IllegalStateException("Retarget mudaria a pilha em " + site.id()
+                        + ": " + mi.desc + " -> " + repl.desc);
+            }
+            mn.instructions.set(mi, repl);
             return idx;
         }
+
+        private MethodInsnNode retargetCall(MethodInsnNode mi, Site site) {
+            if (NBT.equals(mi.owner)) {
+                // getInteger(String)I
+                if ("func_74762_e".equals(mi.name) && "(Ljava/lang/String;)I".equals(mi.desc)) {
+                    return staticCall("getTagInt", "(Lnet/minecraft/nbt/NBTTagCompound;Ljava/lang/String;)I");
+                }
+                // setInteger(String,int)V
+                if ("func_74768_a".equals(mi.name) && "(Ljava/lang/String;I)V".equals(mi.desc)) {
+                    return staticCall("setTagInt", "(Lnet/minecraft/nbt/NBTTagCompound;Ljava/lang/String;I)V");
+                }
+                return null;
+            }
+
+            if (JRMCOREH.equals(mi.owner)) {
+                // getInt(EntityPlayer,String)I
+                if ("getInt".equals(mi.name) && "(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I".equals(mi.desc)) {
+                    return staticCall("getPlayerInt", "(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I");
+                }
+                // setInt(int,EntityPlayer,String)V
+                if ("setInt".equals(mi.name) && "(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V".equals(mi.desc)) {
+                    return staticCall("setPlayerInt", "(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V");
+                }
+                return null;
+            }
+
+            return null;
+        }
+
+        private MethodInsnNode staticCall(String name, String desc) {
+            return new MethodInsnNode(Opcodes.INVOKESTATIC, TP, name, desc, false);
+        }
+
+        private int retargetField(MethodNode mn, int idx, FieldInsnNode fi, Site site) {
+            if (!JRMCOREH.equals(fi.owner) || !"curTP".equals(fi.name) || !"I".equals(fi.desc)) {
+                throw new IllegalStateException("Campo nao suportado no site " + site.id() + ": "
+                        + fi.owner + "." + fi.name + ":" + fi.desc);
+            }
+            if (fi.getOpcode() == Opcodes.GETSTATIC) {
+                InsnList add = new InsnList();
+                add.add(new FieldInsnNode(Opcodes.GETSTATIC, JRMCOREH, "curTPLong", "J"));
+                add.add(new MethodInsnNode(Opcodes.INVOKESTATIC, JRMCOREH, "clampTP", "(J)I", false));
+                mn.instructions.insert(fi, add);
+                mn.instructions.remove(fi);
+                return idx;
+            }
+            if (fi.getOpcode() == Opcodes.PUTSTATIC) {
+                InsnList add = new InsnList();
+                add.add(new InsnNode(Opcodes.DUP));
+                add.add(new InsnNode(Opcodes.I2L));
+                add.add(new FieldInsnNode(Opcodes.PUTSTATIC, JRMCOREH, "curTPLong", "J"));
+                add.add(new FieldInsnNode(Opcodes.PUTSTATIC, JRMCOREH, "curTP", "I"));
+                mn.instructions.insert(fi, add);
+                mn.instructions.remove(fi);
+                return idx;
+            }
+            throw new IllegalStateException("Opcode de campo nao suportado no site " + site.id()
+                    + ": opcode " + fi.getOpcode());
+        }
     }
 
-    // ------------------------------------------------------------------ COMPLEX: explicit per-site (fallback to old patcher logic)
-    static final class ComplexAdapter implements AdapterExec {
-        @Override public int exec(MethodNode mn, int idx, Site site, HierarchyResolver hier) {
-            // Complex sites should have been handled by explicit adapters in the table.
-            // If we reach here, it's a WRITE_COMPLEX without an adapter - abort.
-            System.err.println("ERROR: Unhandled COMPLEX site: " + site.id() + " - " + site.adapter);
-            throw new IllegalStateException("Unhandled COMPLEX site: " + site.id());
-        }
-    }
-
-    // ============================================================ ADAPTER REGISTRY
-
-    private static final Map<String, AdapterExec> ADAPTER_REGISTRY = new HashMap<>();
-
-    static {
-        ADAPTER_REGISTRY.put("READ", new ReadAdapter());
-        ADAPTER_REGISTRY.put("WRITE_ABS", new WriteAbsAdapter());
-        ADAPTER_REGISTRY.put("WRITE_DELTA_ADD", new GainAdapter());
-        ADAPTER_REGISTRY.put("WRITE_DELTA_SUB", new SpendAdapter());
-        ADAPTER_REGISTRY.put("STATE_LOCAL_READ", new StateLocalAdapter());
-        ADAPTER_REGISTRY.put("STATE_LOCAL_WRITE", new StateLocalAdapter());
-        ADAPTER_REGISTRY.put("STATE_NETWORK_READ", new StateLocalAdapter()); // applyLocal
-        ADAPTER_REGISTRY.put("WRITE_COMPLEX", new ComplexAdapter());
-        ADAPTER_REGISTRY.put("UNKNOWN", new ComplexAdapter()); // will abort
-    }
-
-    // Infer AdapterExec from explicit adapter string (e.g., "TpUtil.readUsable(nbt)")
-    private static AdapterExec getAdapterExecFromAdapterString(String adapter) {
-        if (adapter == null) return null;
-        String a = adapter.toLowerCase();
-        if (a.equals("skip")) {
-            return new SkipAdapter();
-        }
-        if (a.contains("readusable") || a.contains("gettp") || a.contains("gettpint")) {
-            return new ReadAdapter();
-        }
-        if (a.contains("writecheckedvoid") || a.contains("commandwrite")) {
-            return new WriteAbsAdapter();
-        }
-        if (a.contains("gainvoid") || a.contains("commandadd")) {
-            return new GainAdapter();
-        }
-        if (a.contains("spendvoid") || a.contains("commandtake")) {
-            return new SpendAdapter();
-        }
-        if (a.contains("applylocal") || a.contains("acceptnetwork") || a.contains("tpshort") || a.contains("clamptp")) {
-            return new StateLocalAdapter();
-        }
-        return null; // fall back to semantics-based lookup
-    }
-
-    // ------------------------------------------------------------------ SKIP: do nothing (false positive)
     static final class SkipAdapter implements AdapterExec {
         @Override public int exec(MethodNode mn, int idx, Site site, HierarchyResolver hier) {
-            // Do nothing - this is a false positive site that should not be patched
+            // Falso positivo documentado: nao ha alteracao a fazer.
             return -1;
         }
     }
+
+    private static final AdapterExec RETARGET_ADAPTER = new RetargetAdapter();
+    private static final AdapterExec SKIP_ADAPTER = new SkipAdapter();
 
     // ============================================================ MAIN PATCHER
 
@@ -685,8 +258,9 @@ public final class TpPatch {
                                  HierarchyResolver hier, boolean injectTpUtil, Config cfg) throws IOException {
         System.out.println("\n=== Patching " + inJar.getName() + " ===");
 
-        // Read all classes
+        // Read all classes, preserving original bytes for verbatim re-emission.
         Map<String, ClassNode> classes = new LinkedHashMap<>();
+        Map<String, byte[]> originalBytes = new LinkedHashMap<>();
         ZipFile zip = new ZipFile(inJar);
         try {
             List<String> classNames = new ArrayList<>();
@@ -699,13 +273,23 @@ public final class TpPatch {
             Collections.sort(classNames);
 
             for (String name : classNames) {
+                byte[] raw = readAllBytes(zip.getInputStream(zip.getEntry(name)));
                 ClassNode cn = new ClassNode();
-                new ClassReader(zip.getInputStream(zip.getEntry(name))).accept(cn, 0);
+                new ClassReader(raw).accept(cn, 0);
                 classes.put(cn.name, cn);
+                originalBytes.put(cn.name, raw);
             }
         } finally {
             zip.close();
         }
+
+        Set<String> codeModified = new LinkedHashSet<>();
+        Set<String> memberModified = new LinkedHashSet<>();
+        // Uma instrucao so pode atender um site. Sem isso, sites identicos no
+        // mesmo metodo reescrevem a mesma instrucao e os demais ficam intactos.
+        Map<MethodNode, Set<Integer>> usedByMethod = new IdentityHashMap<>();
+        // Rastrear LDCs ja consumidos para evitar que um site consuma o LDC de outro.
+        Map<MethodNode, Set<Integer>> usedLdcByMethod = new IdentityHashMap<>();
 
         // Apply site rewrites
         int totalRewritten = 0;
@@ -730,190 +314,285 @@ public final class TpPatch {
                     throw new IllegalStateException("Method not found: " + site.id());
                 }
 
-                // Get adapter executor: prefer explicit adapter string for handled sites
-                AdapterExec exec = null;
-                if (site.handled && site.adapter != null) {
-                    exec = getAdapterExecFromAdapterString(site.adapter);
-                }
-                if (exec == null) {
-                    exec = ADAPTER_REGISTRY.get(site.semantics);
-                }
-                if (exec == null) {
-                    System.err.println("ERROR: No adapter for semantics: " + site.semantics + " at " + site.id());
-                    throw new IllegalStateException("No adapter for: " + site.semantics);
-                }
+                // Retarget de pilha identica. "skip" apenas documenta falso positivo.
+                AdapterExec exec = (site.adapter != null
+                        && site.adapter.trim().equalsIgnoreCase("skip"))
+                        ? SKIP_ADAPTER : RETARGET_ADAPTER;
 
                 // Find the correct instruction index by pattern matching
                 // The CSV offset is a bytecode offset, not an instruction index.
                 // We search for the LDC "jrmcTp..." instruction and the following call.
-                int targetIdx = findTargetInstruction(mn, site);
+                usedByMethod.putIfAbsent(mn, new HashSet<Integer>());
+                usedLdcByMethod.putIfAbsent(mn, new HashSet<Integer>());
+                int targetIdx = findTargetInstruction(mn, site, usedByMethod.get(mn), usedLdcByMethod.get(mn));
                 if (targetIdx < 0) {
-                    System.err.println("WARNING: Could not find target instruction for " + site.id() + " (offset=" + site.offset + ")");
-                    continue;
+                    throw new IllegalStateException("Site nao localizado no bytecode: " + site.id()
+                            + " (offset=" + site.offset + ")");
                 }
+                usedByMethod.get(mn).add(targetIdx);
 
                 // Execute rewrite
+                AbstractInsnNode[] before = mn.instructions.toArray();
                 int newIdx = exec.exec(mn, targetIdx, site, hier);
+                AbstractInsnNode[] after = mn.instructions.toArray();
                 if (newIdx >= 0) {
                     totalRewritten++;
-                    // Update max stack/locals will be done by HierarchyClassWriter
+                }
+                if (!Arrays.equals(before, after)) {
+                    codeModified.add(cn.name);
                 }
             }
         }
 
         System.out.println("  Rewritten " + totalRewritten + " sites in " + inJar.getName());
 
-        // Inject TpUtil into JRMCore
+        // Inject helpers from the explicit allowlist and transform the ORIGINAL classes.
+        Map<String, byte[]> injected = new LinkedHashMap<>();
         if (injectTpUtil && cfg.tpUtilClass != null && cfg.tpUtilClass.exists()) {
-            injectTpUtilClasses(classes, cfg.tpUtilClass);
+            injectTpUtilClasses(injected, cfg.tpUtilClass, originalBytes);
         }
 
-        // Inject tpShort and clampTP into JRMCoreH (required by StateLocalAdapter and GUI adapters)
         if (injectTpUtil) {
-            injectJRMCoreHMethods(classes);
+            // JRMCoreH must be the original class, expanded with curTPLong/tpShort/clampTP.
+            transformJRMCoreH(classes, originalBytes, memberModified);
+            // Append the LONG sync packet registration to PD.registerPackets().
+            injectPdRegistration(classes, injected, codeModified);
         }
 
-        // Write output JAR using HierarchyClassWriter
-        writeJar(outJar, classes, hier, cfg);
+        // Write output JAR preserving every original resource entry.
+        writeJar(outJar, inJar, classes, originalBytes, injected, codeModified, memberModified, hier, cfg);
     }
 
-    private static void injectJRMCoreHMethods(Map<String, ClassNode> classes) {
-        // JRMCoreH has major version 50 (Java 6) bytecode which doesn't support stack map frames.
-        // We inject tpShort(J)S and clampTP(J)I methods required by GUI adapters (DBCTalkGui, StatSheetGui).
-        // These methods are also present in the pre-compiled build/classes/JRMCoreH.class.
-        String jrmcHName = "JinRyuu/JRMCore/JRMCoreH";
-        ClassNode cn = classes.get(jrmcHName);
+    /**
+     * Injeta SOMENTE os auxiliares de runtime declarados na allowlist explicita.
+     *
+     * O diretorio de origem e derivado de --tputil (root/JinRyuu/JRMCore/TpUtil.class).
+     * Nenhum outro .class do diretorio e lido: em especial, JRMCoreH.class do
+     * diretorio de stubs NUNCA e injetado. A classe original do JAR e preservada
+     * e transformada por {@link #transformJRMCoreH}.
+     */
+    private static void injectTpUtilClasses(Map<String, byte[]> injected, File tpUtilClassFile,
+                                            Map<String, byte[]> originalBytes) throws IOException {
+        File root = tpUtilClassFile.getAbsoluteFile().getParentFile().getParentFile().getParentFile();
+        File expectedTpUtil = new File(root, "JinRyuu/JRMCore/TpUtil.class");
+        if (!expectedTpUtil.isFile()) {
+            throw new IllegalStateException("Layout inesperado para --tputil: " + tpUtilClassFile
+                    + " (esperado " + expectedTpUtil + ")");
+        }
+        File stubJrmcH = new File(root, "JinRyuu/JRMCore/JRMCoreH.class");
+        if (stubJrmcH.isFile()) {
+            throw new IllegalStateException("JRMCoreH.class presente em " + root
+                    + " - stubs de compilacao nao podem ser injetados; use um diretorio de producao");
+        }
+
+        String[] prefixes = {
+                "JinRyuu/JRMCore/TpUtil",
+                "JinRyuu/JRMCore/TpLogic",
+                "JinRyuu/JRMCore/TpNbt",
+                "JinRyuu/JRMCore/TpNbtCore",
+                "JinRyuu/JRMCore/TpNetwork",
+                "JinRyuu/JRMCore/TpClientState",
+                "JinRyuu/JRMCore/TpTagView",
+                "JinRyuu/JRMCore/p/JRMCorePTpSync",
+        };
+
+        System.out.println("  Injecao por allowlist a partir de " + root.getAbsolutePath());
+        for (String prefix : prefixes) {
+            File base = new File(root, prefix + ".class");
+            if (!base.isFile()) {
+                throw new IllegalStateException("Classe auxiliar obrigatoria ausente: " + base);
+            }
+            File dir = new File(root, prefix).getParentFile();
+            String simple = new File(root, prefix).getName();
+            File[] candidates = dir.listFiles((d, n) ->
+                    n.endsWith(".class") && (n.equals(simple + ".class") || n.startsWith(simple + "$")));
+            if (candidates == null) {
+                throw new IllegalStateException("Nao foi possivel listar " + dir);
+            }
+            Arrays.sort(candidates, Comparator.comparing(File::getName));
+            for (File f : candidates) {
+                byte[] raw = Files.readAllBytes(f.toPath());
+                String internal = new ClassReader(raw).getClassName();
+                if (!internal.equals(prefix) && !internal.startsWith(prefix + "$")) {
+                    throw new IllegalStateException("Arquivo " + f + " declara classe " + internal
+                            + " fora da allowlist " + prefix);
+                }
+                if (internal.equals("JinRyuu/JRMCore/JRMCoreH")) {
+                    throw new IllegalStateException("Tentativa de injetar JRMCoreH a partir de " + f);
+                }
+                if (originalBytes.containsKey(internal)) {
+                    throw new IllegalStateException("Auxiliar " + internal + " colide com classe original do JAR");
+                }
+                injected.put(internal, raw);
+                System.out.println("    + " + internal);
+            }
+        }
+    }
+
+    /**
+     * Expande a classe JRMCoreH ORIGINAL (v50): adiciona o campo autoritativo
+     * curTPLong:J e os conversores saturados tpShort(J)S / clampTP(J)I.
+     * Nenhum membro existente e removido ou reescrito.
+     */
+    private static void transformJRMCoreH(Map<String, ClassNode> classes,
+                                          Map<String, byte[]> originalBytes,
+                                          Set<String> memberModified) {
+        String name = "JinRyuu/JRMCore/JRMCoreH";
+        ClassNode cn = classes.get(name);
         if (cn == null) {
-            System.err.println("WARNING: JRMCoreH not found in class map, cannot inject tpShort/clampTP");
-            return;
+            throw new IllegalStateException("JRMCoreH original ausente do JAR de entrada");
+        }
+        byte[] original = originalBytes.get(name);
+        if (original == null) {
+            throw new IllegalStateException("Bytes originais de JRMCoreH ausentes");
         }
 
-        // Check if methods already exist (e.g., from pre-compiled class injection)
-        boolean hasTpShort = false;
-        boolean hasClampTP = false;
+        List<String> before = memberSignatures(cn);
+        int originalMajor = cn.version & 0xFFFF;
+
+        if (findField(cn, "curTPLong", "J") == null) {
+            cn.fields.add(new FieldNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                    "curTPLong", "J", null, null));
+            System.out.println("  JRMCoreH: campo curTPLong:J adicionado");
+        }
+        if (findMethod(cn, "tpShort", "(J)S") == null) {
+            cn.methods.add(buildTpShort());
+            System.out.println("  JRMCoreH: metodo tpShort(J)S adicionado");
+        }
+        if (findMethod(cn, "clampTP", "(J)I") == null) {
+            cn.methods.add(buildClampTP());
+            System.out.println("  JRMCoreH: metodo clampTP(J)I adicionado");
+        }
+
+        List<String> after = memberSignatures(cn);
+        for (String sig : before) {
+            if (!after.contains(sig)) {
+                throw new IllegalStateException("Transformacao removeu membro de JRMCoreH: " + sig);
+            }
+        }
+        System.out.println("  JRMCoreH: " + before.size() + " membros originais preservados (v"
+                + originalMajor + "), " + (after.size() - before.size()) + " adicionados");
+        memberModified.add(name);
+    }
+
+    private static List<String> memberSignatures(ClassNode cn) {
+        List<String> out = new ArrayList<>();
+        for (FieldNode f : cn.fields) {
+            out.add("F:" + f.name + ":" + f.desc);
+        }
         for (MethodNode m : cn.methods) {
-            if ("tpShort".equals(m.name) && "(J)S".equals(m.desc)) hasTpShort = true;
-            if ("clampTP".equals(m.name) && "(J)I".equals(m.desc)) hasClampTP = true;
+            out.add("M:" + m.name + m.desc);
+        }
+        Collections.sort(out);
+        return out;
+    }
+
+    private static FieldNode findField(ClassNode cn, String name, String desc) {
+        for (FieldNode f : cn.fields) {
+            if (name.equals(f.name) && desc.equals(f.desc)) {
+                return f;
+            }
+        }
+        return null;
+    }
+
+    /** (short) Math.max(Short.MIN_VALUE, Math.min(Short.MAX_VALUE, value)) - sem branches. */
+    private static MethodNode buildTpShort() {
+        InsnList body = new InsnList();
+        body.add(new VarInsnNode(Opcodes.LLOAD, 0));
+        body.add(new LdcInsnNode(Long.valueOf((long) Short.MAX_VALUE)));
+        body.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Math", "min", "(JJ)J", false));
+        body.add(new LdcInsnNode(Long.valueOf((long) Short.MIN_VALUE)));
+        body.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Math", "max", "(JJ)J", false));
+        body.add(new InsnNode(Opcodes.L2I));
+        body.add(new InsnNode(Opcodes.I2S));
+        body.add(new InsnNode(Opcodes.IRETURN));
+        MethodNode mn = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                "tpShort", "(J)S", null, null);
+        mn.instructions.add(body);
+        mn.maxStack = 4;
+        mn.maxLocals = 2;
+        return mn;
+    }
+
+    /** (int) Math.max(Integer.MIN_VALUE, Math.min(Integer.MAX_VALUE, value)) - sem branches. */
+    private static MethodNode buildClampTP() {
+        InsnList body = new InsnList();
+        body.add(new VarInsnNode(Opcodes.LLOAD, 0));
+        body.add(new LdcInsnNode(Long.valueOf((long) Integer.MAX_VALUE)));
+        body.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Math", "min", "(JJ)J", false));
+        body.add(new LdcInsnNode(Long.valueOf((long) Integer.MIN_VALUE)));
+        body.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Math", "max", "(JJ)J", false));
+        body.add(new InsnNode(Opcodes.L2I));
+        body.add(new InsnNode(Opcodes.IRETURN));
+        MethodNode mn = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                "clampTP", "(J)I", null, null);
+        mn.instructions.add(body);
+        mn.maxStack = 4;
+        mn.maxLocals = 2;
+        return mn;
+    }
+
+    /**
+     * Anexa ao fim de PD.registerPackets() o registro do pacote JRMCorePTpSync.
+     * Usa registerMessage(Class,Class) privado da propria PD, que escolhe o lado
+     * CLIENT para handlers que estendem CAmh. O packetId e incrementado pela PD,
+     * portanto nao ha colisao com os 22 pacotes originais.
+     */
+    private static void injectPdRegistration(Map<String, ClassNode> classes,
+                                             Map<String, byte[]> injected,
+                                             Set<String> codeModified) {
+        String pdName = "JinRyuu/JRMCore/p/PD";
+        String packet = "JinRyuu/JRMCore/p/JRMCorePTpSync";
+        String handler = packet + "$Handler";
+
+        ClassNode pd = classes.get(pdName);
+        if (pd == null) {
+            throw new IllegalStateException("PD original ausente do JAR de entrada");
+        }
+        if (!injected.containsKey(packet) || !injected.containsKey(handler)) {
+            throw new IllegalStateException("JRMCorePTpSync/Handler nao foram injetados; impossivel registrar");
+        }
+        MethodNode reg = findMethod(pd, "registerPackets", "()V");
+        if (reg == null) {
+            throw new IllegalStateException("PD.registerPackets()V ausente");
+        }
+        MethodNode rm = findMethod(pd, "registerMessage", "(Ljava/lang/Class;Ljava/lang/Class;)V");
+        if (rm == null) {
+            throw new IllegalStateException("PD.registerMessage(Class,Class)V ausente");
         }
 
-        if (hasTpShort && hasClampTP) {
-            System.out.println("  JRMCoreH already has tpShort and clampTP (from pre-compiled injection)");
+        boolean already = false;
+        int returns = 0;
+        for (AbstractInsnNode insn : reg.instructions.toArray()) {
+            if (insn instanceof LdcInsnNode) {
+                Object cst = ((LdcInsnNode) insn).cst;
+                if (cst instanceof Type && handler.equals(((Type) cst).getInternalName())) {
+                    already = true;
+                }
+            }
+            if (insn.getOpcode() == Opcodes.RETURN) {
+                returns++;
+            }
+        }
+        if (already) {
+            System.out.println("  PD.registerPackets: pacote JRMCorePTpSync ja registrado");
             return;
         }
 
-        // Add tpShort(J)S - saturates long to Short range
-        if (!hasTpShort) {
-            InsnList tpShortBody = new InsnList();
-            // value > Short.MAX_VALUE ? Short.MAX_VALUE : (value < Short.MIN_VALUE ? Short.MIN_VALUE : (short)value)
-            LabelNode lGreater = new LabelNode();
-            LabelNode lLess = new LabelNode();
-            LabelNode lEnd = new LabelNode();
-
-            // if (value > Short.MAX_VALUE) goto lGreater
-            tpShortBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
-            tpShortBody.add(new LdcInsnNode(Short.MAX_VALUE));
-            tpShortBody.add(new InsnNode(Opcodes.LCMP));
-            tpShortBody.add(new JumpInsnNode(Opcodes.IFGT, lGreater));
-
-            // if (value < Short.MIN_VALUE) goto lLess
-            tpShortBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
-            tpShortBody.add(new LdcInsnNode(Short.MIN_VALUE));
-            tpShortBody.add(new InsnNode(Opcodes.LCMP));
-            tpShortBody.add(new JumpInsnNode(Opcodes.IFLT, lLess));
-
-            // return (short)value
-            tpShortBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
-            tpShortBody.add(new InsnNode(Opcodes.L2I));
-            tpShortBody.add(new InsnNode(Opcodes.I2S));
-            tpShortBody.add(new InsnNode(Opcodes.IRETURN));
-
-            // lGreater: return Short.MAX_VALUE
-            tpShortBody.add(lGreater);
-            tpShortBody.add(new InsnNode(Opcodes.ICONST_0)); // placeholder
-            tpShortBody.add(new InsnNode(Opcodes.ICONST_0)); // will be replaced
-            tpShortBody.add(new LdcInsnNode(Short.MAX_VALUE));
-            tpShortBody.add(new InsnNode(Opcodes.IRETURN));
-
-            // lLess: return Short.MIN_VALUE
-            tpShortBody.add(lLess);
-            tpShortBody.add(new LdcInsnNode(Short.MIN_VALUE));
-            tpShortBody.add(new InsnNode(Opcodes.IRETURN));
-
-            // Fix: the lGreater section had wrong instructions, let me simplify
-            // Actually, let me use a cleaner approach
-            tpShortBody.clear();
-
-            // if (value > Short.MAX_VALUE) return Short.MAX_VALUE;
-            LabelNode l1 = new LabelNode();
-            LabelNode l2 = new LabelNode();
-            LabelNode l3 = new LabelNode();
-
-            tpShortBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
-            tpShortBody.add(new LdcInsnNode(Short.MAX_VALUE));
-            tpShortBody.add(new InsnNode(Opcodes.LCMP));
-            tpShortBody.add(new JumpInsnNode(Opcodes.IFGT, l1));
-
-            tpShortBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
-            tpShortBody.add(new LdcInsnNode(Short.MIN_VALUE));
-            tpShortBody.add(new InsnNode(Opcodes.LCMP));
-            tpShortBody.add(new JumpInsnNode(Opcodes.IFLT, l2));
-
-            tpShortBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
-            tpShortBody.add(new InsnNode(Opcodes.L2I));
-            tpShortBody.add(new InsnNode(Opcodes.I2S));
-            tpShortBody.add(new InsnNode(Opcodes.IRETURN));
-
-            tpShortBody.add(l1);
-            tpShortBody.add(new LdcInsnNode(Short.MAX_VALUE));
-            tpShortBody.add(new InsnNode(Opcodes.IRETURN));
-
-            tpShortBody.add(l2);
-            tpShortBody.add(new LdcInsnNode(Short.MIN_VALUE));
-            tpShortBody.add(new InsnNode(Opcodes.IRETURN));
-
-            MethodNode tpShort = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
-                    "tpShort", "(J)S", null, null);
-            tpShort.instructions.add(tpShortBody);
-            tpShort.visitMaxs(4, 2); // stack=4, locals=2 (1 long param = 2 slots)
-            cn.methods.add(tpShort);
-            System.out.println("  Added tpShort(J)S to JRMCoreH");
+        for (AbstractInsnNode insn : reg.instructions.toArray()) {
+            if (insn.getOpcode() == Opcodes.RETURN) {
+                InsnList add = new InsnList();
+                add.add(new LdcInsnNode(Type.getObjectType(handler)));
+                add.add(new LdcInsnNode(Type.getObjectType(packet)));
+                add.add(new MethodInsnNode(Opcodes.INVOKESTATIC, pdName, "registerMessage",
+                        "(Ljava/lang/Class;Ljava/lang/Class;)V", false));
+                reg.instructions.insertBefore(insn, add);
+            }
         }
-
-        // Add clampTP(J)I - saturates long to Integer range
-        if (!hasClampTP) {
-            InsnList clampTPBody = new InsnList();
-            LabelNode l1 = new LabelNode();
-            LabelNode l2 = new LabelNode();
-
-            clampTPBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
-            clampTPBody.add(new LdcInsnNode(Integer.MAX_VALUE));
-            clampTPBody.add(new InsnNode(Opcodes.LCMP));
-            clampTPBody.add(new JumpInsnNode(Opcodes.IFGT, l1));
-
-            clampTPBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
-            clampTPBody.add(new LdcInsnNode(Integer.MIN_VALUE));
-            clampTPBody.add(new InsnNode(Opcodes.LCMP));
-            clampTPBody.add(new JumpInsnNode(Opcodes.IFLT, l2));
-
-            clampTPBody.add(new VarInsnNode(Opcodes.LLOAD, 0));
-            clampTPBody.add(new InsnNode(Opcodes.L2I));
-            clampTPBody.add(new InsnNode(Opcodes.IRETURN));
-
-            clampTPBody.add(l1);
-            clampTPBody.add(new LdcInsnNode(Integer.MAX_VALUE));
-            clampTPBody.add(new InsnNode(Opcodes.IRETURN));
-
-            clampTPBody.add(l2);
-            clampTPBody.add(new LdcInsnNode(Integer.MIN_VALUE));
-            clampTPBody.add(new InsnNode(Opcodes.IRETURN));
-
-            MethodNode clampTP = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
-                    "clampTP", "(J)I", null, null);
-            clampTP.instructions.add(clampTPBody);
-            clampTP.visitMaxs(4, 2); // stack=4, locals=2
-            cn.methods.add(clampTP);
-            System.out.println("  Added clampTP(J)I to JRMCoreH");
-        }
+        codeModified.add(pdName);
+        System.out.println("  PD.registerPackets: registro de JRMCorePTpSync anexado em " + returns
+                + " ponto(s) de retorno (CLIENT)");
     }
 
     private static MethodNode findMethod(ClassNode cn, String name, String desc) {
@@ -926,7 +605,7 @@ public final class TpPatch {
     }
 
     // Find the target call instruction index by searching for LDC "jrmcTp..." pattern
-    private static int findTargetInstruction(MethodNode mn, Site site) {
+    private static int findTargetInstruction(MethodNode mn, Site site, Set<Integer> used, Set<Integer> usedLdc) {
         String expectedOp = site.operation != null ? site.operation.toLowerCase() : "";
         String expectedKey = site.key != null ? site.key.toLowerCase() : "";
         String expectedAdapter = site.adapter != null ? site.adapter.toLowerCase() : "";
@@ -960,11 +639,25 @@ public final class TpPatch {
                 if (cst instanceof String) {
                     String key = (String) cst;
                     if (key.startsWith("jrmcTp")) {
+                        // Chave do CSV precisa bater com a constante do bytecode:
+                        // impede que um site de jrmcTpint consuma jrmcTp ou outro.
+                        if (site.key != null && !site.key.isEmpty() && !site.key.equals(key)) {
+                            continue;
+                        }
+                        // Skip LDCs that have already been consumed by a previous site
+                        if (usedLdc.contains(i)) {
+                            continue;
+                        }
                         // Found LDC with jrmcTp key - check the next instruction(s) for the expected call
                         // Search up to 20 instructions after LDC (calls may be further due to stack manipulation)
                         for (int j = i + 1; j < Math.min(i + 20, mn.instructions.size()); j++) {
                             AbstractInsnNode next = mn.instructions.get(j);
                             if (next instanceof MethodInsnNode) {
+                                if (used.contains(j)) {
+                                    // A chamada deste LDC ja foi atribuida a outro site.
+                                    // Continua procurando a proxima chamada disponivel.
+                                    continue;
+                                }
                                 MethodInsnNode mi = (MethodInsnNode) next;
                                 String owner = mi.owner;
                                 String name = mi.name;
@@ -993,9 +686,11 @@ public final class TpPatch {
                                 if (matches) {
                                     if (site.context != null && !site.context.isEmpty()) {
                                         if (matchesContext(mn, i, site.context)) {
+                                            usedLdc.add(i); // Marcar LDC como consumido
                                             return j;
                                         }
                                     } else {
+                                        usedLdc.add(i); // Marcar LDC como consumido
                                         return j;
                                     }
                                 }
@@ -1015,25 +710,25 @@ public final class TpPatch {
                     int opcode = fi.getOpcode();
                     boolean isRead = opcode == Opcodes.GETFIELD || opcode == Opcodes.GETSTATIC;
                     boolean isWrite = opcode == Opcodes.PUTFIELD || opcode == Opcodes.PUTSTATIC;
-                    
-                    if (isRead && (expectCurTPFieldRead || expectCurTPLongFieldRead)) {
-                        // StateLocalAdapter replaces GETFIELD/GETSTATIC curTP/curTPLong directly
-                        return i;
+
+                    // Um site ja retargetado vira GETSTATIC curTPLong seguido de clampTP.
+                    // Sem esta restricao a mesma instrucao seria escolhida de novo.
+                    boolean matchesRead = expectCurTPLongFieldRead
+                            ? isCurTPLong : (expectCurTPFieldRead && isCurTP);
+                    boolean matchesWrite = expectCurTPLongFieldWrite
+                            ? isCurTPLong : (expectCurTPFieldWrite && isCurTP);
+
+                    if (isRead && matchesRead) {
+                        if (!used.contains(i)) {
+                            return i;
+                        }
                     }
-                    if (isWrite && (expectCurTPFieldWrite || expectCurTPLongFieldWrite || expectApplyLocal)) {
-                        // StateLocalAdapter replaces PUTFIELD/PUTSTATIC curTP/curTPLong directly
-                        return i;
+                    if (isWrite && matchesWrite) {
+                        if (!used.contains(i)) {
+                            return i;
+                        }
                     }
                 }
-            }
-        }
-        
-        // Fallback: if exact match not found, try using the bytecode offset as approximate instruction index
-        // This handles cases where the pattern matching fails (e.g., JRMCoreH methods with small offsets)
-        if (site.offset < mn.instructions.size()) {
-            AbstractInsnNode insn = mn.instructions.get(site.offset);
-            if (insn instanceof MethodInsnNode || insn instanceof FieldInsnNode) {
-                return site.offset;
             }
         }
         
@@ -1050,113 +745,226 @@ public final class TpPatch {
     }
 
     private static void injectTpUtilClasses(Map<String, ClassNode> classes, File tpUtilClassFile) throws IOException {
-        File baseDir = tpUtilClassFile.getParentFile(); // bigtp/build/classes/JinRyuu/JRMCore/
+        File baseDir = tpUtilClassFile.getParentFile();
         System.out.println("  Injecting TpUtil and dependencies from " + baseDir.getAbsolutePath());
+
+        // Allowlist explícita das 15 classes auxiliares de produção.
+        // Não substitui classes originais do JAR; injeta apenas o que não existe.
+        // Rejeita JRMCoreH.class (transformado separadamente via injectJRMCoreHMethods).
+        Set<String> allowed = new LinkedHashSet<>(Arrays.asList(
+            "JinRyuu/JRMCore/TpUtil",
+            "JinRyuu/JRMCore/TpLogic$1",
+            "JinRyuu/JRMCore/TpLogic$Result",
+            "JinRyuu/JRMCore/TpLogic$Status",
+            "JinRyuu/JRMCore/TpLogic",
+            "JinRyuu/JRMCore/TpNbt",
+            "JinRyuu/JRMCore/TpNbtCore$1",
+            "JinRyuu/JRMCore/TpNbtCore$ReadResult",
+            "JinRyuu/JRMCore/TpNbtCore$Status",
+            "JinRyuu/JRMCore/TpNbtCore",
+            "JinRyuu/JRMCore/TpNetwork",
+            "JinRyuu/JRMCore/TpClientState",
+            "JinRyuu/JRMCore/TpTagView",
+            "JinRyuu/JRMCore/p/JRMCorePTpSync$Handler",
+            "JinRyuu/JRMCore/p/JRMCorePTpSync"
+        ));
+
         String[] classFiles = baseDir.list((dir, name) -> name.endsWith(".class"));
-        if (classFiles != null) {
-            for (String classFile : classFiles) {
-                File f = new File(baseDir, classFile);
-                System.out.println("    Injecting " + classFile);
-                ClassNode cn = new ClassNode();
-                new ClassReader(Files.newInputStream(f.toPath())).accept(cn, 0);
-                classes.put(cn.name, cn);
+        if (classFiles == null) {
+            throw new IOException("Diretório de produção vazio ou inacessível: " + baseDir.getAbsolutePath());
+        }
+
+        Set<String> found = new LinkedHashSet<>();
+        for (String classFile : classFiles) {
+            String className = classFile.substring(0, classFile.length() - ".class".length());
+            if (!allowed.contains(className)) {
+                throw new IOException("Classe inesperada no diretório de produção: " + className
+                    + " (não está na allowlist explícita de 15 classes)");
+            }
+            if (className.equals("JinRyuu/JRMCore/JRMCoreH")) {
+                throw new IOException("JRMCoreH.class encontrado no diretório de produção — proibido. "
+                    + "JRMCoreH é transformado separadamente via injectJRMCoreHMethods().");
+            }
+            File f = new File(baseDir, classFile);
+            System.out.println("    Injecting " + classFile);
+            ClassNode cn = new ClassNode();
+            new ClassReader(Files.newInputStream(f.toPath())).accept(cn, 0);
+            if (classes.containsKey(cn.name)) {
+                throw new IOException("Tentativa de substituir classe original: " + cn.name
+                    + ". Classes auxiliares não devem colidir com classes do JAR original.");
+            }
+            classes.put(cn.name, cn);
+            found.add(className);
+        }
+
+        // Verificar que todas as classes da allowlist foram encontradas
+        for (String expected : allowed) {
+            if (!found.contains(expected)) {
+                throw new IOException("Classe esperada na allowlist não encontrada no diretório de produção: " + expected);
             }
         }
+        System.out.println("  Injeção concluída: " + found.size() + " classes auxiliares injetadas.");
     }
 
-    // Try COMPUTE_FRAMES first; if it fails with frame computation error, retry with COMPUTE_MAXS
+    /**
+     * Gera bytecode de uma classe cujo CODIGO foi alterado.
+     *
+     * Politica de frames por versao:
+     *  - v50 (Java 6, usado pelo JRMCore 1.3.51): COMPUTE_MAXS. A JVM Java 8
+     *    aceita StackMapTable ausente nessa versao, e o calculo de frames nao
+     *    depende da hierarquia externa.
+     *  - v51+ (Java 7+): COMPUTE_FRAMES obrigatorio. Falha e reportada, nunca
+     *    mascarada com COMPUTE_MAXS.
+     */
     private static byte[] writeClassWithFallback(ClassNode cn, HierarchyResolver hier, Config cfg) {
-        // First attempt: COMPUTE_FRAMES (includes COMPUTE_MAXS)
+        int major = cn.version & 0xFFFF;
+        boolean needsFrames = major >= Opcodes.V1_7;
+        int flags = needsFrames
+                ? (ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS)
+                : ClassWriter.COMPUTE_MAXS;
         try {
-            ClassWriter cw = new HierarchyClassWriter(HierarchyClassWriter.FLAGS, hier, cfg.optionalDepsFile);
+            ClassWriter cw = new HierarchyClassWriter(flags, hier, cfg.optionalDepsFile);
             cn.accept(cw);
-            byte[] bytecode = cw.toByteArray();
-
-            // Check major version warning
-            if (cfg.expectMajor > 0 && bytecode.length >= 7) {
-                int major = ((bytecode[6] & 0xFF) << 8) | (bytecode[7] & 0xFF);
-                if (major != cfg.expectMajor) {
-                    System.err.println("WARNING: " + cn.name + " major version " + major + " != expected " + cfg.expectMajor);
-                }
-            }
-            return bytecode;
-        } catch (Throwable e) {
-            // Frame computation failed - catch ALL Throwables including Errors (e.g., NPE in Frame.merge for version 50 classes)
-            String msg = e.getMessage();
-            boolean isFrameError = msg != null && (msg.contains("Frame") || msg.contains("stack") || msg.contains("StackMap") || msg.contains("merge"));
-            if (isFrameError || e instanceof IndexOutOfBoundsException) {
-                System.err.println("WARNING: Frame computation failed for " + cn.name + ", retrying with COMPUTE_MAXS only: " + msg);
-            } else {
-                throw e;
-            }
+            return cw.toByteArray();
+        } catch (RuntimeException | Error e) {
+            throw new IllegalStateException("Falha ao gerar bytecode de " + cn.name
+                    + " (version " + major + ", "
+                    + (needsFrames ? "COMPUTE_FRAMES" : "COMPUTE_MAXS") + "): " + e, e);
         }
-
-        // Fallback: COMPUTE_MAXS only (no stack map frames)
-        ClassWriter cw = new HierarchyClassWriter(ClassWriter.COMPUTE_MAXS, hier, cfg.optionalDepsFile);
-        cn.accept(cw);
-        byte[] bytecode = cw.toByteArray();
-
-        if (cfg.expectMajor > 0 && bytecode.length >= 7) {
-            int major = ((bytecode[6] & 0xFF) << 8) | (bytecode[7] & 0xFF);
-            if (major != cfg.expectMajor) {
-                System.err.println("WARNING: " + cn.name + " major version " + major + " != expected " + cfg.expectMajor);
-            }
-        }
-        return bytecode;
     }
 
-    private static void writeJar(File outJar, Map<String, ClassNode> classes, HierarchyResolver hier, Config cfg) throws IOException {
+    /**
+     * Reemissao sem recalculo: usada quando apenas membros foram adicionados
+     * (campos/metodos sem branches). Preserva bytes, frames e max stack originais.
+     */
+    private static byte[] writeMemberOnly(ClassNode cn) {
+        ClassWriter cw = new ClassWriter(0);
+        cn.accept(cw);
+        return cw.toByteArray();
+    }
+
+    private static void writeJar(File outJar, File inJar, Map<String, ClassNode> classes,
+                                 Map<String, byte[]> originalBytes, Map<String, byte[]> injected,
+                                 Set<String> codeModified, Set<String> memberModified,
+                                 HierarchyResolver hier, Config cfg) throws IOException {
         // Use temporary file for atomic write
         File tempJar = File.createTempFile("tpatch-", ".jar", outJar.getParentFile());
+        Set<String> written = new LinkedHashSet<>();
         try {
             ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(tempJar));
             try {
-                // Write manifest
-                ZipEntry manifestEntry = new ZipEntry("META-INF/MANIFEST.MF");
-                zos.putNextEntry(manifestEntry);
-                writeManifest(zos, cfg);
-                zos.closeEntry();
+                // Manifest novo (as assinaturas antigas sao removidas abaixo)
+                putEntry(zos, written, "META-INF/MANIFEST.MF", manifestBytes(cfg));
 
-                // Write classes
-                for (ClassNode cn : classes.values()) {
-                    if (cn.name.startsWith("META-INF/")) continue; // skip manifest class if any
+                try (ZipFile zip = new ZipFile(inJar)) {
+                    for (Enumeration<? extends ZipEntry> e = zip.entries(); e.hasMoreElements(); ) {
+                        ZipEntry en = e.nextElement();
+                        String entryName = en.getName();
+                        if (en.isDirectory()) {
+                            continue;
+                        }
+                        if (entryName.equals("META-INF/MANIFEST.MF") || isSignatureFile(entryName)) {
+                            continue; // manifest novo; assinatura invalidaria o JAR modificado
+                        }
 
-                    try {
-                        byte[] bytecode = writeClassWithFallback(cn, hier, cfg);
-                        ZipEntry entry = new ZipEntry(cn.name.replace('/', '/') + ".class");
-                        zos.putNextEntry(entry);
-                        zos.write(bytecode);
-                        zos.closeEntry();
-                    } catch (Exception e) {
-                        System.err.println("ERROR writing class: " + cn.name);
-                        e.printStackTrace();
-                        throw e;
+                        byte[] data;
+                        if (entryName.endsWith(".class")) {
+                            String internal = entryName.substring(0, entryName.length() - ".class".length());
+                            ClassNode cn = classes.get(internal);
+                            if (memberModified.contains(internal)) {
+                                data = writeMemberOnly(cn);
+                            } else if (codeModified.contains(internal)) {
+                                data = writeClassWithFallback(cn, hier, cfg);
+                            } else {
+                                data = originalBytes.get(internal);
+                            }
+                            if (data == null) {
+                                throw new IOException("Sem bytes para a classe " + internal);
+                            }
+                        } else {
+                            data = readAllBytes(zip.getInputStream(en));
+                        }
+                        putEntry(zos, written, entryName, data);
                     }
                 }
+
+                // Classes auxiliares novas (fora do JAR original)
+                for (Map.Entry<String, byte[]> e : injected.entrySet()) {
+                    if (originalBytes.containsKey(e.getKey())) {
+                        throw new IOException("Auxiliar colide com classe original: " + e.getKey());
+                    }
+                    putEntry(zos, written, e.getKey() + ".class", e.getValue());
+                }
+
+                zos.finish();
             } finally {
                 zos.close();
             }
 
             // Atomic move
             Files.move(tempJar.toPath(), outJar.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-            System.out.println("  Written: " + outJar.getAbsolutePath());
+            System.out.println("  Written: " + outJar.getAbsolutePath()
+                    + " (" + originalBytes.size() + " classes originais, "
+                    + injected.size() + " auxiliares, "
+                    + codeModified.size() + " com codigo reescrito, "
+                    + memberModified.size() + " com membros adicionados)");
         } catch (Exception e) {
             tempJar.delete();
             throw e;
         }
     }
 
-    private static void writeManifest(ZipOutputStream zos, Config cfg) throws IOException {
+    private static void putEntry(ZipOutputStream zos, Set<String> written, String name, byte[] data) throws IOException {
+        if (!written.add(name)) {
+            throw new IOException("Entrada duplicada no JAR de saida: " + name);
+        }
+        ZipEntry entry = new ZipEntry(name);
+        entry.setTime(0L); // build reproduzivel
+        zos.putNextEntry(entry);
+        zos.write(data);
+        zos.closeEntry();
+    }
+
+    private static boolean isSignatureFile(String name) {
+        String upper = name.toUpperCase(Locale.ROOT);
+        if (!upper.startsWith("META-INF/")) {
+            return false;
+        }
+        return upper.endsWith(".SF") || upper.endsWith(".RSA")
+                || upper.endsWith(".DSA") || upper.endsWith(".EC");
+    }
+
+    private static byte[] readAllBytes(InputStream is) throws IOException {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream(8192)) {
+            byte[] buf = new byte[8192];
+            int n;
+            while ((n = is.read(buf)) > 0) {
+                out.write(buf, 0, n);
+            }
+            return out.toByteArray();
+        } finally {
+            is.close();
+        }
+    }
+
+    private static byte[] manifestBytes(Config cfg) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        writeManifest(out, cfg);
+        return out.toByteArray();
+    }
+
+    private static void writeManifest(OutputStream os, Config cfg) throws IOException {
         StringBuilder sb = new StringBuilder();
         sb.append("Manifest-Version: 1.0\n");
-        sb.append("Created-By: BigTP 1.0.7 Patcher\n");
+        sb.append("Created-By: BigTP 1.1.1 Patcher\n");
         sb.append("Build-Date: ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date())).append("\n");
         sb.append("Specification-Title: JinRyuu JRMCore BigTP\n");
-        sb.append("Specification-Version: 1.0.7\n");
-        sb.append("Implementation-Version: 1.0.7\n");
+        sb.append("Specification-Version: 1.1.1\n");
+        sb.append("Implementation-Version: 1.1.1\n");
         sb.append("Main-Class: \n");
-        zos.write(sb.toString().getBytes("UTF-8"));
+        os.write(sb.toString().getBytes("UTF-8"));
     }
+
 
     // ============================================================ HIERARCHY
 
@@ -1188,20 +996,44 @@ public final class TpPatch {
         File[] jars = outDir.listFiles((d, n) -> n.endsWith("-patched.jar"));
         if (jars == null) return;
 
+        // DBC e NPCDBC usam curTPLong/tpShort/clampTP do JRMCore corrigido.
+        File cpFile = cfg.classpathFile;
+        File jrmcPatched = new File(outDir, "JRMCore-patched.jar");
+        if (jrmcPatched.isFile()) {
+            File merged = new File(outDir, "_verify-classpath.txt");
+            List<String> lines = new ArrayList<>();
+            // JRMCore corrigido precisa vir primeiro e o original precisa sair:
+            // o resolver consulta os JARs na ordem de insercao.
+            lines.add(jrmcPatched.getAbsolutePath());
+            for (String raw : Files.readAllLines(cfg.classpathFile.toPath(),
+                    java.nio.charset.StandardCharsets.UTF_8)) {
+                String trimmed = raw.trim();
+                if (trimmed.isEmpty() || trimmed.startsWith("#")) {
+                    continue;
+                }
+                File entry = new File(trimmed);
+                if (entry.isFile() && entry.getName().equals(cfg.jrmCoreJar.getName())) {
+                    continue;
+                }
+                lines.add(trimmed);
+            }
+            Files.write(merged.toPath(), lines, java.nio.charset.StandardCharsets.UTF_8);
+            cpFile = merged;
+        }
+
         for (File jar : jars) {
             System.out.println("\n=== Verifying " + jar.getName() + " ===");
-            ProcessBuilder pb = new ProcessBuilder(
-                    cfg.classpathFile.getAbsolutePath(),
-                    jar.getAbsolutePath(),
-                    "--expect-major", String.valueOf(cfg.expectMajor)
-            );
-            // Actually run VerifyJar
-            String javaExe = System.getenv("JAVA_HOME") + "/bin/java.exe";
-            String asmCp = "C:\\Users\\Fernando\\Desktop\\NanatsuCore\\tools\\asm-9.7.1.jar;"
-                    + "C:\\Users\\Fernando\\Desktop\\NanatsuCore\\tools\\asm-tree-9.7.1.jar;"
-                    + "C:\\Users\\Fernando\\Desktop\\NanatsuCore\\tools\\asm-analysis-9.7.1.jar;"
-                    + "C:\\Users\\Fernando\\Desktop\\NanatsuCore\\tools\\asm-commons-9.7.1.jar;"
-                    + "C:\\Users\\Fernando\\Desktop\\NanatsuCore\\tools\\asm-util-9.7.1.jar";
+            String javaHome = System.getenv("JAVA_HOME");
+            String javaExe = (javaHome == null || javaHome.isEmpty())
+                    ? "java" : new File(javaHome, "bin/java.exe").getAbsolutePath();
+            File asmDir = new File(new File(System.getProperty("user.dir")).getParentFile(), "tools");
+            StringBuilder asmCp = new StringBuilder();
+            String[] asmJars = {"asm-9.7.1.jar", "asm-tree-9.7.1.jar", "asm-analysis-9.7.1.jar",
+                    "asm-commons-9.7.1.jar", "asm-util-9.7.1.jar"};
+            for (int i = 0; i < asmJars.length; i++) {
+                if (i > 0) asmCp.append(';');
+                asmCp.append(new File(asmDir, asmJars[i]).getAbsolutePath());
+            }
 
             List<String> cmd = new ArrayList<>();
             cmd.add(javaExe);
@@ -1211,11 +1043,13 @@ public final class TpPatch {
             cmd.add("--jar");
             cmd.add(jar.getAbsolutePath());
             cmd.add("--cp-file");
-            cmd.add(cfg.classpathFile.getAbsolutePath());
+            cmd.add(cpFile.getAbsolutePath());
             cmd.add("--optional");
             cmd.add(cfg.optionalDepsFile.getAbsolutePath());
-            cmd.add("--expect-major");
-            cmd.add(String.valueOf(cfg.expectMajor));
+            if (cfg.expectMajor > 0) {
+                cmd.add("--expect-major");
+                cmd.add(String.valueOf(cfg.expectMajor));
+            }
 
             ProcessBuilder pb2 = new ProcessBuilder(cmd);
             pb2.redirectErrorStream(true);
@@ -1237,7 +1071,7 @@ public final class TpPatch {
     private static void generateManifest(File outDir, Config cfg) throws IOException {
         File manifestFile = new File(outDir, "MANIFEST.txt");
         try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(manifestFile), "UTF-8"))) {
-            pw.println("BigTP 1.0.7 Candidate Build");
+            pw.println("BigTP 1.1.1 Candidate Build");
             pw.println("Date: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date()));
             pw.println("JDK: " + System.getProperty("java.version") + " (" + System.getProperty("java.vendor") + ")");
             pw.println("ASM: 9.7.1");
@@ -1358,10 +1192,10 @@ public final class TpPatch {
         if (cfg.jrmCoreJar == null) cfg.jrmCoreJar = new File("JRMCore-v1.3.51-original.jar");
         if (cfg.dbcJar == null) cfg.dbcJar = new File("DragonBlockC-v1.4.85.jar");
         if (cfg.npcdbcJar == null) cfg.npcdbcJar = new File("npcdbc-1.2.1-hotfix1.jar");
-        if (cfg.outputDir == null) cfg.outputDir = new File("bigtp/dist/1.0.7-candidate");
+        if (cfg.outputDir == null) cfg.outputDir = new File("bigtp/dist/1.1.1");
         if (cfg.classpathFile == null) cfg.classpathFile = new File("bigtp/build/classpath.txt");
-        if (cfg.optionalDepsFile == null) cfg.optionalDepsFile = new File("analysis/optional-deps.txt");
-        if (cfg.tpUtilClass == null) cfg.tpUtilClass = new File("bigtp/build/classes/JinRyuu/JRMCore/TpUtil.class");
+        if (cfg.optionalDepsFile == null) cfg.optionalDepsFile = new File("bigtp/analysis/optional-deps.txt");
+        if (cfg.tpUtilClass == null) cfg.tpUtilClass = new File("bigtp/build/prod-classes/JinRyuu/JRMCore/TpUtil.class");
         return cfg;
     }
 }

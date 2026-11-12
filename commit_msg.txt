@@ -1,0 +1,7 @@
+fix: resolve BigTP 1.1.1 structural blockers
+
+- injectJRMCoreHMethods(): implement tpShort(J)S and clampTP(J)I via ASM
+- writeClassWithFallback(): catch Throwable for COMPUTE_FRAMES fallback on v50 classes
+- StateLocalAdapter: parse adapter string for JRMCoreH.tpShort/clampTP calls
+- Verified: InjectedCallVerifier 0 errors, ScanJrmcTpint clean on DBC/NPCDBC
+- 3 JARs produced with SHA-256: JRMCore, DBC, NPCDBC

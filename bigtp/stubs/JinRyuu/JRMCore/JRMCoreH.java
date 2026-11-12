@@ -1,6 +1,7 @@
 package JinRyuu.JRMCore;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
 /** Stub de compilacao/teste. NAO e injetado no jogo. */
@@ -11,6 +12,9 @@ public class JRMCoreH {
     public static NBTTagCompound nbt(Entity entity, String key) {
         if (entity == null) {
             return null;
+        }
+        if (entity instanceof EntityPlayer && "pres".equals(key)) {
+            return ((EntityPlayer) entity).pres;
         }
         return new NBTTagCompound();
     }

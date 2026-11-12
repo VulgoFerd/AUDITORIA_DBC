@@ -89,6 +89,7 @@ public final class TpUtil {
     public static void write(EntityPlayer player, long value) {
         NBTTagCompound tag = playerTag(player);
         write(tag, value);
+        syncToClient(player);
     }
 
     /**
@@ -108,7 +109,9 @@ public final class TpUtil {
     }
 
     public static TpLogic.Result writeChecked(EntityPlayer player, long value) {
-        return writeChecked(playerTag(player), value);
+        TpLogic.Result result = writeChecked(playerTag(player), value);
+        syncToClient(player);
+        return result;
     }
 
     // ------------------------------------------------------------------ ganho
@@ -130,7 +133,9 @@ public final class TpUtil {
     }
 
     public static TpLogic.Result gain(EntityPlayer player, long amount) {
-        return gain(playerTag(player), amount);
+        TpLogic.Result result = gain(playerTag(player), amount);
+        syncToClient(player);
+        return result;
     }
 
     // ------------------------------------------------------------------ gasto
@@ -152,7 +157,9 @@ public final class TpUtil {
     }
 
     public static TpLogic.Result spend(EntityPlayer player, long amount) {
-        return spend(playerTag(player), amount);
+        TpLogic.Result result = spend(playerTag(player), amount);
+        syncToClient(player);
+        return result;
     }
 
     // ----------------------------------------------------- adaptadores ASM
@@ -182,20 +189,19 @@ public final class TpUtil {
         writeChecked(player, value);
     }
 
-    // Combined operations with sync for player targets
+    // Combined operations with sync for player targets.
+    // As variantes *AndSync delegam para os overloads de EntityPlayer, que ja
+    // sincronizam; assim cada operacao envia exatamente um pacote.
     public static void writeAndSync(EntityPlayer player, long value) {
         writeCheckedVoid(player, value);
-        syncToClient(player);
     }
 
     public static void gainAndSync(EntityPlayer player, long amount) {
         gainVoid(player, amount);
-        syncToClient(player);
     }
 
     public static void spendAndSync(EntityPlayer player, long amount) {
         spendVoid(player, amount);
-        syncToClient(player);
     }
 
     // -------------------------------------------------------------- comando
@@ -297,6 +303,88 @@ public final class TpUtil {
         return TpLogic.mirror(value);
     }
 
+    // -------------------------------------------------- ponte legada INT
+    // O bytecode antigo le e escreve o espelho INT. A leitura devolve o
+    // espelho saturado. A escrita INT e interpretada como variacao contra o
+    // espelho:
+    //
+    //   delta = pedido - espelho(saldoAtual)
+    //   novoSaldo = saldoAtual + delta
+    //
+    // Assim um codigo que faz "getInt - custo" continua gastando o custo, e
+    // um saldo LONG acima de Integer.MAX_VALUE nao e truncado. Resultado
+    // sempre em [0, Long.MAX_VALUE]. Chaves que nao sao de TP mantem o
+    // comportamento original do NBT.
+
+    public static int getTagInt(NBTTagCompound tag, String key) {
+        if (tag == null) {
+            return 0;
+        }
+        if (!isTpKey(key)) {
+            return tag.func_74762_e(key);
+        }
+        return getTPInt(tag);
+    }
+
+    public static void setTagInt(NBTTagCompound tag, String key, int requested) {
+        if (tag == null) {
+            throw new IllegalArgumentException("NBTTagCompound nulo em TpUtil.setTagInt");
+        }
+        if (!isTpKey(key)) {
+            tag.func_74768_a(key, requested);
+            return;
+        }
+        writeLegacyInt(tag, requested);
+    }
+
+    public static int getPlayerInt(EntityPlayer player, String key) {
+        if (player == null) {
+            return 0;
+        }
+        if (!isTpKey(key)) {
+            NBTTagCompound tag = JRMCoreH.nbt(player, PLAYER_TAG);
+            return tag == null ? 0 : tag.func_74762_e(key);
+        }
+        return getTPInt(player);
+    }
+
+    public static void setPlayerInt(int requested, EntityPlayer player, String key) {
+        if (player == null) {
+            throw new IllegalArgumentException("EntityPlayer nulo em TpUtil.setPlayerInt");
+        }
+        NBTTagCompound tag = JRMCoreH.nbt(player, PLAYER_TAG);
+        if (tag == null) {
+            throw new IllegalStateException("NBT 'pres' ausente para o jogador");
+        }
+        if (!isTpKey(key)) {
+            tag.func_74768_a(key, requested);
+            return;
+        }
+        writeLegacyInt(tag, requested);
+        syncToClient(player);
+    }
+
+    private static boolean isTpKey(String key) {
+        return KEY_INT.equals(key) || KEY_LONG.equals(key);
+    }
+
+    private static void writeLegacyInt(NBTTagCompound tag, int requested) {
+        long current = readUsable(tag);
+        int mirrored = TpLogic.mirror(current);
+        long delta = (long) requested - (long) mirrored;
+        long next;
+        if (delta > 0L && current > Long.MAX_VALUE - delta) {
+            next = Long.MAX_VALUE;
+            System.err.println("BIGTP: escrita INT legada saturada em Long.MAX_VALUE");
+        } else {
+            next = current + delta;
+        }
+        if (next < 0L) {
+            next = 0L;
+        }
+        TpNbtCore.write(TpNbt.of(tag), next);
+    }
+
     // -------------------------------------------------------------- helpers
 
     private static NBTTagCompound playerTag(EntityPlayer player) {
@@ -334,9 +422,12 @@ public final class TpUtil {
     /**
      * Sincroniza o TP do jogador com o cliente.
      * Envia pacote JRMCorePTpSync com o saldo atual.
+     *
+     * Somente jogadores do servidor (EntityPlayerMP) recebem pacotes. Em
+     * cliente/integrated server o cast direto causava ClassCastException.
      */
     public static void syncToClient(EntityPlayer player) {
-        if (player == null) {
+        if (!(player instanceof EntityPlayerMP)) {
             return;
         }
         long current = getTP(player);
